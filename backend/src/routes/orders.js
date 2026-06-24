@@ -5,7 +5,7 @@ const Order = require('../models/Order');
 // POST /api/orders
 router.post('/', async (req, res) => {
   try {
-    const { items, customerName, customerPhone, address, paymentMethod, total, whatsappSent } = req.body;
+    const { items, customerName, customerPhone, address, paymentMethod, notes, total, whatsappSent } = req.body;
 
     if (!items || !items.length) {
       return res.status(400).json({ error: 'El pedido debe tener al menos un producto' });
@@ -20,6 +20,7 @@ router.post('/', async (req, res) => {
       customerPhone,
       address,
       paymentMethod,
+      notes,
       total,
       whatsappSent: whatsappSent !== undefined ? whatsappSent : true,
     });

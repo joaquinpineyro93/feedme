@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { UtensilsCrossed } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 
 export default function LoginPage() {
@@ -31,7 +32,7 @@ export default function LoginPage() {
     <div className="login-page">
       <div className="login-card">
         <div className="login-logo">
-          <span className="login-logo-icon">🍔</span>
+          <UtensilsCrossed size={40} className="login-logo-icon" />
           <h1 className="login-title">FeedMe Admin</h1>
           <p className="login-subtitle">Burger Bros</p>
         </div>

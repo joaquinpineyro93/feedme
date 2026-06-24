@@ -45,6 +45,14 @@ body {
   border-bottom: 1px solid #374151;
 }
 .sidebar-logo-icon { font-size: 1.6rem; }
+.sidebar-logo-img {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid rgba(255,255,255,0.2);
+  flex-shrink: 0;
+}
 .sidebar-logo-text { color: #fff; font-weight: 700; font-size: 1rem; }
 .sidebar-nav { flex: 1; padding: 16px 0; }
 .sidebar-link {
@@ -54,11 +62,12 @@ body {
   padding: 12px 20px;
   background: none;
   border: none;
+  border-left: 3px solid transparent;
   color: var(--sidebar-text);
   font-size: 0.95rem;
   cursor: pointer;
   transition: background 0.15s, color 0.15s;
-  border-left: 3px solid transparent;
+  text-decoration: none;
 }
 .sidebar-link:hover { background: #374151; color: #fff; }
 .sidebar-link.active { color: var(--sidebar-active); border-left-color: var(--sidebar-active); background: #374151; }
@@ -192,6 +201,15 @@ body {
 .order-customer { display: flex; flex-direction: column; gap: 2px; }
 .order-customer strong { font-size: 0.95rem; }
 .order-customer span { font-size: 0.82rem; color: var(--text-muted); }
+.order-notes {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  font-style: italic;
+  background: #FFFBEB;
+  border-radius: 4px;
+  padding: 4px 8px;
+  margin-top: 2px;
+}
 .order-payment {
   display: inline-block;
   background: var(--bg);
@@ -251,8 +269,81 @@ body {
 }
 
 /* Products */
-.products-section { margin-bottom: 28px; }
+.products-layout {
+  display: grid;
+  grid-template-columns: 260px 1fr;
+  gap: 20px;
+  align-items: start;
+}
+.cat-editor { position: sticky; top: 28px; }
+.products-main { display: flex; flex-direction: column; gap: 24px; }
+.products-section { }
 .products-list { display: flex; flex-direction: column; gap: 8px; }
+.cat-empty { font-size: 0.82rem; color: var(--text-muted); padding: 8px 0; }
+.cat-badge {
+  display: inline-block;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 1px 8px;
+  font-size: 0.72rem;
+  font-weight: 500;
+  color: var(--text-muted);
+  margin-left: 6px;
+  vertical-align: middle;
+}
+
+/* Category editor */
+.cat-list { list-style: none; display: flex; flex-direction: column; gap: 6px; }
+.cat-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px;
+  background: var(--bg);
+  border-radius: 8px;
+  border: 1px solid var(--border);
+}
+.cat-name {
+  flex: 1;
+  min-width: 0;
+  font-size: 0.88rem;
+  font-weight: 500;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  overflow: hidden;
+}
+.cat-name > span:first-child {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.cat-count { font-size: 0.72rem; color: var(--text-muted); font-weight: 400; }
+.cat-rename-input { flex: 1; font-size: 0.85rem; padding: 4px 8px; height: auto; }
+.cat-actions { display: flex; gap: 4px; flex-shrink: 0; }
+.cat-btn {
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  background: none;
+  font-size: 0.82rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  color: var(--text-muted);
+}
+.cat-btn.edit:hover   { border-color: var(--accent); color: var(--accent); background: #FFFBEB; }
+.cat-btn.delete:hover { border-color: var(--danger); color: var(--danger); background: #FEF2F2; }
+.cat-btn.save         { border-color: var(--success); color: var(--success); }
+.cat-btn.cancel       { border-color: var(--text-muted); }
+.cat-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+.cat-add-row { display: flex; gap: 8px; }
+.cat-add-row .form-input { flex: 1; min-width: 0; }
+.cat-add-row .btn-primary { flex-shrink: 0; }
 .product-row {
   background: var(--card-bg);
   border: 1px solid var(--border);
@@ -413,6 +504,80 @@ body {
   white-space: nowrap;
 }
 .total-cell { font-weight: 700; white-space: nowrap; }
+
+/* Restaurant page */
+.restaurant-grid {
+  display: grid;
+  grid-template-columns: 300px 1fr;
+  gap: 20px;
+  align-items: start;
+}
+.restaurant-left  { display: flex; flex-direction: column; gap: 20px; }
+.restaurant-right { display: flex; flex-direction: column; gap: 20px; }
+
+.section-card {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.section-card-title { font-size: 0.78rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-muted); }
+
+/* Logo upload */
+.logo-upload-area {
+  width: 100%;
+  height: 150px;
+  border: 2px dashed var(--border);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  overflow: hidden;
+  transition: border-color 0.15s;
+}
+.logo-upload-area:hover { border-color: var(--accent); }
+.logo-preview-img { width: 100%; height: 100%; object-fit: contain; padding: 12px; }
+.logo-upload-placeholder { display: flex; flex-direction: column; align-items: center; gap: 6px; color: var(--text-muted); font-size: 0.85rem; }
+.logo-upload-icon { font-size: 2rem; line-height: 1; color: var(--border); }
+
+/* Restaurant preview card */
+.restaurant-preview-card {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  background: var(--bg);
+  border-radius: 10px;
+  padding: 14px;
+}
+.preview-logo-img {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid var(--border);
+  flex-shrink: 0;
+}
+.preview-logo-placeholder {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  background: var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.4rem;
+  flex-shrink: 0;
+}
+.preview-info { display: flex; flex-direction: column; gap: 3px; font-size: 0.82rem; }
+.preview-info strong { font-size: 0.95rem; }
+.preview-info span { color: var(--text-muted); }
+
+.form-textarea { resize: vertical; min-height: 80px; font-family: inherit; }
+.form-success { color: var(--success); font-size: 0.85rem; font-weight: 600; }
 
 /* Login page */
 .login-page {

@@ -14,6 +14,7 @@ const orderSchema = new mongoose.Schema({
   address: { type: String, required: true },
   paymentMethod: { type: String, required: true, enum: ['Efectivo', 'Mercado Pago', 'Tarjeta'] },
   total: { type: Number, required: true },
+  notes: { type: String, default: '' },
   whatsappSent: { type: Boolean, default: true },
   status: { type: String, default: 'pending' },
 }, { timestamps: true });

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { Search, X, ShoppingCart, AlertTriangle } from 'lucide-react';
 import Header from '../components/Header';
 import ProductCard from '../components/ProductCard';
 import CartDrawer from '../components/CartDrawer';
@@ -7,7 +8,6 @@ import { useCart } from '../context/CartContext';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001';
 
-const CATEGORY_ORDER = ['Burgers', 'Acompañamientos', 'Bebidas', 'Postres'];
 
 const MOCK_PRODUCTS = [
   { _id: '1', name: 'Burger Clásica', description: 'Medallón de carne, lechuga, tomate, cheddar', price: 1500, category: 'Burgers', image: 'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=400&h=300&fit=crop' },
@@ -22,35 +22,89 @@ const MOCK_PRODUCTS = [
 
 export default function MenuPage() {
   const [products, setProducts] = useState([]);
+  const [restaurant, setRestaurant] = useState(null);
+  const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [cartOpen, setCartOpen] = useState(false);
+  const [search, setSearch] = useState('');
+  const [activeCategory, setActiveCategory] = useState('');
   const { totalItems } = useCart();
 
   useEffect(() => {
-    async function fetchProducts() {
+    async function fetchData() {
       try {
-        const res = await axios.get(`${API_URL}/api/products`);
-        setProducts(res.data);
+        const [productsRes, restaurantRes] = await Promise.all([
+          axios.get(`${API_URL}/api/products`),
+          axios.get(`${API_URL}/api/restaurant`),
+        ]);
+        setProducts(productsRes.data);
+        setRestaurant(restaurantRes.data);
+        setCategories(restaurantRes.data.categories || []);
+        if (restaurantRes.data.name) document.title = `${restaurantRes.data.name} — FeedMe`;
       } catch (err) {
-        // Fall back to mock data when backend is unreachable (e.g. preview/demo)
         setProducts(MOCK_PRODUCTS);
+        setCategories(['Burgers', 'Acompañamientos', 'Bebidas', 'Postres']);
       } finally {
         setLoading(false);
       }
     }
-    fetchProducts();
+    fetchData();
   }, []);
 
-  const grouped = CATEGORY_ORDER.reduce((acc, cat) => {
-    const catProducts = products.filter(p => p.category === cat);
+  const filtered = products.filter(p => {
+    const matchSearch = search === '' ||
+      p.name.toLowerCase().includes(search.toLowerCase()) ||
+      p.description.toLowerCase().includes(search.toLowerCase());
+    const matchCat = activeCategory === '' || p.category === activeCategory;
+    return matchSearch && matchCat;
+  });
+
+  const grouped = categories.reduce((acc, cat) => {
+    const catProducts = filtered.filter(p => p.category === cat);
     if (catProducts.length > 0) acc[cat] = catProducts;
     return acc;
   }, {});
 
   return (
     <div className="app-container">
-      <Header />
+      <Header restaurant={restaurant} />
+
+      {/* Search + category filter */}
+      <div className="search-bar-wrapper">
+        <div className="search-input-wrap">
+          <Search size={16} className="search-icon" />
+          <input
+            className="search-input"
+            type="text"
+            placeholder="Buscar producto..."
+            value={search}
+            onChange={e => setSearch(e.target.value)}
+          />
+          {search && (
+            <button className="search-clear" onClick={() => setSearch('')}><X size={14} /></button>
+          )}
+        </div>
+        {categories.length > 0 && (
+          <div className="cat-filter-scroll">
+            <button
+              className={`cat-filter-pill ${activeCategory === '' ? 'active' : ''}`}
+              onClick={() => setActiveCategory('')}
+            >
+              Todos
+            </button>
+            {categories.map(cat => (
+              <button
+                key={cat}
+                className={`cat-filter-pill ${activeCategory === cat ? 'active' : ''}`}
+                onClick={() => setActiveCategory(activeCategory === cat ? '' : cat)}
+              >
+                {cat}
+              </button>
+            ))}
+          </div>
+        )}
+      </div>
 
       <main className="main-content">
         {loading && (
@@ -62,8 +116,15 @@ export default function MenuPage() {
 
         {error && (
           <div className="error-state">
-            <span>⚠️</span>
+            <AlertTriangle size={32} />
             <p>{error}</p>
+          </div>
+        )}
+
+        {!loading && !error && Object.keys(grouped).length === 0 && (
+          <div className="empty-search">
+            <p>No encontramos productos para "<strong>{search}</strong>"</p>
+            <button className="btn-back" onClick={() => { setSearch(''); setActiveCategory(''); }}>Ver todo el menú</button>
           </div>
         )}
 
@@ -82,7 +143,7 @@ export default function MenuPage() {
       {/* Floating cart button */}
       {totalItems > 0 && (
         <button className="floating-cart" onClick={() => setCartOpen(true)}>
-          <span className="floating-cart-icon">🛒</span>
+          <ShoppingCart size={20} className="floating-cart-icon" />
           <span className="floating-cart-text">Ver pedido</span>
           <span className="floating-cart-badge">{totalItems}</span>
         </button>

@@ -2,6 +2,7 @@ const router = require('express').Router();
 const auth = require('../middleware/auth');
 const Order = require('../models/Order');
 const Product = require('../models/Product');
+const Restaurant = require('../models/Restaurant');
 
 // All admin routes require auth
 router.use(auth);
@@ -87,6 +88,38 @@ router.delete('/products/:id', async (req, res) => {
     res.json({ success: true });
   } catch (err) {
     res.status(500).json({ error: err.message });
+  }
+});
+
+// --- CATEGORIES ---
+router.patch('/restaurant/categories', async (req, res) => {
+  try {
+    const { categories } = req.body;
+    if (!Array.isArray(categories)) return res.status(400).json({ error: 'categories debe ser un array' });
+    const restaurant = await Restaurant.findOneAndUpdate({}, { categories }, { new: true });
+    res.json(restaurant.categories);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// --- RESTAURANT ---
+router.get('/restaurant', async (req, res) => {
+  try {
+    const restaurant = await Restaurant.findOne();
+    res.json(restaurant);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+router.patch('/restaurant', async (req, res) => {
+  try {
+    const restaurant = await Restaurant.findOneAndUpdate({}, req.body, { new: true, runValidators: true });
+    if (!restaurant) return res.status(404).json({ error: 'Restaurante no encontrado' });
+    res.json(restaurant);
+  } catch (err) {
+    res.status(400).json({ error: err.message });
   }
 });
 

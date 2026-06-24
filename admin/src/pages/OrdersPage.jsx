@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
+import { FileText } from 'lucide-react';
 import api from '../api';
 
 const STATUS_LABELS = {
@@ -178,6 +179,7 @@ function OrderCard({ order, onStatusChange }) {
         {order.customerPhone && <span>{order.customerPhone}</span>}
         <span>{order.address}</span>
         <span className="order-payment">{order.paymentMethod}</span>
+        {order.notes && <span className="order-notes"><FileText size={13} style={{ verticalAlign: 'middle', marginRight: 4 }} />{order.notes}</span>}
       </div>
 
       <ul className="order-items">

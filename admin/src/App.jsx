@@ -1,43 +1,46 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { BrowserRouter, Routes, Route, NavLink, Navigate, useLocation } from 'react-router-dom';
+import { UtensilsCrossed } from 'lucide-react';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import LoginPage from './pages/LoginPage';
 import OrdersPage from './pages/OrdersPage';
 import ProductsPage from './pages/ProductsPage';
 import HistoryPage from './pages/HistoryPage';
+import RestaurantPage from './pages/RestaurantPage';
+import api from './api';
 import './index.css';
 
-function AdminApp() {
+function AdminLayout() {
   const { user, logout } = useAuth();
-  const [tab, setTab] = useState('orders');
+  const [restaurant, setRestaurant] = useState(null);
+  const location = useLocation();
 
-  if (!user) return <LoginPage />;
+  useEffect(() => {
+    api.get('/api/restaurant')
+      .then(({ data }) => setRestaurant(data))
+      .catch(() => {});
+  }, [location.pathname]); // re-fetch on nav so name/logo stay fresh
+
+  if (!user) return <Navigate to="/login" replace />;
+
+  const name = restaurant?.name || 'Mi local';
+  const logo = restaurant?.logo;
 
   return (
     <div className="admin-layout">
       <aside className="sidebar">
         <div className="sidebar-logo">
-          <span className="sidebar-logo-icon">🍔</span>
-          <span className="sidebar-logo-text">Burger Bros</span>
+          {logo
+            ? <img src={logo} alt={name} className="sidebar-logo-img" />
+            : <UtensilsCrossed size={28} color="#fff" className="sidebar-logo-icon" />
+          }
+          <span className="sidebar-logo-text">{name}</span>
         </div>
         <nav className="sidebar-nav">
-          <button
-            className={`sidebar-link ${tab === 'orders' ? 'active' : ''}`}
-            onClick={() => setTab('orders')}
-          >
-            Pedidos
-          </button>
-          <button
-            className={`sidebar-link ${tab === 'products' ? 'active' : ''}`}
-            onClick={() => setTab('products')}
-          >
-            Productos
-          </button>
-          <button
-            className={`sidebar-link ${tab === 'history' ? 'active' : ''}`}
-            onClick={() => setTab('history')}
-          >
-            Historico
-          </button>
+          <NavLink className={({ isActive }) => `sidebar-link${isActive ? ' active' : ''}`} to="/pedidos">Pedidos</NavLink>
+          <NavLink className={({ isActive }) => `sidebar-link${isActive ? ' active' : ''}`} to="/productos">Productos</NavLink>
+          <NavLink className={({ isActive }) => `sidebar-link${isActive ? ' active' : ''}`} to="/historico">Historico</NavLink>
+          <NavLink className={({ isActive }) => `sidebar-link${isActive ? ' active' : ''}`} to="/mi-local">Mi local</NavLink>
         </nav>
         <div className="sidebar-footer">
           <span className="sidebar-user">{user.username}</span>
@@ -45,18 +48,39 @@ function AdminApp() {
         </div>
       </aside>
       <main className="admin-main">
-        {tab === 'orders' && <OrdersPage />}
-        {tab === 'products' && <ProductsPage />}
-        {tab === 'history' && <HistoryPage />}
+        <Routes>
+          <Route path="/pedidos"   element={<OrdersPage />} />
+          <Route path="/productos" element={<ProductsPage />} />
+          <Route path="/historico" element={<HistoryPage />} />
+          <Route path="/mi-local"  element={<RestaurantPage />} />
+          <Route path="*"          element={<Navigate to="/pedidos" replace />} />
+        </Routes>
       </main>
     </div>
+  );
+}
+
+function AuthGuard() {
+  const { user } = useAuth();
+  const location = useLocation();
+
+  if (!user && location.pathname !== '/login') return <Navigate to="/login" replace />;
+  if (user  && location.pathname === '/login')  return <Navigate to="/pedidos" replace />;
+
+  return (
+    <Routes>
+      <Route path="/login" element={<LoginPage />} />
+      <Route path="/*"     element={<AdminLayout />} />
+    </Routes>
   );
 }
 
 export default function App() {
   return (
     <AuthProvider>
-      <AdminApp />
+      <BrowserRouter>
+        <AuthGuard />
+      </BrowserRouter>
     </AuthProvider>
   );
 }

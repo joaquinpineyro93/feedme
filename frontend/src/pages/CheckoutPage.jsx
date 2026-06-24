@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { ShoppingCart, CheckCircle, ArrowLeft, Banknote, CreditCard, Smartphone, MessageCircle } from 'lucide-react';
 import { useCart } from '../context/CartContext';
+import { useAuth } from '../context/AuthContext';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001';
 const RESTAURANT_PHONE = '+59898478604';
@@ -10,8 +12,9 @@ const PAYMENT_METHODS = ['Efectivo', 'Mercado Pago', 'Tarjeta'];
 
 export default function CheckoutPage() {
   const { items, totalPrice, clearCart } = useCart();
+  const { user } = useAuth();
   const navigate = useNavigate();
-  const [form, setForm] = useState({ name: '', phone: '', address: '', payment: 'Efectivo' });
+  const [form, setForm] = useState({ name: user?.displayName || '', phone: '', address: '', payment: 'Efectivo', notes: '' });
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState('');
@@ -20,7 +23,7 @@ export default function CheckoutPage() {
     return (
       <div className="app-container">
         <div className="checkout-empty">
-          <span>🛒</span>
+          <ShoppingCart size={40} strokeWidth={1.5} />
           <p>Tu carrito está vacío.</p>
           <button className="btn-back" onClick={() => navigate('/')}>Volver al menú</button>
         </div>
@@ -32,7 +35,7 @@ export default function CheckoutPage() {
     return (
       <div className="app-container">
         <div className="success-screen">
-          <div className="success-icon">🎉</div>
+          <CheckCircle size={64} strokeWidth={1.5} className="success-icon" />
           <h2 className="success-title">¡Pedido enviado!</h2>
           <p className="success-sub">Revisá tu WhatsApp para confirmar el pedido con Burger Bros.</p>
           <button
@@ -66,6 +69,7 @@ export default function CheckoutPage() {
       `*Pago: ${form.payment}*`,
       `*Nombre: ${form.name}*`,
       `*Telefono: ${form.phone}*`,
+      ...(form.notes.trim() ? [`*Nota: ${form.notes.trim()}*`] : []),
       '---------------------------------',
     ].join('\n');
     return msg;
@@ -99,6 +103,7 @@ export default function CheckoutPage() {
         customerPhone: form.phone,
         address: form.address,
         paymentMethod: form.payment,
+        notes: form.notes.trim(),
         total: totalPrice,
         whatsappSent: true,
       });
@@ -114,7 +119,7 @@ export default function CheckoutPage() {
   return (
     <div className="app-container">
       <div className="checkout-header">
-        <button className="btn-back-icon" onClick={() => navigate('/')}>←</button>
+        <button className="btn-back-icon" onClick={() => navigate('/')}><ArrowLeft size={20} /></button>
         <h1 className="checkout-title">Checkout</h1>
       </div>
 
@@ -180,6 +185,18 @@ export default function CheckoutPage() {
           </label>
         </section>
 
+        {/* Notes */}
+        <section className="checkout-section">
+          <h2 className="checkout-section-title">Observaciones <span className="optional-label">(opcional)</span></h2>
+          <textarea
+            className="form-input form-textarea"
+            placeholder="Ej: Sin cebolla, tocar timbre 2B, dejar en puerta..."
+            value={form.notes}
+            onChange={e => setForm(f => ({ ...f, notes: e.target.value }))}
+            rows={3}
+          />
+        </section>
+
         {/* Payment method */}
         <section className="checkout-section">
           <h2 className="checkout-section-title">Método de pago</h2>
@@ -194,7 +211,7 @@ export default function CheckoutPage() {
                   onChange={() => setForm(f => ({ ...f, payment: method }))}
                 />
                 <span className="payment-icon">
-                  {method === 'Efectivo' ? '💵' : method === 'Mercado Pago' ? '💙' : '💳'}
+                  {method === 'Efectivo' ? <Banknote size={18} /> : method === 'Mercado Pago' ? <Smartphone size={18} /> : <CreditCard size={18} />}
                 </span>
                 <span>{method}</span>
               </label>
@@ -205,7 +222,7 @@ export default function CheckoutPage() {
         {error && <p className="form-error">{error}</p>}
 
         <button className="btn-whatsapp" type="submit" disabled={loading}>
-          {loading ? 'Enviando...' : '📲 Hacer pedido por WhatsApp'}
+          {loading ? 'Enviando...' : <><MessageCircle size={18} /> Hacer pedido por WhatsApp</>}
         </button>
       </form>
     </div>

@@ -70,6 +70,7 @@ const restaurantData = {
   address: 'Av. Corrientes 1234, Buenos Aires',
   description: 'Las mejores hamburguesas artesanales de la ciudad',
   openHours: 'Lun-Dom: 12:00 - 00:00',
+  categories: ['Burgers', 'Acompañamientos', 'Bebidas', 'Postres'],
 };
 
 async function seed() {

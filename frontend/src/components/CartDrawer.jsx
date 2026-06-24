@@ -1,35 +1,42 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { ShoppingCart, X, Trash2 } from 'lucide-react';
 import { useCart } from '../context/CartContext';
+import { useAuth } from '../context/AuthContext';
+import LoginModal from './LoginModal';
 
 export default function CartDrawer({ isOpen, onClose }) {
   const { items, addItem, removeItem, deleteItem, totalItems, totalPrice } = useCart();
+  const { user } = useAuth();
   const navigate = useNavigate();
+  const [showLogin, setShowLogin] = useState(false);
 
   const handleCheckout = () => {
+    if (!user) {
+      setShowLogin(true);
+      return;
+    }
     onClose();
     navigate('/checkout');
   };
 
   return (
     <>
-      {/* Backdrop */}
       <div
         className={`drawer-backdrop ${isOpen ? 'drawer-backdrop--visible' : ''}`}
         onClick={onClose}
       />
 
-      {/* Drawer */}
       <div className={`cart-drawer ${isOpen ? 'cart-drawer--open' : ''}`}>
         <div className="cart-drawer-header">
           <h2 className="cart-drawer-title">Tu pedido</h2>
-          <button className="cart-drawer-close" onClick={onClose}>✕</button>
+          <button className="cart-drawer-close" onClick={onClose}><X size={20} /></button>
         </div>
 
         <div className="cart-drawer-body">
           {items.length === 0 ? (
             <div className="cart-empty">
-              <span className="cart-empty-icon">🛒</span>
+              <ShoppingCart size={40} strokeWidth={1.5} className="cart-empty-icon" />
               <p>Tu carrito está vacío</p>
               <p className="cart-empty-sub">Agregá productos del menú</p>
             </div>
@@ -51,7 +58,7 @@ export default function CartDrawer({ isOpen, onClose }) {
                       ${(product.price * quantity).toLocaleString('es-AR')}
                     </span>
                     <button className="cart-item-delete" onClick={() => deleteItem(product._id)} title="Eliminar">
-                      🗑
+                      <Trash2 size={15} />
                     </button>
                   </div>
                 </li>
@@ -72,6 +79,8 @@ export default function CartDrawer({ isOpen, onClose }) {
           </div>
         )}
       </div>
+
+      {showLogin && <LoginModal onClose={() => setShowLogin(false)} />}
     </>
   );
 }
