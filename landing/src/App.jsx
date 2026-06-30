@@ -55,18 +55,18 @@ function Hero() {
               </div>
               <div>
                 <div className="phone-header-name">La Pizzería</div>
-                <div className="phone-header-sub">Las mejores burgers</div>
+                <div className="phone-header-sub">Las mejores pizzas</div>
               </div>
             </div>
             <div className="phone-product-card">
               <img
                 className="phone-product-img"
-                src="https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=400&h=200&fit=crop"
-                alt="Burger"
+                src="https://images.unsplash.com/photo-1604382354936-07c5d9983bd3?w=400&h=200&fit=crop"
+                alt="Pizza"
               />
               <div className="phone-product-body">
-                <div className="phone-product-name">Burger Clásica</div>
-                <div className="phone-product-desc">Medallón, lechuga, tomate, cheddar</div>
+                <div className="phone-product-name">Pizza Clásica</div>
+                <div className="phone-product-desc">Salsa, mozzarella, albahaca fresca</div>
                 <div className="phone-product-footer">
                   <span className="phone-product-price">$1.500</span>
                   <span className="phone-add-btn">+ Agregar</span>
