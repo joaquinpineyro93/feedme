@@ -30,56 +30,73 @@ export default function LoginPage() {
 
   return (
     <div className="login-page">
-      <div className="login-card">
-        <div className="login-logo">
-          <UtensilsCrossed size={40} className="login-logo-icon" />
-          <h1 className="login-title">FeedMe Admin</h1>
-          <p className="login-subtitle">Burger Bros</p>
+      <div className="login-split">
+
+        {/* Brand panel */}
+        <div className="login-brand">
+          <div className="login-brand-inner">
+            <div className="login-brand-icon">
+              <UtensilsCrossed size={28} color="#fff" strokeWidth={1.8} />
+            </div>
+            <div className="login-brand-name">Pedi</div>
+            <div className="login-brand-tag">admin</div>
+            <p className="login-brand-sub">Gestioná tu local desde un solo lugar</p>
+          </div>
         </div>
 
-        <div className="login-tabs">
-          <button
-            className={`login-tab ${mode === 'login' ? 'active' : ''}`}
-            onClick={() => { setMode('login'); setError(''); }}
-          >
-            Iniciar sesión
-          </button>
-          <button
-            className={`login-tab ${mode === 'register' ? 'active' : ''}`}
-            onClick={() => { setMode('register'); setError(''); }}
-          >
-            Registrarse
-          </button>
+        {/* Form panel */}
+        <div className="login-form-panel">
+          <div className="login-form-inner">
+            <h2 className="login-form-title">Bienvenido</h2>
+            <p className="login-form-sub">Ingresá con tu usuario y contraseña</p>
+
+            <div className="login-tabs">
+              <button
+                className={`login-tab ${mode === 'login' ? 'active' : ''}`}
+                onClick={() => { setMode('login'); setError(''); }}
+              >
+                Iniciar sesión
+              </button>
+              <button
+                className={`login-tab ${mode === 'register' ? 'active' : ''}`}
+                onClick={() => { setMode('register'); setError(''); }}
+              >
+                Registrarse
+              </button>
+            </div>
+
+            <form className="login-form" onSubmit={handleSubmit}>
+              <div className="form-group">
+                <label className="form-label">Usuario</label>
+                <input
+                  className="form-input"
+                  type="text"
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value)}
+                  placeholder="Ej: admin"
+                  autoComplete="username"
+                  autoFocus
+                />
+              </div>
+              <div className="form-group">
+                <label className="form-label">Contraseña</label>
+                <input
+                  className="form-input"
+                  type="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder="••••••••"
+                  autoComplete="current-password"
+                />
+              </div>
+              {error && <p className="form-error">{error}</p>}
+              <button className="btn-primary" type="submit" disabled={loading}>
+                {loading ? 'Cargando...' : mode === 'login' ? 'Entrar' : 'Crear cuenta'}
+              </button>
+            </form>
+          </div>
         </div>
 
-        <form className="login-form" onSubmit={handleSubmit}>
-          <div className="form-group">
-            <label className="form-label">Usuario</label>
-            <input
-              className="form-input"
-              type="text"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-              placeholder="Ej: admin"
-              autoComplete="username"
-            />
-          </div>
-          <div className="form-group">
-            <label className="form-label">Contraseña</label>
-            <input
-              className="form-input"
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder="••••••••"
-              autoComplete="current-password"
-            />
-          </div>
-          {error && <p className="form-error">{error}</p>}
-          <button className="btn-primary" type="submit" disabled={loading}>
-            {loading ? 'Cargando...' : mode === 'login' ? 'Entrar' : 'Crear cuenta'}
-          </button>
-        </form>
       </div>
     </div>
   );

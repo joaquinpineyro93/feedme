@@ -1,13 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { Search, X, ShoppingCart, AlertTriangle } from 'lucide-react';
+import { Search, X, ShoppingCart, AlertTriangle, Star, RefreshCw, Calendar } from 'lucide-react';
 import Header from '../components/Header';
 import ProductCard from '../components/ProductCard';
 import CartDrawer from '../components/CartDrawer';
 import { useCart } from '../context/CartContext';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001';
-
 
 const MOCK_PRODUCTS = [
   { _id: '1', name: 'Burger Clásica', description: 'Medallón de carne, lechuga, tomate, cheddar', price: 1500, category: 'Burgers', image: 'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=400&h=300&fit=crop' },
@@ -20,6 +19,22 @@ const MOCK_PRODUCTS = [
   { _id: '8', name: 'Helado Casero', description: 'Vainilla o chocolate, 2 bochas', price: 900, category: 'Postres', image: 'https://images.unsplash.com/photo-1567206563114-c179706a56b0?w=400&h=300&fit=crop' },
 ];
 
+function getTodayMenus(dailyMenus = []) {
+  if (!dailyMenus.length) return [];
+  const now = new Date();
+  const todayDow  = now.getDay(); // 0=Dom … 6=Sáb
+  const todayDate = now.toISOString().slice(0, 10); // "YYYY-MM-DD"
+
+  return dailyMenus.filter(m => {
+    if (!m.active) return false;
+    if (m.recurrence === 'weekly') return m.dayOfWeek === todayDow;
+    if (m.recurrence === 'once')   return m.date === todayDate;
+    return false;
+  });
+}
+
+const DAYS = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'];
+
 export default function MenuPage() {
   const [products, setProducts] = useState([]);
   const [restaurant, setRestaurant] = useState(null);
@@ -29,7 +44,7 @@ export default function MenuPage() {
   const [cartOpen, setCartOpen] = useState(false);
   const [search, setSearch] = useState('');
   const [activeCategory, setActiveCategory] = useState('');
-  const { totalItems } = useCart();
+  const { totalItems, addItem, removeItem, items, setRestaurant: setCartRestaurant } = useCart();
 
   useEffect(() => {
     async function fetchData() {
@@ -40,8 +55,9 @@ export default function MenuPage() {
         ]);
         setProducts(productsRes.data);
         setRestaurant(restaurantRes.data);
+        setCartRestaurant(restaurantRes.data);
         setCategories(restaurantRes.data.categories || []);
-        if (restaurantRes.data.name) document.title = `${restaurantRes.data.name} — FeedMe`;
+        if (restaurantRes.data.name) document.title = `${restaurantRes.data.name} — Pedi`;
       } catch (err) {
         setProducts(MOCK_PRODUCTS);
         setCategories(['Burgers', 'Acompañamientos', 'Bebidas', 'Postres']);
@@ -52,6 +68,12 @@ export default function MenuPage() {
     fetchData();
   }, []);
 
+  const todayMenus = getTodayMenus(restaurant?.dailyMenus).filter(m =>
+    search === '' ||
+    m.name.toLowerCase().includes(search.toLowerCase()) ||
+    m.description?.toLowerCase().includes(search.toLowerCase())
+  );
+
   const filtered = products.filter(p => {
     const matchSearch = search === '' ||
       p.name.toLowerCase().includes(search.toLowerCase()) ||
@@ -60,7 +82,15 @@ export default function MenuPage() {
     return matchSearch && matchCat;
   });
 
-  const grouped = categories.reduce((acc, cat) => {
+  // Group by category — use restaurant categories order when available,
+  // but always include products whose category isn't in the list yet.
+  const knownCats = categories.length > 0 ? categories : [];
+  const allCats = [
+    ...knownCats,
+    ...filtered.map(p => p.category).filter(c => c && !knownCats.includes(c)),
+  ].filter((c, i, arr) => arr.indexOf(c) === i);
+
+  const grouped = allCats.reduce((acc, cat) => {
     const catProducts = filtered.filter(p => p.category === cat);
     if (catProducts.length > 0) acc[cat] = catProducts;
     return acc;
@@ -70,6 +100,7 @@ export default function MenuPage() {
     <div className="app-container">
       <Header restaurant={restaurant} />
 
+      <div className="content-card">
       {/* Search + category filter */}
       <div className="search-bar-wrapper">
         <div className="search-input-wrap">
@@ -121,6 +152,54 @@ export default function MenuPage() {
           </div>
         )}
 
+        {/* Menú del día */}
+        {!loading && todayMenus.length > 0 && (
+          <section className="menu-section">
+            <h2 className="category-title category-title--daily">
+              <Star size={14} className="category-title-star" /> Menú del día
+            </h2>
+            <div className="product-grid">
+              {todayMenus.map(m => (
+                <div key={m._id} className="product-card product-card--daily">
+                  {m.image && (
+                    <div className="product-image-wrap">
+                      <img src={m.image} alt={m.name} className="product-image" loading="lazy" />
+                    </div>
+                  )}
+                  <div className="product-info">
+                    <div>
+                      <div className="daily-badge">
+                        {m.recurrence === 'weekly'
+                          ? <><RefreshCw size={10} /> Todos los {DAYS[m.dayOfWeek]}</>
+                          : <><Calendar size={10} /> Solo hoy</>
+                        }
+                      </div>
+                      <h3 className="product-name">{m.name}</h3>
+                      {m.description && <p className="product-description">{m.description}</p>}
+                    </div>
+                    <div className="product-footer">
+                      <span className="product-price">${Number(m.price).toLocaleString('es-AR')}</span>
+                      {(() => {
+                        const cartItem = items.find(i => i.product._id === m._id);
+                        const qty = cartItem ? cartItem.quantity : 0;
+                        return qty === 0 ? (
+                          <button className="btn-add" onClick={() => addItem(m)}>+</button>
+                        ) : (
+                          <div className="quantity-controls">
+                            <button className="qty-btn" onClick={() => removeItem(m._id)}>−</button>
+                            <span className="qty-value">{qty}</span>
+                            <button className="qty-btn qty-btn--add" onClick={() => addItem(m)}>+</button>
+                          </div>
+                        );
+                      })()}
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </section>
+        )}
+
         {!loading && !error && Object.keys(grouped).length === 0 && (
           <div className="empty-search">
             <p>No encontramos productos para "<strong>{search}</strong>"</p>
@@ -139,8 +218,8 @@ export default function MenuPage() {
           </section>
         ))}
       </main>
+      </div>{/* /content-card */}
 
-      {/* Floating cart button */}
       {totalItems > 0 && (
         <button className="floating-cart" onClick={() => setCartOpen(true)}>
           <ShoppingCart size={20} className="floating-cart-icon" />

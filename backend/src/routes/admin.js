@@ -91,6 +91,43 @@ router.delete('/products/:id', async (req, res) => {
   }
 });
 
+// --- DAILY MENUS ---
+router.get('/restaurant/daily-menus', async (req, res) => {
+  try {
+    const r = await Restaurant.findOne();
+    res.json(r?.dailyMenus || []);
+  } catch (err) { res.status(500).json({ error: err.message }); }
+});
+
+router.post('/restaurant/daily-menus', async (req, res) => {
+  try {
+    const r = await Restaurant.findOne();
+    r.dailyMenus.push(req.body);
+    await r.save();
+    res.status(201).json(r.dailyMenus[r.dailyMenus.length - 1]);
+  } catch (err) { res.status(400).json({ error: err.message }); }
+});
+
+router.patch('/restaurant/daily-menus/:id', async (req, res) => {
+  try {
+    const r = await Restaurant.findOne();
+    const item = r.dailyMenus.id(req.params.id);
+    if (!item) return res.status(404).json({ error: 'No encontrado' });
+    Object.assign(item, req.body);
+    await r.save();
+    res.json(item);
+  } catch (err) { res.status(400).json({ error: err.message }); }
+});
+
+router.delete('/restaurant/daily-menus/:id', async (req, res) => {
+  try {
+    const r = await Restaurant.findOne();
+    r.dailyMenus.pull({ _id: req.params.id });
+    await r.save();
+    res.json({ success: true });
+  } catch (err) { res.status(500).json({ error: err.message }); }
+});
+
 // --- CATEGORIES ---
 router.patch('/restaurant/categories', async (req, res) => {
   try {

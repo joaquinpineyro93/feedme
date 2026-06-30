@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 const Product = require('./models/Product');
 const Restaurant = require('./models/Restaurant');
 
-const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/feedme';
+const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/pedi';
 
 const products = [
   {
@@ -65,7 +65,7 @@ const products = [
 ];
 
 const restaurantData = {
-  name: 'Burger Bros',
+  name: 'Mi Local',
   phone: '+59898478604',
   address: 'Av. Corrientes 1234, Buenos Aires',
   description: 'Las mejores hamburguesas artesanales de la ciudad',

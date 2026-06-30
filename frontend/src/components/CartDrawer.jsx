@@ -1,21 +1,13 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ShoppingCart, X, Trash2 } from 'lucide-react';
 import { useCart } from '../context/CartContext';
-import { useAuth } from '../context/AuthContext';
-import LoginModal from './LoginModal';
 
 export default function CartDrawer({ isOpen, onClose }) {
   const { items, addItem, removeItem, deleteItem, totalItems, totalPrice } = useCart();
-  const { user } = useAuth();
   const navigate = useNavigate();
-  const [showLogin, setShowLogin] = useState(false);
 
   const handleCheckout = () => {
-    if (!user) {
-      setShowLogin(true);
-      return;
-    }
     onClose();
     navigate('/checkout');
   };
@@ -74,13 +66,12 @@ export default function CartDrawer({ isOpen, onClose }) {
               <span className="cart-total-price">${totalPrice.toLocaleString('es-AR')}</span>
             </div>
             <button className="btn-checkout" onClick={handleCheckout}>
-              Ir al checkout →
+              Finalizar compra
             </button>
           </div>
         )}
       </div>
 
-      {showLogin && <LoginModal onClose={() => setShowLogin(false)} />}
-    </>
+</>
   );
 }

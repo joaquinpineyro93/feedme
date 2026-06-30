@@ -5,6 +5,7 @@ const userSchema = new mongoose.Schema({
   username: { type: String, required: true, unique: true, trim: true },
   password: { type: String, required: true },
   role: { type: String, default: 'admin' },
+  restaurantId: { type: mongoose.Schema.Types.ObjectId, ref: 'Restaurant', default: null },
 }, { timestamps: true });
 
 userSchema.pre('save', async function (next) {

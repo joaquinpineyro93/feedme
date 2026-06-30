@@ -24,9 +24,7 @@ export default function ProductCard({ product }) {
         <div className="product-footer">
           <span className="product-price">${product.price.toLocaleString('es-AR')}</span>
           {quantity === 0 ? (
-            <button className="btn-add" onClick={() => addItem(product)}>
-              + Agregar
-            </button>
+            <button className="btn-add" onClick={() => addItem(product)}>+</button>
           ) : (
             <div className="quantity-controls">
               <button className="qty-btn" onClick={() => removeItem(product._id)}>−</button>

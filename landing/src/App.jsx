@@ -14,7 +14,7 @@ function Nav() {
         <div className="nav-brand-icon">
           <UtensilsCrossed size={18} color="#111827" />
         </div>
-        <span className="nav-brand-name">FeedMe</span>
+        <span className="nav-brand-name">Pedi</span>
       </a>
       <a href="#contacto" className="nav-cta">Quiero mi local</a>
     </nav>
@@ -54,7 +54,7 @@ function Hero() {
                 <UtensilsCrossed size={13} color="#111827" />
               </div>
               <div>
-                <div className="phone-header-name">Burger Bros</div>
+                <div className="phone-header-name">La Pizzería</div>
                 <div className="phone-header-sub">Las mejores burgers</div>
               </div>
             </div>
@@ -86,7 +86,7 @@ function Hero() {
 
 function HowItWorks() {
   const steps = [
-    { n: '1', title: 'Nos contás tu negocio', desc: 'Completás un formulario con el nombre, logo, productos y precios de tu local.' },
+    { n: '1', title: 'Ponte en contacto con nosotros', desc: 'Completá el formulario de contacto o escribinos por WhatsApp. Contanos tu negocio: rubro, nombre del local y qué productos querés ofrecer.' },
     { n: '2', title: 'Armamos tu carta digital', desc: 'En menos de 24 hs tenés tu catálogo online listo para compartir con tus clientes.' },
     { n: '3', title: 'Recibís pedidos por WhatsApp', desc: 'Tus clientes eligen del menú y te envían el pedido directo a tu WhatsApp.' },
     { n: '4', title: 'Gestionás desde el panel', desc: 'Actualizás estados, notificás al cliente y llevás el historial desde el backoffice.' },
@@ -205,7 +205,7 @@ function DemoStrip() {
       <h2>Probá la experiencia en vivo</h2>
       <p>Así va a ver tu menú digital cualquier cliente desde su celular.</p>
       <a href={DEMO_URL} target="_blank" rel="noreferrer" className="btn-primary">
-        <Smartphone size={18} /> Abrir demo de Burger Bros <ArrowRight size={16} />
+        <Smartphone size={18} /> Abrir Demo <ArrowRight size={16} />
       </a>
     </div>
   );
@@ -269,7 +269,7 @@ function Contact() {
     setLoading(true);
     const msg = [
       '---------------------------------',
-      'Hola! Me interesa FeedMe para mi negocio.',
+      'Hola! Me interesa Pedi para mi negocio.',
       '---------------------------------',
       `*Nombre:* ${form.name}`,
       `*Local:* ${form.business}`,
@@ -286,7 +286,7 @@ function Contact() {
       <section className="section">
         <div className="contact-wrap">
           <p className="section-label">Contacto</p>
-          <h2 className="section-title">Quiero mi local en FeedMe</h2>
+          <h2 className="section-title">Quiero mi local en Pedi</h2>
           <p className="section-sub" style={{ margin: '0 auto' }}>
             Completá el formulario y te contactamos en menos de 24 hs para arrancar.
           </p>
@@ -346,9 +346,9 @@ function Footer() {
         <div className="footer-brand-icon">
           <UtensilsCrossed size={14} color="#111827" />
         </div>
-        <span className="footer-brand-name">FeedMe</span>
+        <span className="footer-brand-name">Pedi</span>
       </div>
-      <p className="footer-tagline">Tu menú en la web &mdash; &copy; {new Date().getFullYear()} FeedMe</p>
+      <p className="footer-tagline">Tu menú en la web &mdash; &copy; {new Date().getFullYear()} Pedi</p>
     </footer>
   );
 }

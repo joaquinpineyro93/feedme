@@ -136,7 +136,7 @@ function buildReadyMessage(order) {
   const lines = order.items.map((i) => `- ${i.quantity}x ${i.name}`);
   return [
     '---------------------------------',
-    `Hola ${order.customerName}! Tu pedido en Burger Bros esta listo.`,
+    `Hola ${order.customerName}! Tu pedido esta listo.`,
     '---------------------------------',
     '*Tu pedido:*',
     ...lines,

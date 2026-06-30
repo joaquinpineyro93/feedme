@@ -1,6 +1,8 @@
 import { useState, useEffect, useRef } from 'react';
 import { UtensilsCrossed, MapPin, Clock } from 'lucide-react';
 import api from '../api';
+import OpenHoursPicker from '../components/OpenHoursPicker';
+import PhoneInput from '../components/PhoneInput';
 
 export default function RestaurantPage() {
   const [form, setForm] = useState({
@@ -122,11 +124,9 @@ export default function RestaurantPage() {
             <h3 className="section-card-title">Información</h3>
 
             {[
-              { key: 'name',        label: 'Nombre del local',    type: 'text',     placeholder: 'Ej: Burger Bros' },
-              { key: 'phone',       label: 'Teléfono (WhatsApp)', type: 'tel',      placeholder: '+59898478604' },
-              { key: 'address',     label: 'Dirección',           type: 'text',     placeholder: 'Av. Corrientes 1234' },
-              { key: 'openHours',   label: 'Horario de atención', type: 'text',     placeholder: 'Lun-Dom: 12:00 - 00:00' },
-              { key: 'description', label: 'Descripción',         type: 'textarea', placeholder: 'Las mejores hamburguesas...' },
+              { key: 'name',        label: 'Nombre del local', type: 'text',     placeholder: 'Ej: La Pizzería de Juan' },
+              { key: 'address',     label: 'Dirección',        type: 'text',     placeholder: 'Av. Corrientes 1234' },
+              { key: 'description', label: 'Descripción',      type: 'textarea', placeholder: 'Las mejores hamburguesas...' },
             ].map(({ key, label, type, placeholder }) => (
               <div className="form-group" key={key}>
                 <label className="form-label">{label}</label>
@@ -149,6 +149,23 @@ export default function RestaurantPage() {
                 )}
               </div>
             ))}
+
+            <div className="form-group">
+              <label className="form-label">Teléfono (WhatsApp)</label>
+              <PhoneInput
+                value={form.phone}
+                onChange={(val) => setForm((f) => ({ ...f, phone: val }))}
+                placeholder="98 478 604"
+              />
+            </div>
+
+            <div className="form-group">
+              <label className="form-label">Horario de atención</label>
+              <OpenHoursPicker
+                value={form.openHours}
+                onChange={(val) => setForm((f) => ({ ...f, openHours: val }))}
+              />
+            </div>
 
             {error   && <p className="form-error">{error}</p>}
             {success && <p className="form-success">Cambios guardados correctamente.</p>}

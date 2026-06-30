@@ -4,14 +4,14 @@ import axios from 'axios';
 import { ShoppingCart, CheckCircle, ArrowLeft, Banknote, CreditCard, Smartphone, MessageCircle } from 'lucide-react';
 import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
+import PhoneInput from '../components/PhoneInput';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001';
-const RESTAURANT_PHONE = '+59898478604';
 
 const PAYMENT_METHODS = ['Efectivo', 'Mercado Pago', 'Tarjeta'];
 
 export default function CheckoutPage() {
-  const { items, totalPrice, clearCart } = useCart();
+  const { items, totalPrice, clearCart, restaurant } = useCart();
   const { user } = useAuth();
   const navigate = useNavigate();
   const [form, setForm] = useState({ name: user?.displayName || '', phone: '', address: '', payment: 'Efectivo', notes: '' });
@@ -37,7 +37,7 @@ export default function CheckoutPage() {
         <div className="success-screen">
           <CheckCircle size={64} strokeWidth={1.5} className="success-icon" />
           <h2 className="success-title">¡Pedido enviado!</h2>
-          <p className="success-sub">Revisá tu WhatsApp para confirmar el pedido con Burger Bros.</p>
+          <p className="success-sub">Revisá tu WhatsApp para confirmar el pedido con el local.</p>
           <button
             className="btn-checkout"
             onClick={() => {
@@ -59,7 +59,7 @@ export default function CheckoutPage() {
     );
     const msg = [
       '---------------------------------',
-      'Hola Burger Bros! Quiero hacer un pedido:',
+      'Hola! Quiero hacer un pedido:',
       '---------------------------------',
       '*PEDIDO:*',
       ...lines,
@@ -85,7 +85,8 @@ export default function CheckoutPage() {
     setLoading(true);
 
     const waMessage = buildWhatsAppMessage();
-    const waLink = `https://wa.me/${RESTAURANT_PHONE.replace(/\D/g, '')}?text=${encodeURIComponent(waMessage)}`;
+    const phone = (restaurant?.phone || '').replace(/\D/g, '');
+    const waLink = `https://wa.me/${phone}?text=${encodeURIComponent(waMessage)}`;
 
     // Open WhatsApp
     window.open(waLink, '_blank');
@@ -162,13 +163,10 @@ export default function CheckoutPage() {
 
           <label className="form-label">
             Teléfono (WhatsApp)
-            <input
-              className="form-input"
-              type="tel"
-              placeholder="Ej: 099 123 456"
+            <PhoneInput
               value={form.phone}
-              onChange={e => setForm(f => ({ ...f, phone: e.target.value }))}
-              required
+              onChange={val => setForm(f => ({ ...f, phone: val }))}
+              placeholder="98 478 604"
             />
           </label>
 
@@ -222,7 +220,7 @@ export default function CheckoutPage() {
         {error && <p className="form-error">{error}</p>}
 
         <button className="btn-whatsapp" type="submit" disabled={loading}>
-          {loading ? 'Enviando...' : <><MessageCircle size={18} /> Hacer pedido por WhatsApp</>}
+          {loading ? 'Enviando...' : <><MessageCircle size={18} /> Confirmar pedido</>}
         </button>
       </form>
     </div>

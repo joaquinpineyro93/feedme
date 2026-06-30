@@ -1,5 +1,5 @@
-import { useState, useEffect } from 'react';
-import { Pencil, X, Check, Trash2 } from 'lucide-react';
+import { useState, useEffect, useRef } from 'react';
+import { Pencil, X, Check, Trash2, ImagePlus } from 'lucide-react';
 import api from '../api';
 
 const EMPTY_FORM = { name: '', description: '', price: '', category: '', image: '', available: true };
@@ -13,12 +13,21 @@ export default function ProductsPage() {
   const [form, setForm]             = useState(EMPTY_FORM);
   const [saving, setSaving]         = useState(false);
   const [formError, setFormError]   = useState('');
+  const fileRef = useRef(null);
 
   // Category editor state
   const [newCatName, setNewCatName]       = useState('');
   const [editingCat, setEditingCat]       = useState(null); // { index, value }
   const [catError, setCatError]           = useState('');
   const [savingCats, setSavingCats]       = useState(false);
+
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (ev) => setForm(f => ({ ...f, image: ev.target.result }));
+    reader.readAsDataURL(file);
+  };
 
   const fetchData = async () => {
     setLoading(true);
@@ -288,8 +297,27 @@ export default function ProductsPage() {
                 </div>
               </div>
               <div className="form-group">
-                <label className="form-label">URL de imagen</label>
-                <input className="form-input" value={form.image} onChange={(e) => setForm({ ...form, image: e.target.value })} />
+                <label className="form-label">Imagen</label>
+                <div
+                  className="daily-img-upload"
+                  onClick={() => fileRef.current.click()}
+                  style={form.image ? { backgroundImage: `url(${form.image})` } : {}}
+                >
+                  {!form.image && (
+                    <div className="daily-img-placeholder">
+                      <ImagePlus size={22} color="#9CA3AF" />
+                      <span>Subir imagen</span>
+                    </div>
+                  )}
+                  {form.image && (
+                    <button
+                      type="button"
+                      className="daily-img-remove"
+                      onClick={e => { e.stopPropagation(); setForm(f => ({ ...f, image: '' })); }}
+                    >✕</button>
+                  )}
+                </div>
+                <input ref={fileRef} type="file" accept="image/*" style={{ display: 'none' }} onChange={handleFileChange} />
               </div>
               {formError && <p className="form-error">{formError}</p>}
               <div className="modal-actions">
