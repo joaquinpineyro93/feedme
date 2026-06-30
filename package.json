@@ -1,0 +1,8 @@
+{
+  "name": "pedi-monorepo",
+  "private": true,
+  "scripts": {
+    "postinstall": "npm install --prefix backend",
+    "start": "npm run start --prefix backend"
+  }
+}
