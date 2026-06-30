@@ -1,11 +1,11 @@
-import { useState } from 'react';
 import {
   UtensilsCrossed, ShoppingCart, MessageCircle, BarChart2,
-  Pencil, CheckCircle, Zap, Globe, Lock, RefreshCw, Send,
+  Pencil, Zap, Globe, Lock, RefreshCw,
   Check, ArrowRight, Smartphone
 } from 'lucide-react';
 
 const DEMO_URL = 'http://localhost:5173';
+const WA_LINK = "https://wa.me/59898478604?text=Hola%2C%20deseo%20tener%20mi%20local%20en%20pedi.uy";
 
 function Nav() {
   return (
@@ -16,7 +16,7 @@ function Nav() {
         </div>
         <span className="nav-brand-name">Pedi</span>
       </a>
-      <a href="#contacto" className="nav-cta">Quiero mi local</a>
+      <a href={WA_LINK} target="_blank" rel="noreferrer" className="nav-cta">Contactar</a>
     </nav>
   );
 }
@@ -37,8 +37,8 @@ function Hero() {
         Vos lo gestionás todo desde un panel simple.
       </p>
       <div className="hero-actions">
-        <a href="#contacto" className="btn-primary">
-          <MessageCircle size={18} /> Quiero mi local
+        <a href={WA_LINK} target="_blank" rel="noreferrer" className="btn-primary">
+          <MessageCircle size={18} /> Contactar
         </a>
         <a href={DEMO_URL} target="_blank" rel="noreferrer" className="btn-ghost">
           <Smartphone size={18} /> Ver demo en vivo
@@ -241,7 +241,7 @@ function Pricing() {
           <ul className="plan-features">
             {free.map(f => <li key={f}><Check size={15} />{f}</li>)}
           </ul>
-          <a href="#contacto" className="plan-cta outline">Empezar gratis</a>
+          <a href={WA_LINK} target="_blank" rel="noreferrer" className="plan-cta outline">Contactar</a>
         </div>
         <div className="plan-card featured">
           <div className="plan-badge">Más popular</div>
@@ -251,7 +251,7 @@ function Pricing() {
           <ul className="plan-features">
             {pro.map(f => <li key={f}><Check size={15} />{f}</li>)}
           </ul>
-          <a href="#contacto" className="plan-cta">Quiero el plan Pro</a>
+          <a href={WA_LINK} target="_blank" rel="noreferrer" className="plan-cta">Contactar</a>
         </div>
       </div>
     </section>
@@ -259,80 +259,19 @@ function Pricing() {
 }
 
 function Contact() {
-  const [form, setForm] = useState({ name: '', business: '', phone: '' });
-  const [sent, setSent] = useState(false);
-  const [loading, setLoading] = useState(false);
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    if (!form.name.trim() || !form.business.trim() || !form.phone.trim()) return;
-    setLoading(true);
-    const msg = [
-      '---------------------------------',
-      'Hola! Me interesa Pedi para mi negocio.',
-      '---------------------------------',
-      `*Nombre:* ${form.name}`,
-      `*Local:* ${form.business}`,
-      `*Telefono:* ${form.phone}`,
-      '---------------------------------',
-    ].join('\n');
-    const waLink = `https://wa.me/59898478604?text=${encodeURIComponent(msg)}`;
-    window.open(waLink, '_blank');
-    setTimeout(() => { setLoading(false); setSent(true); }, 500);
-  };
-
   return (
     <div id="contacto" className="contact-bg">
       <section className="section">
         <div className="contact-wrap">
           <p className="section-label">Contacto</p>
-          <h2 className="section-title">Quiero mi local en Pedi</h2>
-          <p className="section-sub" style={{ margin: '0 auto' }}>
-            Completá el formulario y te contactamos en menos de 24 hs para arrancar.
-          </p>
-          <form className="contact-form" onSubmit={handleSubmit}>
-            <div className="form-group">
-              <label className="form-label">Tu nombre</label>
-              <input
-                className="form-input"
-                placeholder="Ej: María García"
-                value={form.name}
-                onChange={e => setForm(f => ({ ...f, name: e.target.value }))}
-                required
-              />
-            </div>
-            <div className="form-group">
-              <label className="form-label">Nombre de tu negocio</label>
-              <input
-                className="form-input"
-                placeholder="Ej: La Pizzería de Juan"
-                value={form.business}
-                onChange={e => setForm(f => ({ ...f, business: e.target.value }))}
-                required
-              />
-            </div>
-            <div className="form-group">
-              <label className="form-label">Tu WhatsApp</label>
-              <input
-                className="form-input"
-                type="tel"
-                placeholder="Ej: +598 99 123 456"
-                value={form.phone}
-                onChange={e => setForm(f => ({ ...f, phone: e.target.value }))}
-                required
-              />
-            </div>
-            <button className="form-submit" type="submit" disabled={loading || sent}>
-              <Send size={16} />
-              {sent ? 'Mensaje enviado!' : loading ? 'Abriendo WhatsApp...' : 'Enviar por WhatsApp'}
-            </button>
-            {sent && (
-              <div className="form-success">
-                <CheckCircle size={16} style={{ display: 'inline', marginRight: 6, verticalAlign: 'middle' }} />
-                Te vamos a responder en menos de 24 hs. Gracias!
-              </div>
-            )}
-          </form>
+          <h2 className="section-title">Quiero mi local</h2>
+          <a href={WA_LINK} target="_blank" rel="noreferrer" className="form-submit" style={{ display: 'inline-flex', textDecoration: 'none', marginTop: 24 }}>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" style={{ flexShrink: 0 }}>
+              <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/>
+              <path d="M12 0C5.373 0 0 5.373 0 12c0 2.123.554 4.117 1.528 5.847L.057 23.882l6.19-1.449A11.945 11.945 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.8 9.8 0 01-5.001-1.367l-.358-.214-3.724.872.931-3.613-.234-.372A9.79 9.79 0 012.182 12C2.182 6.57 6.57 2.182 12 2.182S21.818 6.57 21.818 12 17.43 21.818 12 21.818z"/>
+            </svg>
+            Contactar
+          </a>
         </div>
       </section>
     </div>
