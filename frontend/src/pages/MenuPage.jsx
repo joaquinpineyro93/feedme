@@ -3,7 +3,6 @@ import axios from 'axios';
 import { Search, X, ShoppingCart, AlertTriangle, Star, RefreshCw, Calendar, ArrowUpDown, Check } from 'lucide-react';
 import Header from '../components/Header';
 import ProductCard from '../components/ProductCard';
-import SplashScreen from '../components/SplashScreen';
 import CartDrawer from '../components/CartDrawer';
 import { useCart } from '../context/CartContext';
 
@@ -40,7 +39,6 @@ export default function MenuPage() {
   const [products, setProducts] = useState([]);
   const [restaurant, setRestaurant] = useState(null);
   const [categories, setCategories] = useState([]);
-  const [splash, setSplash] = useState(true);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [cartOpen, setCartOpen] = useState(false);
@@ -116,14 +114,12 @@ export default function MenuPage() {
   }, {});
 
   return (
-    <>
-    {splash && <SplashScreen onDone={() => setSplash(false)} />}
     <div className="app-container">
-      {!loading && <Header restaurant={restaurant} />}
+      <Header restaurant={restaurant} />
 
       <div className="content-card">
       {/* Search + category filter */}
-      <div className={`search-bar-wrapper ${loading ? 'search-bar-wrapper--hidden' : ''}`}>
+      <div className="search-bar-wrapper">
         <div className="search-sort-row">
           <div className="search-input-wrap">
             <Search size={16} className="search-icon" />
@@ -178,34 +174,9 @@ export default function MenuPage() {
 
       <main className="main-content">
         {loading && (
-          <div className="skeleton-menu">
-            <div className="skeleton-section">
-              <div className="skeleton skeleton-category-title" />
-              {[1,2,3].map(i => (
-                <div key={i} className="skeleton-card">
-                  <div className="skeleton skeleton-card-img" />
-                  <div className="skeleton-card-body">
-                    <div className="skeleton skeleton-line skeleton-line--lg" />
-                    <div className="skeleton skeleton-line skeleton-line--sm" />
-                    <div className="skeleton skeleton-line skeleton-line--sm" />
-                    <div className="skeleton skeleton-line skeleton-line--price" />
-                  </div>
-                </div>
-              ))}
-            </div>
-            <div className="skeleton-section">
-              <div className="skeleton skeleton-category-title" />
-              {[1,2].map(i => (
-                <div key={i} className="skeleton-card">
-                  <div className="skeleton skeleton-card-img" />
-                  <div className="skeleton-card-body">
-                    <div className="skeleton skeleton-line skeleton-line--lg" />
-                    <div className="skeleton skeleton-line skeleton-line--sm" />
-                    <div className="skeleton skeleton-line skeleton-line--price" />
-                  </div>
-                </div>
-              ))}
-            </div>
+          <div className="loading-state">
+            <div className="spinner" />
+            <p>Cargando menú...</p>
           </div>
         )}
 
@@ -299,6 +270,5 @@ export default function MenuPage() {
 
       <CartDrawer isOpen={cartOpen} onClose={() => setCartOpen(false)} />
     </div>
-    </>
   );
 }

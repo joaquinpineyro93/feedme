@@ -10,7 +10,7 @@ const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001';
 
 const PAYMENT_METHODS = [
   { value: 'Efectivo', label: 'Efectivo', icon: <Banknote size={18} /> },
-  { value: 'Tarjeta', label: 'Tarjeta', icon: <CreditCard size={18} /> },
+  { value: 'Tarjeta', label: 'Tarjeta (Llevar Pos)', icon: <CreditCard size={18} /> },
 ];
 
 function getSavedProfile(uid) {
