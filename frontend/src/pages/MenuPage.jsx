@@ -1,9 +1,10 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import axios from 'axios';
 import { Search, X, ShoppingCart, AlertTriangle, Star, RefreshCw, Calendar, ArrowUpDown, Check } from 'lucide-react';
 import Header from '../components/Header';
 import ProductCard from '../components/ProductCard';
 import CartDrawer from '../components/CartDrawer';
+import SplashScreen from '../components/SplashScreen';
 import { useCart } from '../context/CartContext';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001';
@@ -40,6 +41,7 @@ export default function MenuPage() {
   const [restaurant, setRestaurant] = useState(null);
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [splash, setSplash] = useState(true);
   const [error, setError] = useState(null);
   const [cartOpen, setCartOpen] = useState(false);
   const [search, setSearch] = useState('');
@@ -113,13 +115,17 @@ export default function MenuPage() {
     return acc;
   }, {});
 
+  const onSplashDone = useCallback(() => setSplash(false), []);
+
   return (
+    <>
+    {splash && <SplashScreen onDone={onSplashDone} />}
     <div className="app-container">
-      <Header restaurant={restaurant} />
+      {!loading && <Header restaurant={restaurant} />}
 
       <div className="content-card">
       {/* Search + category filter */}
-      <div className="search-bar-wrapper">
+      <div className={`search-bar-wrapper${loading ? ' search-bar-wrapper--hidden' : ''}`}>
         <div className="search-sort-row">
           <div className="search-input-wrap">
             <Search size={16} className="search-icon" />
@@ -174,9 +180,24 @@ export default function MenuPage() {
 
       <main className="main-content">
         {loading && (
-          <div className="loading-state">
-            <div className="spinner" />
-            <p>Cargando menú...</p>
+          <div className="skeleton-menu">
+            {[0,1,2].map(s => (
+              <div key={s} className="skeleton-section">
+                <div className="skeleton skeleton-category-title" />
+                <div className="product-grid">
+                  {[0,1,2,3].map(c => (
+                    <div key={c} className="skeleton-card">
+                      <div className="skeleton skeleton-card-img" />
+                      <div className="skeleton-card-body">
+                        <div className="skeleton skeleton-line skeleton-line--lg" />
+                        <div className="skeleton skeleton-line skeleton-line--sm" />
+                        <div className="skeleton skeleton-line skeleton-line--price" />
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ))}
           </div>
         )}
 
@@ -270,5 +291,6 @@ export default function MenuPage() {
 
       <CartDrawer isOpen={cartOpen} onClose={() => setCartOpen(false)} />
     </div>
+    </>
   );
 }
