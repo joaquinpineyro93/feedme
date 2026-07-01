@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { FileText } from 'lucide-react';
 import api from '../api';
 
@@ -133,10 +133,13 @@ export default function OrdersPage() {
 }
 
 function buildReadyMessage(order) {
+  const isDelivery = order.address && order.address !== 'A levantar';
   const lines = order.items.map((i) => `- ${i.quantity}x ${i.name}`);
   return [
     '---------------------------------',
-    `Hola ${order.customerName}! Tu pedido esta listo.`,
+    isDelivery
+      ? `Hola ${order.customerName}! Tu pedido está en camino.`
+      : `Hola ${order.customerName}! Tu pedido está listo para retirar.`,
     '---------------------------------',
     '*Tu pedido:*',
     ...lines,
@@ -144,26 +147,42 @@ function buildReadyMessage(order) {
     `*Total: $${order.total.toLocaleString('es-AR')}*`,
     `*Pago: ${order.paymentMethod}*`,
     '---------------------------------',
-    'En breve lo estamos despachando. Gracias!',
+    isDelivery ? '¡Ya está en camino! Gracias.' : '¡Podés pasar a buscarlo! Gracias.',
   ].join('\n');
 }
 
 function OrderCard({ order, onStatusChange }) {
+  const [notifyPrompt, setNotifyPrompt] = useState(false);
   const next = STATUS_NEXT[order.status];
 
   const handleStatusChange = (id, status) => {
     if (status === 'ready' && order.customerPhone) {
+      setNotifyPrompt(true);
+      return;
+    }
+    onStatusChange(id, status);
+  };
+
+  const confirmReady = (notify) => {
+    setNotifyPrompt(false);
+    if (notify) {
       const msg = buildReadyMessage(order);
       const phone = order.customerPhone.replace(/\D/g, '');
       window.open(`https://wa.me/${phone}?text=${encodeURIComponent(msg)}`, '_blank');
     }
-    onStatusChange(id, status);
+    onStatusChange(order._id, 'ready');
   };
   return (
     <div className="order-card">
       <div className="order-card-header">
         <div>
-          <span className="order-id">#{order._id.slice(-6).toUpperCase()}</span>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+            <span className="order-id">#{order._id.slice(-6).toUpperCase()}</span>
+            {order.address === 'A levantar'
+              ? <span className="delivery-pill delivery-pill--pickup">A levantar</span>
+              : <span className="delivery-pill delivery-pill--delivery">Envío</span>
+            }
+          </div>
           <span className="order-time">{formatDate(order.createdAt)} {formatTime(order.createdAt)}</span>
         </div>
         <span
@@ -175,10 +194,26 @@ function OrderCard({ order, onStatusChange }) {
       </div>
 
       <div className="order-customer">
-        <strong>{order.customerName}</strong>
-        {order.customerPhone && <span>{order.customerPhone}</span>}
-        <span>{order.address}</span>
-        <span className="order-payment">{order.paymentMethod}</span>
+        <div className="order-customer-grid">
+          <div className="order-customer-field">
+            <span className="order-field-label">Nombre</span>
+            <span className="order-field-value">{order.customerName}</span>
+          </div>
+          <div className="order-customer-field">
+            <span className="order-field-label">Teléfono</span>
+            <span className="order-field-value">{order.customerPhone || '—'}</span>
+          </div>
+          {order.address && order.address !== 'A levantar' && (
+            <div className="order-customer-field" style={{ gridColumn: '1 / -1' }}>
+              <span className="order-field-label">Dirección</span>
+              <span className="order-field-value">{order.address}</span>
+            </div>
+          )}
+          <div className="order-customer-field">
+            <span className="order-field-label">Pago</span>
+            <span className="order-field-value">{order.paymentMethod}</span>
+          </div>
+        </div>
         {order.notes && <span className="order-notes"><FileText size={13} style={{ verticalAlign: 'middle', marginRight: 4 }} />{order.notes}</span>}
       </div>
 
@@ -195,25 +230,30 @@ function OrderCard({ order, onStatusChange }) {
         Total: <strong>${order.total.toLocaleString('es-AR')}</strong>
       </div>
 
-      <div className="order-actions">
-        {next && (
-          <button
-            className="btn-status-next"
-            onClick={() => handleStatusChange(order._id, next)}
-          >
-            Marcar como {STATUS_LABELS[next]}
-            {next === 'ready' && order.customerPhone ? ' + Notificar' : ''}
-          </button>
-        )}
-        {order.status !== 'cancelled' && order.status !== 'delivered' && (
-          <button
-            className="btn-status-cancel"
-            onClick={() => onStatusChange(order._id, 'cancelled')}
-          >
-            Cancelar
-          </button>
-        )}
-      </div>
+      {notifyPrompt && (
+        <div className="notify-prompt">
+          <p className="notify-prompt-text">¿Notificar al cliente?</p>
+          <div className="notify-prompt-actions">
+            <button className="btn-status-next" onClick={() => confirmReady(true)}>Notificar por WA</button>
+            <button className="btn-secondary" onClick={() => confirmReady(false)}>Solo marcar listo</button>
+          </div>
+        </div>
+      )}
+
+      {!notifyPrompt && (
+        <div className="order-actions">
+          {next && (
+            <button className="btn-status-next" onClick={() => handleStatusChange(order._id, next)}>
+              Marcar como {STATUS_LABELS[next]}
+            </button>
+          )}
+          {order.status !== 'cancelled' && order.status !== 'delivered' && (
+            <button className="btn-status-cancel" onClick={() => onStatusChange(order._id, 'cancelled')}>
+              Cancelar
+            </button>
+          )}
+        </div>
+      )}
     </div>
   );
 }

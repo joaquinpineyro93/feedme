@@ -1023,3 +1023,26 @@ body {
 }
 .page-tab:hover { color: var(--text); }
 .page-tab--active { color: var(--accent); border-bottom-color: var(--accent); }
+
+.notify-prompt { background: #FFFBEB; border: 1px solid #F59E0B; border-radius: 8px; padding: 12px; }
+.notify-prompt-text { font-size: 0.88rem; font-weight: 600; margin-bottom: 8px; }
+.notify-prompt-actions { display: flex; gap: 8px; }
+.notify-prompt-actions .btn-status-next,
+.notify-prompt-actions .btn-secondary { flex: 1; font-size: 0.8rem; padding: 7px 10px; }
+
+.delivery-pill {
+  font-size: 0.7rem; font-weight: 600; padding: 2px 8px;
+  border-radius: 20px; white-space: nowrap;
+}
+.delivery-pill--delivery { background: #DBEAFE; color: #1D4ED8; }
+.delivery-pill--pickup { background: #D1FAE5; color: #065F46; }
+
+.order-customer-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px 12px;
+  margin-bottom: 4px;
+}
+.order-customer-field { display: flex; flex-direction: column; gap: 1px; }
+.order-field-label { font-size: 0.7rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; color: var(--text-muted); }
+.order-field-value { font-size: 0.88rem; color: var(--text); }

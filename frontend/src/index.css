@@ -1392,3 +1392,19 @@ body {
     grid-template-columns: repeat(3, 1fr);
   }
 }
+
+.form-input--error { border-color: #EF4444; }
+.field-error { display: block; color: #EF4444; font-size: 12px; margin-top: 4px; }
+
+.delivery-toggle {
+  display: flex; gap: 8px; margin: 8px 0 16px;
+}
+.delivery-btn {
+  flex: 1; padding: 10px; border: 2px solid var(--border);
+  border-radius: var(--radius-sm); background: var(--bg);
+  font-size: 14px; font-weight: 500; cursor: pointer;
+  color: var(--text-secondary); transition: all .15s;
+}
+.delivery-btn--active {
+  border-color: var(--accent); background: #FEF3C7; color: var(--text-primary);
+}
