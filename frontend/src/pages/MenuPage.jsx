@@ -115,15 +115,15 @@ export default function MenuPage() {
     return acc;
   }, {});
 
-  if (splash) return <SplashScreen onDone={() => setSplash(false)} />;
-
   return (
+    <>
+    {splash && <SplashScreen onDone={() => setSplash(false)} />}
     <div className="app-container">
-      <Header restaurant={restaurant} />
+      {!loading && <Header restaurant={restaurant} />}
 
       <div className="content-card">
       {/* Search + category filter */}
-      <div className="search-bar-wrapper">
+      <div className={`search-bar-wrapper ${loading ? 'search-bar-wrapper--hidden' : ''}`}>
         <div className="search-sort-row">
           <div className="search-input-wrap">
             <Search size={16} className="search-icon" />
@@ -299,5 +299,6 @@ export default function MenuPage() {
 
       <CartDrawer isOpen={cartOpen} onClose={() => setCartOpen(false)} />
     </div>
+    </>
   );
 }
