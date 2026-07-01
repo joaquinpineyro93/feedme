@@ -16,7 +16,7 @@ function AdminLayout() {
   const location = useLocation();
 
   useEffect(() => {
-    api.get('/api/restaurant')
+    api.get('/api/admin/restaurant')
       .then(({ data }) => {
         setRestaurant(data);
         if (data.name) document.title = `${data.name} — Pedi [Admin]`;
