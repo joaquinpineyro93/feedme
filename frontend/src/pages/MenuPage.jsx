@@ -202,7 +202,7 @@ export default function MenuPage() {
           </section>
         )}
 
-        {!loading && !error && Object.keys(grouped).length === 0 && (
+        {!loading && !error && Object.keys(grouped).length === 0 && search && (
           <div className="empty-search">
             <p>No encontramos productos para "<strong>{search}</strong>"</p>
             <button className="btn-back" onClick={() => { setSearch(''); setActiveCategory(''); }}>Ver todo el menú</button>
