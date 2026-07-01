@@ -4,10 +4,11 @@ import { useCart } from '../context/CartContext';
 const FALLBACK_IMG = '/favicon.svg';
 
 export default function ProductCard({ product }) {
-  const { items, addItem, removeItem } = useCart();
+  const { items, addItem, removeItem, restaurant } = useCart();
   const cartItem = items.find(i => i.product._id === product._id);
   const quantity = cartItem ? cartItem.quantity : 0;
-  const imgSrc = product.image || FALLBACK_IMG;
+  const fallback = restaurant?.logo || FALLBACK_IMG;
+  const imgSrc = product.image || fallback;
 
   return (
     <div className="product-card">
@@ -17,7 +18,7 @@ export default function ProductCard({ product }) {
           alt={product.name}
           className="product-image"
           loading="lazy"
-          onError={e => { e.target.src = FALLBACK_IMG; }}
+          onError={e => { e.target.src = fallback; }}
         />
       </div>
       <div className="product-info">

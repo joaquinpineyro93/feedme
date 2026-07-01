@@ -47,7 +47,7 @@ export default function MenuPage() {
   const [sortOrder, setSortOrder] = useState('');
   const [sortOpen, setSortOpen] = useState(false);
   const sortRef = useRef(null);
-  const { totalItems, addItem, removeItem, items, setRestaurant: setCartRestaurant } = useCart();
+  const { totalItems, addItem, removeItem, items, setRestaurant: setCartRestaurant, restaurant: cartRestaurant } = useCart();
 
   useEffect(() => {
     async function fetchData() {
@@ -197,7 +197,7 @@ export default function MenuPage() {
               {todayMenus.map(m => (
                 <div key={m._id} className="product-card product-card--daily">
                   <div className={`product-image-wrap ${!m.image ? 'product-image-wrap--fallback' : ''}`}>
-                    <img src={m.image || '/favicon.svg'} alt={m.name} className="product-image" loading="lazy" onError={e => { e.target.src = '/favicon.svg'; }} />
+                    <img src={m.image || cartRestaurant?.logo || '/favicon.svg'} alt={m.name} className="product-image" loading="lazy" onError={e => { e.target.src = cartRestaurant?.logo || '/favicon.svg'; }} />
                   </div>
                   <div className="product-info">
                     <div>
