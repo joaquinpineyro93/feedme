@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
-import { Search, X, ShoppingCart, AlertTriangle, Star, RefreshCw, Calendar } from 'lucide-react';
+import { Search, X, ShoppingCart, AlertTriangle, Star, RefreshCw, Calendar, ArrowUpDown, Check } from 'lucide-react';
 import Header from '../components/Header';
 import ProductCard from '../components/ProductCard';
 import CartDrawer from '../components/CartDrawer';
@@ -44,6 +44,9 @@ export default function MenuPage() {
   const [cartOpen, setCartOpen] = useState(false);
   const [search, setSearch] = useState('');
   const [activeCategory, setActiveCategory] = useState('');
+  const [sortOrder, setSortOrder] = useState('');
+  const [sortOpen, setSortOpen] = useState(false);
+  const sortRef = useRef(null);
   const { totalItems, addItem, removeItem, items, setRestaurant: setCartRestaurant } = useCart();
 
   useEffect(() => {
@@ -70,19 +73,31 @@ export default function MenuPage() {
     fetchData();
   }, []);
 
+  useEffect(() => {
+    const handler = (e) => { if (sortRef.current && !sortRef.current.contains(e.target)) setSortOpen(false); };
+    document.addEventListener('mousedown', handler);
+    return () => document.removeEventListener('mousedown', handler);
+  }, []);
+
   const todayMenus = getTodayMenus(restaurant?.dailyMenus).filter(m =>
     search === '' ||
     m.name.toLowerCase().includes(search.toLowerCase()) ||
     m.description?.toLowerCase().includes(search.toLowerCase())
   );
 
-  const filtered = products.filter(p => {
-    const matchSearch = search === '' ||
-      p.name.toLowerCase().includes(search.toLowerCase()) ||
-      p.description.toLowerCase().includes(search.toLowerCase());
-    const matchCat = activeCategory === '' || p.category === activeCategory;
-    return matchSearch && matchCat;
-  });
+  const filtered = products
+    .filter(p => {
+      const matchSearch = search === '' ||
+        p.name.toLowerCase().includes(search.toLowerCase()) ||
+        p.description.toLowerCase().includes(search.toLowerCase());
+      const matchCat = activeCategory === '' || p.category === activeCategory;
+      return matchSearch && matchCat;
+    })
+    .sort((a, b) => {
+      if (sortOrder === 'asc') return a.price - b.price;
+      if (sortOrder === 'desc') return b.price - a.price;
+      return 0;
+    });
 
   // Group by category — use restaurant categories order when available,
   // but always include products whose category isn't in the list yet.
@@ -105,18 +120,36 @@ export default function MenuPage() {
       <div className="content-card">
       {/* Search + category filter */}
       <div className="search-bar-wrapper">
-        <div className="search-input-wrap">
-          <Search size={16} className="search-icon" />
-          <input
-            className="search-input"
-            type="text"
-            placeholder="Buscar producto..."
-            value={search}
-            onChange={e => setSearch(e.target.value)}
-          />
-          {search && (
-            <button className="search-clear" onClick={() => setSearch('')}><X size={14} /></button>
-          )}
+        <div className="search-sort-row">
+          <div className="search-input-wrap">
+            <Search size={16} className="search-icon" />
+            <input
+              className="search-input"
+              type="text"
+              placeholder="Buscar..."
+              value={search}
+              onChange={e => setSearch(e.target.value)}
+            />
+            {search && (
+              <button className="search-clear" onClick={() => setSearch('')}><X size={14} /></button>
+            )}
+          </div>
+          <div className="sort-dropdown-wrap" ref={sortRef}>
+            <button className={`sort-icon-btn ${sortOrder ? 'sort-icon-btn--active' : ''}`} onClick={() => setSortOpen(o => !o)}>
+              <ArrowUpDown size={16} />
+            </button>
+            {sortOpen && (
+              <div className="sort-dropdown">
+                {[{ value: '', label: 'Sin orden' }, { value: 'asc', label: 'Precio: menor a mayor' }, { value: 'desc', label: 'Precio: mayor a menor' }].map(opt => (
+                  <button key={opt.value} className={`sort-option ${sortOrder === opt.value ? 'sort-option--active' : ''}`}
+                    onClick={() => { setSortOrder(opt.value); setSortOpen(false); }}>
+                    {sortOrder === opt.value && <Check size={13} />}
+                    {opt.label}
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
         </div>
         {categories.length > 0 && (
           <div className="cat-filter-scroll">
