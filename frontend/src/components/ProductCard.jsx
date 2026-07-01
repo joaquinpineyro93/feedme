@@ -1,19 +1,23 @@
 import React from 'react';
 import { useCart } from '../context/CartContext';
 
+const FALLBACK_IMG = '/favicon.svg';
+
 export default function ProductCard({ product }) {
   const { items, addItem, removeItem } = useCart();
   const cartItem = items.find(i => i.product._id === product._id);
   const quantity = cartItem ? cartItem.quantity : 0;
+  const imgSrc = product.image || FALLBACK_IMG;
 
   return (
     <div className="product-card">
-      <div className="product-image-wrap">
+      <div className={`product-image-wrap ${!product.image ? 'product-image-wrap--fallback' : ''}`}>
         <img
-          src={product.image}
+          src={imgSrc}
           alt={product.name}
           className="product-image"
           loading="lazy"
+          onError={e => { e.target.src = FALLBACK_IMG; }}
         />
       </div>
       <div className="product-info">

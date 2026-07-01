@@ -1408,3 +1408,15 @@ body {
 .delivery-btn--active {
   border-color: var(--accent); background: #FEF3C7; color: var(--text-primary);
 }
+
+.product-image-wrap--fallback {
+  background: var(--bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.product-image-wrap--fallback .product-image {
+  width: 48px;
+  height: 48px;
+  object-fit: contain;
+}
