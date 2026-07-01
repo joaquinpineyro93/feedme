@@ -49,9 +49,11 @@ export default function MenuPage() {
   useEffect(() => {
     async function fetchData() {
       try {
+        const subdomain = window.location.hostname.split('.')[0];
+        const headers = subdomain && subdomain !== 'localhost' ? { 'X-Tenant': subdomain } : {};
         const [productsRes, restaurantRes] = await Promise.all([
-          axios.get(`${API_URL}/api/products`),
-          axios.get(`${API_URL}/api/restaurant`),
+          axios.get(`${API_URL}/api/products`, { headers }),
+          axios.get(`${API_URL}/api/restaurant`, { headers }),
         ]);
         setProducts(productsRes.data);
         setRestaurant(restaurantRes.data);

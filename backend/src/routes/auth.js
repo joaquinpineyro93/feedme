@@ -11,7 +11,7 @@ router.post('/register', async (req, res) => {
     const exists = await User.findOne({ username });
     if (exists) return res.status(400).json({ error: 'Usuario ya existe' });
     const user = await User.create({ username, password });
-    const token = jwt.sign({ id: user._id, username: user.username, role: user.role }, JWT_SECRET, { expiresIn: '7d' });
+    const token = jwt.sign({ id: user._id, username: user.username, role: user.role, restaurantId: user.restaurantId }, JWT_SECRET, { expiresIn: '7d' });
     res.status(201).json({ token, username: user.username });
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -26,7 +26,7 @@ router.post('/login', async (req, res) => {
     if (!user) return res.status(401).json({ error: 'Credenciales incorrectas' });
     const ok = await user.comparePassword(password);
     if (!ok) return res.status(401).json({ error: 'Credenciales incorrectas' });
-    const token = jwt.sign({ id: user._id, username: user.username, role: user.role }, JWT_SECRET, { expiresIn: '7d' });
+    const token = jwt.sign({ id: user._id, username: user.username, role: user.role, restaurantId: user.restaurantId }, JWT_SECRET, { expiresIn: '7d' });
     res.json({ token, username: user.username });
   } catch (err) {
     res.status(500).json({ error: err.message });

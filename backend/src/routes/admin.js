@@ -56,7 +56,9 @@ router.patch('/orders/:id/status', async (req, res) => {
 // --- PRODUCTS ---
 router.get('/products', async (req, res) => {
   try {
-    const products = await Product.find().sort({ category: 1, name: 1 });
+    const { restaurantId } = req.user;
+    const query = restaurantId ? { restaurantId } : {};
+    const products = await Product.find(query).sort({ category: 1, name: 1 });
     res.json(products);
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -65,7 +67,8 @@ router.get('/products', async (req, res) => {
 
 router.post('/products', async (req, res) => {
   try {
-    const product = await Product.create(req.body);
+    const { restaurantId } = req.user;
+    const product = await Product.create({ ...req.body, restaurantId });
     res.status(201).json(product);
   } catch (err) {
     res.status(400).json({ error: err.message });
