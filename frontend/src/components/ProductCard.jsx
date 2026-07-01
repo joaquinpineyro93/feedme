@@ -20,6 +20,7 @@ export default function ProductCard({ product }) {
         <div>
           <h3 className="product-name">{product.name}</h3>
           <p className="product-description">{product.description}</p>
+
         </div>
         <div className="product-footer">
           <span className="product-price">${product.price.toLocaleString('es-AR')}</span>

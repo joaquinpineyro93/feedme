@@ -5,6 +5,7 @@ const CartContext = createContext(null);
 const initialState = {
   items: [],
   restaurant: null,
+  notes: '',
 };
 
 function cartReducer(state, action) {
@@ -42,6 +43,8 @@ function cartReducer(state, action) {
       return { ...state, items: state.items.filter(i => i.product._id !== action.productId) };
     case 'SET_RESTAURANT':
       return { ...state, restaurant: action.restaurant };
+    case 'SET_NOTES':
+      return { ...state, notes: action.notes };
     case 'CLEAR_CART':
       return { ...initialState, restaurant: state.restaurant };
     default:
@@ -57,12 +60,13 @@ export function CartProvider({ children }) {
   const deleteItem = (productId) => dispatch({ type: 'DELETE_ITEM', productId });
   const clearCart = () => dispatch({ type: 'CLEAR_CART' });
   const setRestaurant = (restaurant) => dispatch({ type: 'SET_RESTAURANT', restaurant });
+  const setNotes = (notes) => dispatch({ type: 'SET_NOTES', notes });
 
   const totalItems = state.items.reduce((sum, i) => sum + i.quantity, 0);
   const totalPrice = state.items.reduce((sum, i) => sum + i.product.price * i.quantity, 0);
 
   return (
-    <CartContext.Provider value={{ items: state.items, restaurant: state.restaurant, addItem, removeItem, deleteItem, clearCart, setRestaurant, totalItems, totalPrice }}>
+    <CartContext.Provider value={{ items: state.items, restaurant: state.restaurant, notes: state.notes, addItem, removeItem, deleteItem, clearCart, setRestaurant, setNotes, totalItems, totalPrice }}>
       {children}
     </CartContext.Provider>
   );

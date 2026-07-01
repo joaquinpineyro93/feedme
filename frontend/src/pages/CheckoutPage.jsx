@@ -10,11 +10,29 @@ const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001';
 
 const PAYMENT_METHODS = ['Efectivo', 'Mercado Pago', 'Tarjeta'];
 
+function getSavedProfile(uid) {
+  try {
+    const key = uid ? `pedi_profile_${uid}` : 'pedi_profile_guest';
+    return JSON.parse(localStorage.getItem(key) || '{}');
+  } catch { return {}; }
+}
+
+function saveProfile(uid, data) {
+  const key = uid ? `pedi_profile_${uid}` : 'pedi_profile_guest';
+  localStorage.setItem(key, JSON.stringify(data));
+}
+
 export default function CheckoutPage() {
-  const { items, totalPrice, clearCart, restaurant } = useCart();
+  const { items, totalPrice, clearCart, restaurant, notes } = useCart();
   const { user } = useAuth();
   const navigate = useNavigate();
-  const [form, setForm] = useState({ name: user?.displayName || '', phone: '', address: '', payment: 'Efectivo', notes: '' });
+  const saved = getSavedProfile(user?.uid);
+  const [form, setForm] = useState({
+    name: user?.displayName || saved.name || '',
+    phone: saved.phone || '',
+    address: saved.address || '',
+    payment: 'Efectivo',
+  });
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState('');
@@ -69,7 +87,7 @@ export default function CheckoutPage() {
       `*Pago: ${form.payment}*`,
       `*Nombre: ${form.name}*`,
       `*Telefono: ${form.phone}*`,
-      ...(form.notes.trim() ? [`*Nota: ${form.notes.trim()}*`] : []),
+      ...(notes?.trim() ? [`*Nota: ${notes.trim()}*`] : []),
       '---------------------------------',
     ].join('\n');
     return msg;
@@ -88,6 +106,9 @@ export default function CheckoutPage() {
     const phone = (restaurant?.phone || '').replace(/\D/g, '');
     const waLink = `https://wa.me/${phone}?text=${encodeURIComponent(waMessage)}`;
 
+    // Save address/name/phone for next time
+    saveProfile(user?.uid, { name: form.name, phone: form.phone, address: form.address });
+
     // Open WhatsApp
     window.open(waLink, '_blank');
 
@@ -104,7 +125,7 @@ export default function CheckoutPage() {
         customerPhone: form.phone,
         address: form.address,
         paymentMethod: form.payment,
-        notes: form.notes.trim(),
+        notes: notes?.trim() || '',
         total: totalPrice,
         whatsappSent: true,
       });
@@ -181,18 +202,6 @@ export default function CheckoutPage() {
               required
             />
           </label>
-        </section>
-
-        {/* Notes */}
-        <section className="checkout-section">
-          <h2 className="checkout-section-title">Observaciones <span className="optional-label">(opcional)</span></h2>
-          <textarea
-            className="form-input form-textarea"
-            placeholder="Ej: Sin cebolla, tocar timbre 2B, dejar en puerta..."
-            value={form.notes}
-            onChange={e => setForm(f => ({ ...f, notes: e.target.value }))}
-            rows={3}
-          />
         </section>
 
         {/* Payment method */}

@@ -7,7 +7,6 @@ import OrdersPage from './pages/OrdersPage';
 import ProductsPage from './pages/ProductsPage';
 import HistoryPage from './pages/HistoryPage';
 import RestaurantPage from './pages/RestaurantPage';
-import DailyMenuPage from './pages/DailyMenuPage';
 import api from './api';
 import './index.css';
 
@@ -44,7 +43,6 @@ function AdminLayout() {
           <NavLink className={({ isActive }) => `sidebar-link${isActive ? ' active' : ''}`} to="/pedidos">Pedidos</NavLink>
           <NavLink className={({ isActive }) => `sidebar-link${isActive ? ' active' : ''}`} to="/productos">Productos</NavLink>
           <NavLink className={({ isActive }) => `sidebar-link${isActive ? ' active' : ''}`} to="/historico">Historico</NavLink>
-          <NavLink className={({ isActive }) => `sidebar-link${isActive ? ' active' : ''}`} to="/menu-del-dia">Menú del día</NavLink>
           <NavLink className={({ isActive }) => `sidebar-link${isActive ? ' active' : ''}`} to="/mi-local">Mi local</NavLink>
         </nav>
         <div className="sidebar-footer">
@@ -57,7 +55,6 @@ function AdminLayout() {
           <Route path="/pedidos"   element={<OrdersPage />} />
           <Route path="/productos" element={<ProductsPage />} />
           <Route path="/historico"    element={<HistoryPage />} />
-          <Route path="/menu-del-dia" element={<DailyMenuPage />} />
           <Route path="/mi-local"     element={<RestaurantPage />} />
           <Route path="*"          element={<Navigate to="/pedidos" replace />} />
         </Routes>

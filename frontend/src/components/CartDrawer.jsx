@@ -4,7 +4,7 @@ import { ShoppingCart, X, Trash2 } from 'lucide-react';
 import { useCart } from '../context/CartContext';
 
 export default function CartDrawer({ isOpen, onClose }) {
-  const { items, addItem, removeItem, deleteItem, totalItems, totalPrice } = useCart();
+  const { items, addItem, removeItem, deleteItem, totalItems, totalPrice, notes, setNotes } = useCart();
   const navigate = useNavigate();
 
   const handleCheckout = () => {
@@ -38,6 +38,7 @@ export default function CartDrawer({ isOpen, onClose }) {
                 <li key={product._id} className="cart-item">
                   <div className="cart-item-info">
                     <span className="cart-item-name">{product.name}</span>
+                    {product.description && <span className="cart-item-desc">{product.description}</span>}
                     <span className="cart-item-unit-price">${product.price.toLocaleString('es-AR')} c/u</span>
                   </div>
                   <div className="cart-item-right">
@@ -65,6 +66,14 @@ export default function CartDrawer({ isOpen, onClose }) {
               <span>Total ({totalItems} {totalItems === 1 ? 'item' : 'items'})</span>
               <span className="cart-total-price">${totalPrice.toLocaleString('es-AR')}</span>
             </div>
+            <textarea
+              className="form-input form-textarea"
+              placeholder="Observaciones: ej. sin cebolla, tocar timbre 2B..."
+              value={notes}
+              onChange={e => setNotes(e.target.value)}
+              rows={2}
+              style={{ marginBottom: 10 }}
+            />
             <button className="btn-checkout" onClick={handleCheckout}>
               Finalizar compra
             </button>
