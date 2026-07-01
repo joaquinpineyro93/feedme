@@ -1412,11 +1412,20 @@ body {
 .product-image-wrap--fallback {
   background: var(--bg);
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
+  gap: 6px;
 }
-.product-image-wrap--fallback .product-image {
-  width: 48px;
-  height: 48px;
-  object-fit: contain;
+.product-fallback-logo {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+.product-fallback-label {
+  font-size: 11px;
+  color: var(--text-secondary);
+  font-weight: 500;
+  letter-spacing: 0.05em;
 }

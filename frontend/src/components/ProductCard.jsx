@@ -12,15 +12,16 @@ export default function ProductCard({ product }) {
 
   return (
     <div className="product-card">
-      <div className={`product-image-wrap ${!product.image ? 'product-image-wrap--fallback' : ''}`}>
-        <img
-          src={imgSrc}
-          alt={product.name}
-          className="product-image"
-          loading="lazy"
-          onError={e => { e.target.src = fallback; }}
-        />
-      </div>
+      {!product.image ? (
+        <div className="product-image-wrap product-image-wrap--fallback">
+          <img src={fallback} alt={product.name} className="product-fallback-logo" onError={e => { e.target.src = FALLBACK_IMG; }} />
+          <span className="product-fallback-label">SIN IMAGEN</span>
+        </div>
+      ) : (
+        <div className="product-image-wrap">
+          <img src={product.image} alt={product.name} className="product-image" loading="lazy" onError={e => { e.target.src = fallback; }} />
+        </div>
+      )}
       <div className="product-info">
         <div>
           <h3 className="product-name">{product.name}</h3>

@@ -196,9 +196,16 @@ export default function MenuPage() {
             <div className="product-grid">
               {todayMenus.map(m => (
                 <div key={m._id} className="product-card product-card--daily">
-                  <div className={`product-image-wrap ${!m.image ? 'product-image-wrap--fallback' : ''}`}>
-                    <img src={m.image || cartRestaurant?.logo || '/favicon.svg'} alt={m.name} className="product-image" loading="lazy" onError={e => { e.target.src = cartRestaurant?.logo || '/favicon.svg'; }} />
-                  </div>
+                  {!m.image ? (
+                    <div className="product-image-wrap product-image-wrap--fallback">
+                      <img src={cartRestaurant?.logo || '/favicon.svg'} alt={m.name} className="product-fallback-logo" onError={e => { e.target.src = '/favicon.svg'; }} />
+                      <span className="product-fallback-label">SIN IMAGEN</span>
+                    </div>
+                  ) : (
+                    <div className="product-image-wrap">
+                      <img src={m.image} alt={m.name} className="product-image" loading="lazy" onError={e => { e.target.src = cartRestaurant?.logo || '/favicon.svg'; }} />
+                    </div>
+                  )}
                   <div className="product-info">
                     <div>
                       <div className="daily-badge">
