@@ -12,6 +12,7 @@ const TABS = ['Categorías', 'Productos', 'Menú del día'];
 
 export default function ProductsPage() {
   const [tab, setTab] = useState('Categorías');
+  const newActionRef = useRef(null);
 
   // ── shared data ──────────────────────────────────────────
   const [products, setProducts]     = useState([]);
@@ -33,6 +34,7 @@ export default function ProductsPage() {
 
   useEffect(() => { fetchData(); }, []);
 
+
   return (
     <div className="page">
       <div className="page-header">
@@ -47,6 +49,14 @@ export default function ProductsPage() {
         ))}
       </div>
 
+      {!loading && (
+        <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: 16 }}>
+          <button className="btn-primary" onClick={() => newActionRef.current?.()}>
+            + Nuevo
+          </button>
+        </div>
+      )}
+
       {loading ? <p className="loading-text">Cargando...</p> : (
         <>
           {tab === 'Categorías' && (
@@ -54,14 +64,16 @@ export default function ProductsPage() {
               categories={categories}
               products={products}
               setCategories={setCategories}
+              newActionRef={newActionRef}
             />
           )}
-          {tab === 'Menú del día' && <DailyMenuTab />}
+          {tab === 'Menú del día' && <DailyMenuTab newActionRef={newActionRef} />}
           {tab === 'Productos' && (
             <ProductsTab
               products={products}
               setProducts={setProducts}
               categories={categories}
+              newActionRef={newActionRef}
             />
           )}
         </>
@@ -72,11 +84,15 @@ export default function ProductsPage() {
 
 // ── TAB: Categorías ───────────────────────────────────────────────────────────
 
-function CategoriesTab({ categories, products, setCategories }) {
+function CategoriesTab({ categories, products, setCategories, newActionRef }) {
   const [newCatName, setNewCatName] = useState('');
   const [editingCat, setEditingCat] = useState(null);
   const [catError, setCatError]     = useState('');
   const [savingCats, setSavingCats] = useState(false);
+  const [showForm, setShowForm]     = useState(false);
+  const inputRef = useRef(null);
+
+  useEffect(() => { newActionRef.current = () => { setShowForm(true); setTimeout(() => inputRef.current?.focus(), 50); }; }, [newActionRef]);
 
   const grouped = categories.reduce((acc, cat) => {
     acc[cat] = products.filter(p => p.category === cat);
@@ -116,67 +132,90 @@ function CategoriesTab({ categories, products, setCategories }) {
     saveCategories(categories.filter(c => c !== cat));
   };
 
+  const handleAdd = () => {
+    addCategory();
+    setShowForm(false);
+  };
+
   return (
-    <div className="section-card" style={{ maxWidth: 480 }}>
-      <h3 className="section-card-title">Categorías</h3>
-      <ul className="cat-list">
-        {categories.map((cat, i) => (
-          <li key={cat} className="cat-row">
-            {editingCat?.index === i ? (
-              <input
-                className="form-input cat-rename-input"
-                value={editingCat.value}
-                autoFocus
-                onChange={e => setEditingCat({ index: i, value: e.target.value })}
-                onKeyDown={e => {
-                  if (e.key === 'Enter') { e.preventDefault(); renameCategory(i); }
-                  if (e.key === 'Escape') setEditingCat(null);
-                }}
-              />
-            ) : (
-              <span className="cat-name">
-                {cat}
-                <span className="cat-count">
-                  {(grouped[cat] || []).length} producto{(grouped[cat] || []).length !== 1 ? 's' : ''}
-                </span>
-              </span>
-            )}
-            <div className="cat-actions">
+    <>
+      <div className="section-card" style={{ maxWidth: 480 }}>
+        <ul className="cat-list">
+          {categories.map((cat, i) => (
+            <li key={cat} className="cat-row">
               {editingCat?.index === i ? (
-                <>
-                  <button className="cat-btn save" onClick={() => renameCategory(i)} disabled={savingCats}><Check size={13} /></button>
-                  <button className="cat-btn cancel" onClick={() => setEditingCat(null)}><X size={13} /></button>
-                </>
+                <input
+                  className="form-input cat-rename-input"
+                  value={editingCat.value}
+                  autoFocus
+                  onChange={e => setEditingCat({ index: i, value: e.target.value })}
+                  onKeyDown={e => {
+                    if (e.key === 'Enter') { e.preventDefault(); renameCategory(i); }
+                    if (e.key === 'Escape') setEditingCat(null);
+                  }}
+                />
               ) : (
-                <>
-                  <button className="cat-btn edit" title="Renombrar" onClick={() => setEditingCat({ index: i, value: cat })}><Pencil size={13} /></button>
-                  <button className="cat-btn delete" title="Eliminar" onClick={() => deleteCategory(cat)} disabled={savingCats}><X size={13} /></button>
-                </>
+                <span className="cat-name">
+                  {cat}
+                  <span className="cat-count">
+                    {(grouped[cat] || []).length} producto{(grouped[cat] || []).length !== 1 ? 's' : ''}
+                  </span>
+                </span>
               )}
-            </div>
-          </li>
-        ))}
-      </ul>
-      {catError && <p className="form-error">{catError}</p>}
-      <div className="cat-add-row">
-        <input
-          className="form-input"
-          placeholder="Nueva categoría..."
-          value={newCatName}
-          onChange={e => setNewCatName(e.target.value)}
-          onKeyDown={e => { if (e.key === 'Enter') { e.preventDefault(); addCategory(); } }}
-        />
-        <button className="btn-primary" onClick={addCategory} disabled={!newCatName.trim() || savingCats}>
-          Agregar
-        </button>
+              <div className="cat-actions">
+                {editingCat?.index === i ? (
+                  <>
+                    <button className="cat-btn save" onClick={() => renameCategory(i)} disabled={savingCats}><Check size={13} /></button>
+                    <button className="cat-btn cancel" onClick={() => setEditingCat(null)}><X size={13} /></button>
+                  </>
+                ) : (
+                  <>
+                    <button className="cat-btn edit" title="Renombrar" onClick={() => setEditingCat({ index: i, value: cat })}><Pencil size={13} /></button>
+                    <button className="cat-btn delete" title="Eliminar" onClick={() => deleteCategory(cat)} disabled={savingCats}><X size={13} /></button>
+                  </>
+                )}
+              </div>
+            </li>
+          ))}
+        </ul>
+        {catError && <p className="form-error">{catError}</p>}
+        {categories.length === 0 && <p className="empty-text" style={{ margin: '20px 0' }}>No hay categorías. Agregá una.</p>}
       </div>
-    </div>
+
+      {showForm && (
+        <div className="modal-overlay" onClick={() => setShowForm(false)}>
+          <div className="modal" onClick={e => e.stopPropagation()}>
+            <h3 className="modal-title">Nueva categoría</h3>
+            <div className="modal-form">
+              <div className="form-group">
+                <label className="form-label">Nombre</label>
+                <input
+                  ref={inputRef}
+                  className="form-input"
+                  placeholder="Ej: Entradas"
+                  value={newCatName}
+                  onChange={e => setNewCatName(e.target.value)}
+                  onKeyDown={e => { if (e.key === 'Enter') { e.preventDefault(); handleAdd(); } }}
+                />
+              </div>
+              {catError && <p className="form-error">{catError}</p>}
+              <div className="modal-actions">
+                <button type="button" className="btn-secondary" onClick={() => setShowForm(false)}>Cancelar</button>
+                <button type="button" className="btn-primary" onClick={handleAdd} disabled={!newCatName.trim() || savingCats}>
+                  {savingCats ? 'Guardando...' : 'Guardar'}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+    </>
   );
 }
 
 // ── TAB: Menú del día ─────────────────────────────────────────────────────────
 
-function DailyMenuTab() {
+function DailyMenuTab({ newActionRef }) {
   const [menus, setMenus]         = useState([]);
   const [loading, setLoading]     = useState(true);
   const [showForm, setShowForm]   = useState(false);
@@ -203,6 +242,8 @@ function DailyMenuTab() {
   };
 
   const openCreate = () => { setEditingId(null); setForm({ ...EMPTY_DAILY, date: todayStr() }); setError(''); setShowForm(true); };
+  useEffect(() => { newActionRef.current = openCreate; }, [newActionRef]);
+
   const openEdit = (m) => {
     setEditingId(m._id);
     setForm({ name: m.name, description: m.description, price: m.price, image: m.image || '', recurrence: m.recurrence, dayOfWeek: m.dayOfWeek ?? 1, date: m.date || todayStr(), active: m.active });
@@ -249,10 +290,6 @@ function DailyMenuTab() {
 
   return (
     <>
-      <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: 16 }}>
-        <button className="btn-primary" onClick={openCreate}><Plus size={16} /> Nuevo</button>
-      </div>
-
       {loading ? <p className="loading-text">Cargando...</p> : menus.length === 0 ? (
         <p className="empty-text">No hay menús del día configurados.</p>
       ) : (
@@ -356,7 +393,7 @@ function DailyMenuTab() {
 
 // ── TAB: Productos ────────────────────────────────────────────────────────────
 
-function ProductsTab({ products, setProducts, categories }) {
+function ProductsTab({ products, setProducts, categories, newActionRef }) {
   const [showForm, setShowForm] = useState(false);
   const [editingId, setEditingId] = useState(null);
   const [form, setForm]           = useState(EMPTY_PRODUCT);
@@ -372,6 +409,8 @@ function ProductsTab({ products, setProducts, categories }) {
   };
 
   const openCreate = () => { setEditingId(null); setForm({ ...EMPTY_PRODUCT, category: categories[0] || '' }); setFormError(''); setShowForm(true); };
+  useEffect(() => { newActionRef.current = openCreate; }, [newActionRef, categories]);
+
   const openEdit = (product) => {
     setEditingId(product._id);
     setForm({ name: product.name, description: product.description, price: product.price, category: product.category, image: product.image, available: product.available });
@@ -414,12 +453,6 @@ function ProductsTab({ products, setProducts, categories }) {
 
   return (
     <>
-      <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: 16 }}>
-        <button className="btn-primary" onClick={openCreate} disabled={categories.length === 0}>
-          + Nuevo producto
-        </button>
-      </div>
-
       <div className="products-main">
         {categories.map(cat => (
           <section key={cat} className="products-section">
