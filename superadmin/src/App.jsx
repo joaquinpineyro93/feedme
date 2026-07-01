@@ -7,8 +7,14 @@ import './index.css';
 // ---- Icons (inline SVG to avoid lucide dep) ----
 const Icon = {
   Pedi: () => (
-    <svg width="20" height="20" viewBox="0 0 48 46" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <path fill="#863bff" d="M25.946 44.938c-.664.845-2.021.375-2.021-.698V33.937a2.26 2.26 0 0 0-2.262-2.262H10.287c-.92 0-1.456-1.04-.92-1.788l7.48-10.471c1.07-1.497 0-3.578-1.842-3.578H1.237c-.92 0-1.456-1.04-.92-1.788L10.013.474c.214-.297.556-.474.92-.474h28.894c.92 0 1.456 1.04.92 1.788l-7.48 10.471c-1.07 1.498 0 3.579 1.842 3.579h11.377c.943 0 1.473 1.088.89 1.83L25.947 44.94z"/>
+    <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 32 32">
+      <rect width="32" height="32" rx="7" fill="#863bff"/>
+      <g transform="translate(4,4)" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" fill="none">
+        <path d="m16 2-2.3 2.3a3 3 0 0 0 0 4.2l1.8 1.8a3 3 0 0 0 4.2 0L22 8"/>
+        <path d="M15 15 3.3 3.3a4.2 4.2 0 0 0 0 6l7.3 7.3c.7.7 2 .7 2.8 0L15 15Zm0 0 7 7"/>
+        <path d="m2.1 21.8 6.4-6.3"/>
+        <path d="m19 5-7 7"/>
+      </g>
     </svg>
   ),
   Shield: () => (
