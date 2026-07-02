@@ -10,8 +10,10 @@ router.use(auth);
 // --- ORDERS ---
 router.get('/orders', async (req, res) => {
   try {
+    const { restaurantId } = req.user;
     const { status, date } = req.query;
     const filter = {};
+    if (restaurantId) filter.restaurantId = restaurantId;
     if (status && status !== 'all') filter.status = status;
     if (date) {
       const start = new Date(date);
@@ -28,12 +30,15 @@ router.get('/orders', async (req, res) => {
 
 router.get('/orders/history', async (req, res) => {
   try {
+    const { restaurantId } = req.user;
     const { from, to } = req.query;
     if (!from || !to) return res.status(400).json({ error: 'from y to son requeridos' });
     const start = new Date(from);
     const end = new Date(to);
     end.setDate(end.getDate() + 1);
-    const orders = await Order.find({ createdAt: { $gte: start, $lt: end } }).sort({ createdAt: -1 });
+    const filter = { createdAt: { $gte: start, $lt: end } };
+    if (restaurantId) filter.restaurantId = restaurantId;
+    const orders = await Order.find(filter).sort({ createdAt: -1 });
     res.json(orders);
   } catch (err) {
     res.status(500).json({ error: err.message });

@@ -1,6 +1,23 @@
 const express = require('express');
 const router = express.Router();
 const Order = require('../models/Order');
+const Restaurant = require('../models/Restaurant');
+
+async function getRestaurantId(req) {
+  const tenant = req.headers['x-tenant'];
+  if (tenant) {
+    const r = await Restaurant.findOne({ slug: tenant }).select('_id');
+    return r ? r._id : null;
+  }
+  const host = req.headers.host || '';
+  const subdomain = host.split('.')[0];
+  const ignored = ['www', 'admin', 'superadmin', 'localhost', 'pedi'];
+  if (!ignored.includes(subdomain) && subdomain) {
+    const r = await Restaurant.findOne({ slug: subdomain }).select('_id');
+    return r ? r._id : null;
+  }
+  return null;
+}
 
 // POST /api/orders
 router.post('/', async (req, res) => {
@@ -14,6 +31,7 @@ router.post('/', async (req, res) => {
       return res.status(400).json({ error: 'Faltan datos del cliente' });
     }
 
+    const restaurantId = await getRestaurantId(req);
     const order = new Order({
       items,
       customerName,
@@ -23,6 +41,7 @@ router.post('/', async (req, res) => {
       notes,
       total,
       whatsappSent: whatsappSent !== undefined ? whatsappSent : true,
+      restaurantId,
     });
 
     await order.save();

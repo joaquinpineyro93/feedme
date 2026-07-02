@@ -17,6 +17,7 @@ const orderSchema = new mongoose.Schema({
   notes: { type: String, default: '' },
   whatsappSent: { type: Boolean, default: true },
   status: { type: String, default: 'pending' },
+  restaurantId: { type: mongoose.Schema.Types.ObjectId, ref: 'Restaurant' },
 }, { timestamps: true });
 
 module.exports = mongoose.model('Order', orderSchema);
