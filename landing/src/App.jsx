@@ -40,9 +40,6 @@ function Hero() {
         <a href={WA_LINK} target="_blank" rel="noreferrer" className="btn-primary">
           <MessageCircle size={18} /> Contactar
         </a>
-        <a href={DEMO_URL} target="_blank" rel="noreferrer" className="btn-ghost">
-          <Smartphone size={18} /> Ver demo en vivo
-        </a>
       </div>
 
       <div className="hero-visual">
@@ -86,7 +83,7 @@ function Hero() {
 
 function HowItWorks() {
   const steps = [
-    { n: '1', title: 'Ponte en contacto con nosotros', desc: 'Completá el formulario de contacto o escribinos por WhatsApp. Contanos tu negocio: rubro, nombre del local y qué productos querés ofrecer.' },
+    { n: '1', title: 'Escribinos por WhatsApp', desc: 'Mandanos un mensaje contándonos tu negocio: nombre del local, rubro y qué productos querés ofrecer. Te respondemos enseguida.' },
     { n: '2', title: 'Armamos tu carta digital', desc: 'En menos de 24 hs tenés tu catálogo online listo para compartir con tus clientes.' },
     { n: '3', title: 'Recibís pedidos por WhatsApp', desc: 'Tus clientes eligen del menú y te envían el pedido directo a tu WhatsApp.' },
     { n: '4', title: 'Gestionás desde el panel', desc: 'Actualizás estados, notificás al cliente y llevás el historial desde el backoffice.' },
@@ -95,7 +92,7 @@ function HowItWorks() {
     <section className="section">
       <div className="section-center">
         <p className="section-label">Cómo funciona</p>
-        <h2 className="section-title">De cero a pedidos<br />en menos de 24 horas</h2>
+        <h2 className="section-title">Tené tu menú en la web<br />en simples pasos</h2>
         <p className="section-sub">Sin instalaciones, sin aprendizaje técnico. Solo compartís el link y empezás a recibir pedidos.</p>
       </div>
       <div className="steps-grid">
@@ -300,7 +297,7 @@ export default function App() {
       <HowItWorks />
       <Features />
       <HowToReceive />
-      <DemoStrip />
+
       <Contact />
       <Footer />
     </>
