@@ -5,7 +5,7 @@ import {
 } from 'lucide-react';
 
 const DEMO_URL = 'http://localhost:5173';
-const WA_LINK = "https://wa.me/59898478604?text=Hola%2C%20deseo%20tener%20mi%20local%20en%20pedi.uy";
+const WA_LINK = "https://wa.me/59899566170?text=Hola%2C%20deseo%20tener%20mi%20local%20en%20pedi.uy";
 
 function Nav() {
   return (
