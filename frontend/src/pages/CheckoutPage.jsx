@@ -113,6 +113,7 @@ export default function CheckoutPage() {
     window.open(waLink, '_blank');
 
     try {
+      const orderHeaders = restaurant?.slug ? { 'X-Tenant': restaurant.slug } : {};
       await axios.post(`${API_URL}/api/orders`, {
         items: items.map(({ product, quantity }) => ({
           productId: product._id,
@@ -127,7 +128,7 @@ export default function CheckoutPage() {
         notes: notes?.trim() || '',
         total: totalPrice,
         whatsappSent: true,
-      });
+      }, { headers: orderHeaders });
     } catch (err) {
       console.error('Error guardando pedido:', err.message);
     }
