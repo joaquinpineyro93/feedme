@@ -86,6 +86,7 @@ router.post('/products/bulk', async (req, res) => {
     // Auto-create missing categories
     const restaurant = await Restaurant.findOne(restaurantId ? { _id: restaurantId } : {});
     if (restaurant) {
+
       const incomingCats = [...new Set(products.filter(p => !p.isDaily && p.category).map(p => p.category))];
       const newCats = incomingCats.filter(c => !restaurant.categories.includes(c));
       if (newCats.length) {
@@ -159,14 +160,16 @@ router.post('/products/migrate-daily-menus', async (req, res) => {
 // --- DAILY MENUS ---
 router.get('/restaurant/daily-menus', async (req, res) => {
   try {
-    const r = await Restaurant.findOne();
+    const { restaurantId } = req.user;
+    const r = await Restaurant.findOne(restaurantId ? { _id: restaurantId } : {});
     res.json(r?.dailyMenus || []);
   } catch (err) { res.status(500).json({ error: err.message }); }
 });
 
 router.post('/restaurant/daily-menus', async (req, res) => {
   try {
-    const r = await Restaurant.findOne();
+    const { restaurantId } = req.user;
+    const r = await Restaurant.findOne(restaurantId ? { _id: restaurantId } : {});
     r.dailyMenus.push(req.body);
     await r.save();
     res.status(201).json(r.dailyMenus[r.dailyMenus.length - 1]);
@@ -175,7 +178,8 @@ router.post('/restaurant/daily-menus', async (req, res) => {
 
 router.patch('/restaurant/daily-menus/:id', async (req, res) => {
   try {
-    const r = await Restaurant.findOne();
+    const { restaurantId } = req.user;
+    const r = await Restaurant.findOne(restaurantId ? { _id: restaurantId } : {});
     const item = r.dailyMenus.id(req.params.id);
     if (!item) return res.status(404).json({ error: 'No encontrado' });
     Object.assign(item, req.body);
@@ -186,7 +190,8 @@ router.patch('/restaurant/daily-menus/:id', async (req, res) => {
 
 router.delete('/restaurant/daily-menus/:id', async (req, res) => {
   try {
-    const r = await Restaurant.findOne();
+    const { restaurantId } = req.user;
+    const r = await Restaurant.findOne(restaurantId ? { _id: restaurantId } : {});
     r.dailyMenus.pull({ _id: req.params.id });
     await r.save();
     res.json({ success: true });
@@ -196,9 +201,11 @@ router.delete('/restaurant/daily-menus/:id', async (req, res) => {
 // --- CATEGORIES ---
 router.patch('/restaurant/categories', async (req, res) => {
   try {
+    const { restaurantId } = req.user;
     const { categories } = req.body;
     if (!Array.isArray(categories)) return res.status(400).json({ error: 'categories debe ser un array' });
-    const restaurant = await Restaurant.findOneAndUpdate({}, { categories }, { new: true });
+    const filter = restaurantId ? { _id: restaurantId } : {};
+    const restaurant = await Restaurant.findOneAndUpdate(filter, { categories }, { new: true });
     res.json(restaurant.categories);
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -208,7 +215,8 @@ router.patch('/restaurant/categories', async (req, res) => {
 // --- RESTAURANT ---
 router.get('/restaurant', async (req, res) => {
   try {
-    const restaurant = await Restaurant.findOne();
+    const { restaurantId } = req.user;
+    const restaurant = await Restaurant.findOne(restaurantId ? { _id: restaurantId } : {});
     res.json(restaurant);
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -217,7 +225,9 @@ router.get('/restaurant', async (req, res) => {
 
 router.patch('/restaurant', async (req, res) => {
   try {
-    const restaurant = await Restaurant.findOneAndUpdate({}, req.body, { new: true, runValidators: true });
+    const { restaurantId } = req.user;
+    const filter = restaurantId ? { _id: restaurantId } : {};
+    const restaurant = await Restaurant.findOneAndUpdate(filter, req.body, { new: true, runValidators: true });
     if (!restaurant) return res.status(404).json({ error: 'Restaurante no encontrado' });
     res.json(restaurant);
   } catch (err) {
