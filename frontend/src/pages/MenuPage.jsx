@@ -20,16 +20,15 @@ const MOCK_PRODUCTS = [
   { _id: '8', name: 'Helado Casero', description: 'Vainilla o chocolate, 2 bochas', price: 900, category: 'Postres', image: 'https://images.unsplash.com/photo-1567206563114-c179706a56b0?w=400&h=300&fit=crop' },
 ];
 
-function getTodayMenus(dailyMenus = []) {
-  if (!dailyMenus.length) return [];
+function getTodayMenus(products = []) {
   const now = new Date();
-  const todayDow  = now.getDay(); // 0=Dom … 6=Sáb
-  const todayDate = now.toISOString().slice(0, 10); // "YYYY-MM-DD"
+  const todayDow  = now.getDay();
+  const todayDate = now.toISOString().slice(0, 10);
 
-  return dailyMenus.filter(m => {
-    if (!m.active) return false;
-    if (m.recurrence === 'weekly') return m.dayOfWeek === todayDow;
-    if (m.recurrence === 'once')   return m.date === todayDate;
+  return products.filter(p => {
+    if (!p.isDaily || !p.dailyActive) return false;
+    if (p.recurrence === 'weekly') return p.dayOfWeek === todayDow;
+    if (p.recurrence === 'once')   return p.date === todayDate;
     return false;
   });
 }
@@ -81,7 +80,7 @@ export default function MenuPage() {
     return () => document.removeEventListener('mousedown', handler);
   }, []);
 
-  const todayMenus = getTodayMenus(restaurant?.dailyMenus).filter(m =>
+  const todayMenus = getTodayMenus(products).filter(m =>
     search === '' ||
     m.name.toLowerCase().includes(search.toLowerCase()) ||
     m.description?.toLowerCase().includes(search.toLowerCase())
@@ -89,6 +88,7 @@ export default function MenuPage() {
 
   const filtered = products
     .filter(p => {
+      if (p.isDaily) return false;
       const matchSearch = search === '' ||
         p.name.toLowerCase().includes(search.toLowerCase()) ||
         p.description.toLowerCase().includes(search.toLowerCase());

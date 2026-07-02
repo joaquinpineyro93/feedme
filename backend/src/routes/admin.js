@@ -75,6 +75,35 @@ router.post('/products', async (req, res) => {
   }
 });
 
+// Bulk import from Excel
+router.post('/products/bulk', async (req, res) => {
+  try {
+    const { restaurantId } = req.user;
+    const { products } = req.body;
+    if (!Array.isArray(products) || products.length === 0)
+      return res.status(400).json({ error: 'products debe ser un array no vacío' });
+
+    // Auto-create missing categories
+    const restaurant = await Restaurant.findOne(restaurantId ? { _id: restaurantId } : {});
+    if (restaurant) {
+      const incomingCats = [...new Set(products.filter(p => !p.isDaily && p.category).map(p => p.category))];
+      const newCats = incomingCats.filter(c => !restaurant.categories.includes(c));
+      if (newCats.length) {
+        restaurant.categories = [...restaurant.categories, ...newCats];
+        await restaurant.save();
+      }
+    }
+
+    const created = await Product.insertMany(
+      products.map(p => ({ ...p, restaurantId })),
+      { ordered: false }
+    );
+    res.status(201).json({ inserted: created.length, products: created, categories: restaurant?.categories || [] });
+  } catch (err) {
+    res.status(400).json({ error: err.message });
+  }
+});
+
 router.patch('/products/:id', async (req, res) => {
   try {
     const product = await Product.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true });
@@ -89,6 +118,39 @@ router.delete('/products/:id', async (req, res) => {
   try {
     await Product.findByIdAndDelete(req.params.id);
     res.json({ success: true });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// Migrate dailyMenus from restaurant subdoc → Product collection
+router.post('/products/migrate-daily-menus', async (req, res) => {
+  try {
+    const { restaurantId } = req.user;
+    const restaurant = await Restaurant.findOne(restaurantId ? { _id: restaurantId } : {});
+    if (!restaurant) return res.status(404).json({ error: 'Restaurante no encontrado' });
+    if (!restaurant.dailyMenus?.length) return res.json({ migrated: 0 });
+
+    const toInsert = restaurant.dailyMenus.map(m => ({
+      name: m.name,
+      description: m.description || '',
+      price: m.price,
+      category: 'Menú del día',
+      image: m.image || '',
+      available: true,
+      restaurantId: restaurant._id,
+      isDaily: true,
+      recurrence: m.recurrence,
+      dayOfWeek: m.dayOfWeek,
+      date: m.date,
+      dailyActive: m.active,
+    }));
+
+    const created = await Product.insertMany(toInsert);
+    restaurant.dailyMenus = [];
+    await restaurant.save();
+
+    res.json({ migrated: created.length });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }

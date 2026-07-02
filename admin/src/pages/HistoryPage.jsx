@@ -1,4 +1,6 @@
 import { useState, useEffect } from 'react';
+import * as XLSX from 'xlsx';
+import { Download } from 'lucide-react';
 import api from '../api';
 
 const STATUS_LABELS = {
@@ -50,6 +52,27 @@ export default function HistoryPage() {
 
   useEffect(() => { fetchHistory(); }, []);
 
+  const exportExcel = () => {
+    const rows = orders.map(o => ({
+      'ID': `#${o._id.slice(-6).toUpperCase()}`,
+      'Fecha': new Date(o.createdAt).toLocaleDateString('es-AR'),
+      'Hora': new Date(o.createdAt).toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit' }),
+      'Cliente': o.customerName,
+      'Teléfono': o.customerPhone || '',
+      'Dirección': o.address,
+      'Items': o.items.map(i => `${i.quantity}x ${i.name}`).join(', '),
+      'Pago': o.paymentMethod,
+      'Total': o.total,
+      'Estado': STATUS_LABELS[o.status] || o.status,
+      'Notas': o.notes || '',
+    }));
+    const ws = XLSX.utils.json_to_sheet(rows);
+    ws['!cols'] = [6,10,6,16,12,20,30,10,10,12,20].map(wch => ({ wch }));
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'Pedidos');
+    XLSX.writeFile(wb, `historial_${from}_${to}.xlsx`);
+  };
+
   const totalRevenue = orders
     .filter((o) => o.status !== 'cancelled')
     .reduce((sum, o) => sum + o.total, 0);
@@ -85,6 +108,11 @@ export default function HistoryPage() {
         <button className="btn-primary history-search-btn" onClick={fetchHistory} disabled={loading}>
           {loading ? 'Buscando...' : 'Buscar'}
         </button>
+        {orders.length > 0 && (
+          <button className="btn-secondary history-search-btn" style={{ display: 'flex', alignItems: 'center', gap: 6 }} onClick={exportExcel}>
+            <Download size={15} /> Exportar Excel
+          </button>
+        )}
       </div>
 
       {error && <p className="form-error" style={{ marginBottom: 16 }}>{error}</p>}
