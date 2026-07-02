@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
-import { FileText } from 'lucide-react';
+import { FileText, MessageCircle } from 'lucide-react';
 import api from '../api';
 
 const STATUS_LABELS = {
@@ -201,7 +201,20 @@ function OrderCard({ order, onStatusChange }) {
           </div>
           <div className="order-customer-field">
             <span className="order-field-label">Teléfono</span>
-            <span className="order-field-value">{order.customerPhone || '—'}</span>
+            <span className="order-field-value" style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+              {order.customerPhone || '—'}
+              {order.customerPhone && (
+                <a
+                  href={`https://wa.me/${order.customerPhone.replace(/\D/g, '')}`}
+                  target="_blank"
+                  rel="noreferrer"
+                  title="Contactar por WhatsApp"
+                  style={{ display: 'inline-flex', color: '#25D366' }}
+                >
+                  <MessageCircle size={16} />
+                </a>
+              )}
+            </span>
           </div>
           {order.address && order.address !== 'A levantar' && (
             <div className="order-customer-field" style={{ gridColumn: '1 / -1' }}>
