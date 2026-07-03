@@ -58,15 +58,15 @@ export default function Header({ restaurant }) {
   const openHours   = restaurant?.openHours;
   const open        = isOpenNow(openHours);
   const acceptingOrders = restaurant?.acceptingOrders !== false;
-  const { user, loginWithGoogle, logout } = useAuth();
+  const { user, logout } = useAuth();
 
   return (
     <header className="header-hero" style={logo ? { backgroundImage: `url(${logo})` } : {}}>
       <div className="header-hero-overlay" />
 
       {/* Auth — top right */}
-      <div className="header-hero-auth">
-        {user ? (
+      {user && (
+        <div className="header-hero-auth">
           <div className="header-user">
             {user.photoURL ? (
               <img
@@ -82,12 +82,8 @@ export default function Header({ restaurant }) {
               <LogOut size={15} />
             </button>
           </div>
-        ) : (
-          <button className="header-avatar-btn" onClick={loginWithGoogle} title="Iniciar sesión">
-            <UserCircle size={32} color="rgba(255,255,255,0.8)" />
-          </button>
-        )}
-      </div>
+        </div>
+      )}
 
       {/* Bottom-left: name + description + badges */}
       <div className="header-hero-content">
