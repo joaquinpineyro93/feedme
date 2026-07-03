@@ -3,18 +3,15 @@ const router = express.Router();
 const Order = require('../models/Order');
 const Restaurant = require('../models/Restaurant');
 
-async function getRestaurantId(req) {
+async function getRestaurant(req) {
   const tenant = req.headers['x-tenant'];
-  if (tenant) {
-    const r = await Restaurant.findOne({ slug: tenant }).select('_id');
-    return r ? r._id : null;
-  }
+  if (tenant) return await Restaurant.findOne({ slug: tenant }).select('_id acceptingOrders');
+
   const host = req.headers.host || '';
   const subdomain = host.split('.')[0];
   const ignored = ['www', 'admin', 'superadmin', 'localhost', 'pedi'];
   if (!ignored.includes(subdomain) && subdomain) {
-    const r = await Restaurant.findOne({ slug: subdomain }).select('_id');
-    return r ? r._id : null;
+    return await Restaurant.findOne({ slug: subdomain }).select('_id acceptingOrders');
   }
   return null;
 }
@@ -31,7 +28,11 @@ router.post('/', async (req, res) => {
       return res.status(400).json({ error: 'Faltan datos del cliente' });
     }
 
-    const restaurantId = await getRestaurantId(req);
+    const restaurant = await getRestaurant(req);
+    if (restaurant && restaurant.acceptingOrders === false) {
+      return res.status(403).json({ error: 'El local no está aceptando pedidos en este momento' });
+    }
+
     const order = new Order({
       items,
       customerName,
@@ -41,7 +42,7 @@ router.post('/', async (req, res) => {
       notes,
       total,
       whatsappSent: whatsappSent !== undefined ? whatsappSent : true,
-      restaurantId,
+      restaurantId: restaurant ? restaurant._id : null,
     });
 
     await order.save();

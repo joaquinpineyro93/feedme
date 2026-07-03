@@ -10,6 +10,7 @@ export default function ProductCard({ product, dailyBadge }) {
 
   const hasVariants = product.variants?.length > 0;
   const fallback = restaurant?.logo || FALLBACK_IMG;
+  const acceptingOrders = restaurant?.acceptingOrders !== false;
 
   // Para productos sin variantes: item único
   const simpleItem = !hasVariants ? items.find(i => i.key === product._id) : null;
@@ -21,6 +22,7 @@ export default function ProductCard({ product, dailyBadge }) {
   const quantity = hasVariants ? totalVariantQty : (simpleItem?.quantity || 0);
 
   const handleAdd = () => {
+    if (!acceptingOrders) return;
     if (hasVariants) {
       setShowVariants(true);
     } else {
@@ -55,19 +57,19 @@ export default function ProductCard({ product, dailyBadge }) {
           <div className="product-footer">
             <span className="product-price">${Number(product.price).toLocaleString('es-AR')}</span>
             {quantity === 0 ? (
-              <button className="btn-add" onClick={handleAdd}>+</button>
+              acceptingOrders && <button className="btn-add" onClick={handleAdd}>+</button>
             ) : (
               <div className="quantity-controls">
                 {hasVariants ? (
                   <>
-                    <button className="qty-btn qty-btn--add" onClick={() => setShowVariants(true)}>+</button>
+                    {acceptingOrders && <button className="qty-btn qty-btn--add" onClick={() => setShowVariants(true)}>+</button>}
                     <span className="qty-value">{quantity}</span>
                   </>
                 ) : (
                   <>
                     <button className="qty-btn" onClick={() => removeItem(simpleItem.key)}>−</button>
                     <span className="qty-value">{quantity}</span>
-                    <button className="qty-btn qty-btn--add" onClick={handleAdd}>+</button>
+                    {acceptingOrders && <button className="qty-btn qty-btn--add" onClick={handleAdd}>+</button>}
                   </>
                 )}
               </div>

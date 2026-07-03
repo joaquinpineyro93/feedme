@@ -41,12 +41,26 @@ export default function CheckoutPage() {
   const [success, setSuccess] = useState(false);
   const [errors, setErrors] = useState({});
 
+  const acceptingOrders = restaurant?.acceptingOrders !== false;
+
   if (items.length === 0 && !success) {
     return (
       <div className="app-container">
         <div className="checkout-empty">
           <ShoppingCart size={40} strokeWidth={1.5} />
           <p>Tu carrito está vacío.</p>
+          <button className="btn-back" onClick={() => navigate('/')}>Volver al menú</button>
+        </div>
+      </div>
+    );
+  }
+
+  if (!acceptingOrders && !success) {
+    return (
+      <div className="app-container">
+        <div className="checkout-empty">
+          <ShoppingCart size={40} strokeWidth={1.5} />
+          <p>El local no está aceptando pedidos en este momento.</p>
           <button className="btn-back" onClick={() => navigate('/')}>Volver al menú</button>
         </div>
       </div>

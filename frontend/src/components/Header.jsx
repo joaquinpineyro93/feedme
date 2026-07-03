@@ -57,6 +57,7 @@ export default function Header({ restaurant }) {
   const logo        = restaurant?.logo;
   const openHours   = restaurant?.openHours;
   const open        = isOpenNow(openHours);
+  const acceptingOrders = restaurant?.acceptingOrders !== false;
   const { user, loginWithGoogle, logout } = useAuth();
 
   return (
@@ -94,8 +95,9 @@ export default function Header({ restaurant }) {
         <h1 className="header-hero-title">{name}</h1>
         {description && <p className="header-hero-sub">{description}</p>}
         <div className="header-hero-badges">
-          {open === true  && <span className="hero-badge hero-badge--open">Abierto</span>}
-          {open === false && <span className="hero-badge hero-badge--closed">Cerrado</span>}
+          {!acceptingOrders && <span className="hero-badge hero-badge--closed">No acepta pedidos en el momento</span>}
+          {acceptingOrders && open === true  && <span className="hero-badge hero-badge--open">Abierto</span>}
+          {acceptingOrders && open === false && <span className="hero-badge hero-badge--closed">Cerrado</span>}
           {openHours && <span className="hero-badge hero-badge--hours"><Clock size={11} /> {openHours}</span>}
         </div>
       </div>

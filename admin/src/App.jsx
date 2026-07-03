@@ -13,6 +13,7 @@ import './index.css';
 function AdminLayout() {
   const { user, logout } = useAuth();
   const [restaurant, setRestaurant] = useState(null);
+  const [togglingOrders, setTogglingOrders] = useState(false);
   const location = useLocation();
 
   useEffect(() => {
@@ -29,6 +30,21 @@ function AdminLayout() {
   const loading = restaurant === null;
   const name = restaurant?.name || 'Mi local';
   const logo = restaurant?.logo;
+  const acceptingOrders = restaurant?.acceptingOrders !== false;
+
+  const handleToggleOrders = async () => {
+    if (togglingOrders || !restaurant) return;
+    const next = !acceptingOrders;
+    setRestaurant(r => ({ ...r, acceptingOrders: next }));
+    setTogglingOrders(true);
+    try {
+      await api.patch('/api/admin/restaurant', { acceptingOrders: next });
+    } catch {
+      setRestaurant(r => ({ ...r, acceptingOrders: !next }));
+    } finally {
+      setTogglingOrders(false);
+    }
+  };
 
   return (
     <div className="admin-layout">
@@ -43,6 +59,23 @@ function AdminLayout() {
             : <span className="sidebar-logo-text">{name}</span>
           }
         </div>
+        {!loading && (
+          <div className="sidebar-orders-toggle">
+            <span className="sidebar-orders-toggle-label">
+              {acceptingOrders ? 'Aceptando pedidos' : 'Pedidos pausados'}
+            </span>
+            <button
+              type="button"
+              className={`switch ${acceptingOrders ? 'switch--on' : ''}`}
+              role="switch"
+              aria-checked={acceptingOrders}
+              disabled={togglingOrders}
+              onClick={handleToggleOrders}
+            >
+              <span className="switch-thumb" />
+            </button>
+          </div>
+        )}
         <nav className="sidebar-nav">
           <NavLink className={({ isActive }) => `sidebar-link${isActive ? ' active' : ''}`} to="/pedidos">Pedidos</NavLink>
           <NavLink className={({ isActive }) => `sidebar-link${isActive ? ' active' : ''}`} to="/productos">Productos</NavLink>
