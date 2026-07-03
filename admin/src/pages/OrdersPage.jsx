@@ -134,7 +134,10 @@ export default function OrdersPage() {
 
 function buildReadyMessage(order) {
   const isDelivery = order.address && order.address !== 'A levantar';
-  const lines = order.items.map((i) => `- ${i.quantity}x ${i.name}`);
+  const lines = order.items.map((i) => {
+    const varStr = i.variantLabels?.length ? ` (${i.variantLabels.join(', ')})` : '';
+    return `- ${i.quantity}x ${i.name}${varStr}`;
+  });
   return [
     '---------------------------------',
     isDelivery
@@ -217,7 +220,7 @@ function OrderCard({ order, onStatusChange }) {
             </span>
           </div>
           {order.address && order.address !== 'A levantar' && (
-            <div className="order-customer-field" style={{ gridColumn: '1 / -1' }}>
+            <div className="order-customer-field">
               <span className="order-field-label">Dirección</span>
               <span className="order-field-value">{order.address}</span>
             </div>
@@ -233,7 +236,12 @@ function OrderCard({ order, onStatusChange }) {
       <ul className="order-items">
         {order.items.map((item, i) => (
           <li key={i} className="order-item-row">
-            <span>{item.quantity}x {item.name}</span>
+            <span>
+              {item.quantity}x {item.name}
+              {item.variantLabels?.length > 0 && (
+                <span className="order-item-variants"> ({item.variantLabels.join(', ')})</span>
+              )}
+            </span>
             <span>${(item.price * item.quantity).toLocaleString('es-AR')}</span>
           </li>
         ))}

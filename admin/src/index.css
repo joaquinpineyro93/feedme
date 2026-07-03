@@ -279,6 +279,7 @@ body {
 }
 .order-items { list-style: none; border-top: 1px solid var(--border); padding-top: 10px; display: flex; flex-direction: column; gap: 4px; }
 .order-item-row { display: flex; justify-content: space-between; font-size: 0.85rem; }
+.order-item-variants { color: var(--text-muted); font-size: 0.8rem; }
 .order-total { font-size: 0.9rem; color: var(--text-muted); border-top: 1px solid var(--border); padding-top: 10px; }
 .order-total strong { color: var(--text); }
 .order-actions { display: flex; gap: 8px; flex-wrap: wrap; }

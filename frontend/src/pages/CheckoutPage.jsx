@@ -25,6 +25,16 @@ function saveProfile(uid, data) {
   localStorage.setItem(key, JSON.stringify(data));
 }
 
+function getVariantParts(product, selectedVariants) {
+  if (!selectedVariants || !product.variants?.length) return [];
+  const parts = [];
+  for (const g of product.variants) {
+    const opt = g.options.find(o => o._id === selectedVariants[g._id]);
+    if (opt) parts.push(opt.label);
+  }
+  return parts;
+}
+
 export default function CheckoutPage() {
   const { items, totalPrice, clearCart, restaurant, notes } = useCart();
   const { user } = useAuth();
@@ -84,13 +94,7 @@ export default function CheckoutPage() {
 
   const buildWhatsAppMessage = () => {
     const lines = items.map(({ product, quantity, selectedVariants, unitPrice }) => {
-      const varParts = [];
-      if (selectedVariants && product.variants?.length) {
-        for (const g of product.variants) {
-          const opt = g.options.find(o => o._id === selectedVariants[g._id]);
-          if (opt) varParts.push(opt.label);
-        }
-      }
+      const varParts = getVariantParts(product, selectedVariants);
       const varStr = varParts.length ? ` (${varParts.join(', ')})` : '';
       return `- ${quantity}x ${product.name}${varStr} — $${(unitPrice * quantity).toLocaleString('es-AR')}`;
     });
@@ -141,7 +145,7 @@ export default function CheckoutPage() {
           name: product.name,
           price: unitPrice,
           quantity,
-          selectedVariants: selectedVariants || undefined,
+          variantLabels: getVariantParts(product, selectedVariants),
         })),
         customerName: form.name,
         customerPhone: form.phone,
@@ -172,13 +176,7 @@ export default function CheckoutPage() {
           <h2 className="checkout-section-title">Tu pedido</h2>
           <ul className="order-summary">
             {items.map(({ key, product, quantity, selectedVariants, unitPrice }) => {
-              const varParts = [];
-              if (selectedVariants && product.variants?.length) {
-                for (const g of product.variants) {
-                  const opt = g.options.find(o => o._id === selectedVariants[g._id]);
-                  if (opt) varParts.push(opt.label);
-                }
-              }
+              const varParts = getVariantParts(product, selectedVariants);
               return (
                 <li key={key} className="order-summary-item">
                   <span className="order-item-qty">{quantity}x</span>
