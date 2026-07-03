@@ -26,6 +26,7 @@ function AdminLayout() {
 
   if (!user) return <Navigate to="/login" replace />;
 
+  const loading = restaurant === null;
   const name = restaurant?.name || 'Mi local';
   const logo = restaurant?.logo;
 
@@ -37,7 +38,10 @@ function AdminLayout() {
             ? <img src={logo} alt={name} className="sidebar-logo-img" />
             : <UtensilsCrossed size={28} color="#fff" className="sidebar-logo-icon" />
           }
-          <span className="sidebar-logo-text">{name}</span>
+          {loading
+            ? <span className="sidebar-logo-text-skeleton" />
+            : <span className="sidebar-logo-text">{name}</span>
+          }
         </div>
         <nav className="sidebar-nav">
           <NavLink className={({ isActive }) => `sidebar-link${isActive ? ' active' : ''}`} to="/pedidos">Pedidos</NavLink>
