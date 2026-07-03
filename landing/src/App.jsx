@@ -35,7 +35,7 @@ function Hero() {
         <span>sin comisiones, sin app</span>
       </h1>
       <p className="hero-sub">
-        Creamos tu catálogo digital y tus clientes te piden directo por WhatsApp.
+        Crea tu catalogo digital y tus clientes te piden directo por WhatsApp.
         Vos lo gestionás todo desde un panel simple.
       </p>
       <div className="hero-actions">
