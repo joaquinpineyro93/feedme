@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
-import { FileText, MessageCircle, X } from 'lucide-react';
+import { FileText, MessageCircle, X, Search } from 'lucide-react';
 import api from '../api';
 
 const STATUS_LABELS = {
@@ -34,6 +34,7 @@ function formatDate(dateStr) {
 export default function OrdersPage() {
   const [orders, setOrders] = useState([]);
   const [filter, setFilter] = useState('all');
+  const [search, setSearch] = useState('');
   const [loading, setLoading] = useState(true);
   const [lastCount, setLastCount] = useState(0);
   const [newAlert, setNewAlert] = useState(false);
@@ -82,8 +83,20 @@ export default function OrdersPage() {
     }
   };
 
-  const activeOrders = orders.filter((o) => !['delivered', 'cancelled'].includes(o.status));
-  const historyOrders = orders.filter((o) => ['delivered', 'cancelled'].includes(o.status));
+  const matchesSearch = (o) => {
+    if (!search.trim()) return true;
+    const q = search.trim().toLowerCase();
+    return (
+      o.customerName?.toLowerCase().includes(q) ||
+      o.customerPhone?.toLowerCase().includes(q) ||
+      o._id.slice(-6).toLowerCase().includes(q) ||
+      o.items.some((i) => i.name.toLowerCase().includes(q))
+    );
+  };
+
+  const filteredOrders = orders.filter(matchesSearch);
+  const activeOrders = filteredOrders.filter((o) => !['delivered', 'cancelled'].includes(o.status));
+  const historyOrders = filteredOrders.filter((o) => ['delivered', 'cancelled'].includes(o.status));
 
   return (
     <div className="page">
@@ -98,22 +111,37 @@ export default function OrdersPage() {
         </button>
       </div>
 
-      <div className="filter-tabs">
-        {['all', 'pending', 'preparing', 'ready', 'delivered', 'cancelled'].map((s) => (
-          <button
-            key={s}
-            className={`filter-tab ${filter === s ? 'active' : ''}`}
-            onClick={() => setFilter(s)}
-          >
-            {s === 'all' ? 'Todos' : STATUS_LABELS[s]}
-          </button>
-        ))}
+      <div className="orders-toolbar">
+        <div className="orders-search">
+          <Search size={15} className="orders-search-icon" />
+          <input
+            type="text"
+            className="orders-search-input"
+            placeholder="Buscar"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+          />
+        </div>
+        <div className="filter-tabs">
+          {['all', 'pending', 'preparing', 'ready', 'delivered', 'cancelled'].map((s) => (
+            <button
+              key={s}
+              className={`filter-tab ${filter === s ? 'active' : ''}`}
+              onClick={() => setFilter(s)}
+            >
+              {s === 'all' ? 'Todos' : STATUS_LABELS[s]}
+            </button>
+          ))}
+        </div>
       </div>
 
       {loading ? (
         <p className="loading-text">Cargando pedidos...</p>
-      ) : orders.length === 0 ? (
-        <p className="empty-text">No hay pedidos {filter !== 'all' ? `con estado "${STATUS_LABELS[filter]}"` : ''}.</p>
+      ) : filteredOrders.length === 0 ? (
+        <p className="empty-text">
+          No hay pedidos {filter !== 'all' ? `con estado "${STATUS_LABELS[filter]}"` : ''}
+          {search.trim() ? ` que coincidan con "${search.trim()}"` : ''}.
+        </p>
       ) : (
         <>
           {activeOrders.length > 0 && (
