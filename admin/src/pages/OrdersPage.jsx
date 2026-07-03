@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
-import { FileText, MessageCircle } from 'lucide-react';
+import { FileText, MessageCircle, X } from 'lucide-react';
 import api from '../api';
 
 const STATUS_LABELS = {
@@ -72,6 +72,16 @@ export default function OrdersPage() {
     }
   };
 
+  const deleteOrder = async (id) => {
+    if (!confirm('¿Eliminar este pedido definitivamente? Esta acción no se puede deshacer.')) return;
+    try {
+      await api.delete(`/api/admin/orders/${id}`);
+      setOrders((prev) => prev.filter((o) => o._id !== id));
+    } catch (err) {
+      alert('Error al eliminar el pedido');
+    }
+  };
+
   const activeOrders = orders.filter((o) => !['delivered', 'cancelled'].includes(o.status));
   const historyOrders = orders.filter((o) => ['delivered', 'cancelled'].includes(o.status));
 
@@ -111,7 +121,7 @@ export default function OrdersPage() {
               <h3 className="section-label">Activos ({activeOrders.length})</h3>
               <div className="orders-grid">
                 {activeOrders.map((order) => (
-                  <OrderCard key={order._id} order={order} onStatusChange={updateStatus} />
+                  <OrderCard key={order._id} order={order} onStatusChange={updateStatus} onDelete={deleteOrder} />
                 ))}
               </div>
             </section>
@@ -121,7 +131,7 @@ export default function OrdersPage() {
               <h3 className="section-label">Historial ({historyOrders.length})</h3>
               <div className="orders-grid">
                 {historyOrders.map((order) => (
-                  <OrderCard key={order._id} order={order} onStatusChange={updateStatus} />
+                  <OrderCard key={order._id} order={order} onStatusChange={updateStatus} onDelete={deleteOrder} />
                 ))}
               </div>
             </section>
@@ -154,7 +164,7 @@ function buildReadyMessage(order) {
   ].join('\n');
 }
 
-function OrderCard({ order, onStatusChange }) {
+function OrderCard({ order, onStatusChange, onDelete }) {
   const [notifyPrompt, setNotifyPrompt] = useState(false);
   const next = STATUS_NEXT[order.status];
 
@@ -188,12 +198,17 @@ function OrderCard({ order, onStatusChange }) {
           </div>
           <span className="order-time">{formatDate(order.createdAt)} {formatTime(order.createdAt)}</span>
         </div>
-        <span
-          className="order-status-badge"
-          style={{ background: STATUS_COLORS[order.status] }}
-        >
-          {STATUS_LABELS[order.status]}
-        </span>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+          <span
+            className="order-status-badge"
+            style={{ background: STATUS_COLORS[order.status] }}
+          >
+            {STATUS_LABELS[order.status]}
+          </span>
+          <button className="order-delete-btn" onClick={() => onDelete(order._id)} title="Eliminar pedido">
+            <X size={15} />
+          </button>
+        </div>
       </div>
 
       <div className="order-customer">

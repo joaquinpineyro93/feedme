@@ -58,6 +58,16 @@ router.patch('/orders/:id/status', async (req, res) => {
   }
 });
 
+router.delete('/orders/:id', async (req, res) => {
+  try {
+    const order = await Order.findByIdAndDelete(req.params.id);
+    if (!order) return res.status(404).json({ error: 'Pedido no encontrado' });
+    res.json({ message: 'Pedido eliminado' });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 // --- PRODUCTS ---
 router.get('/products', async (req, res) => {
   try {

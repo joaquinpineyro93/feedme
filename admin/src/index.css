@@ -255,6 +255,20 @@ body {
   font-weight: 600;
   white-space: nowrap;
 }
+.order-delete-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  border: none;
+  background: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  flex-shrink: 0;
+}
+.order-delete-btn:hover { background: var(--danger); color: #fff; }
 .order-customer { display: flex; flex-direction: column; gap: 2px; }
 .order-customer strong { font-size: 0.95rem; }
 .order-customer span { font-size: 0.82rem; color: var(--text-muted); }

@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import * as XLSX from 'xlsx';
-import { Download } from 'lucide-react';
+import { Download, X } from 'lucide-react';
 import api from '../api';
 
 const STATUS_LABELS = {
@@ -51,6 +51,16 @@ export default function HistoryPage() {
   };
 
   useEffect(() => { fetchHistory(); }, []);
+
+  const deleteOrder = async (id) => {
+    if (!confirm('¿Eliminar este pedido definitivamente? Esta acción no se puede deshacer.')) return;
+    try {
+      await api.delete(`/api/admin/orders/${id}`);
+      setOrders((prev) => prev.filter((o) => o._id !== id));
+    } catch (err) {
+      alert('Error al eliminar el pedido');
+    }
+  };
 
   const exportExcel = () => {
     const rows = orders.map(o => ({
@@ -155,6 +165,7 @@ export default function HistoryPage() {
                 <th>Pago</th>
                 <th>Total</th>
                 <th>Estado</th>
+                <th></th>
               </tr>
             </thead>
             <tbody>
@@ -178,6 +189,11 @@ export default function HistoryPage() {
                     <span className="order-status-badge" style={{ background: STATUS_COLORS[order.status] }}>
                       {STATUS_LABELS[order.status]}
                     </span>
+                  </td>
+                  <td>
+                    <button className="order-delete-btn" onClick={() => deleteOrder(order._id)} title="Eliminar pedido">
+                      <X size={15} />
+                    </button>
                   </td>
                 </tr>
               ))}
