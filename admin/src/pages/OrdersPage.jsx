@@ -16,6 +16,12 @@ const STATUS_NEXT = {
   ready: 'delivered',
 };
 
+const STATUS_ACTION_LABELS = {
+  preparing: 'En preparacion',
+  ready: 'Listo',
+  delivered: 'Entregado',
+};
+
 const STATUS_COLORS = {
   pending: '#F59E0B',
   preparing: '#3B82F6',
@@ -308,7 +314,7 @@ function OrderCard({ order, onStatusChange, onDelete }) {
         <div className="order-actions">
           {next && (
             <button className="btn-status-next" onClick={() => handleStatusChange(order._id, next)}>
-              Marcar como {STATUS_LABELS[next]}
+              {STATUS_ACTION_LABELS[next]}
             </button>
           )}
           {order.status !== 'cancelled' && order.status !== 'delivered' && (
