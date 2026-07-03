@@ -48,7 +48,7 @@ export default function MenuPage() {
   const [sortOrder, setSortOrder] = useState('');
   const [sortOpen, setSortOpen] = useState(false);
   const sortRef = useRef(null);
-  const { totalItems, addItem, removeItem, items, setRestaurant: setCartRestaurant, restaurant: cartRestaurant } = useCart();
+  const { totalItems, setRestaurant: setCartRestaurant } = useCart();
 
   useEffect(() => {
     async function fetchData() {
@@ -216,46 +216,14 @@ export default function MenuPage() {
             </h2>
             <div className="product-grid">
               {todayMenus.map(m => (
-                <div key={m._id} className="product-card product-card--daily">
-                  {!m.image ? (
-                    <div className="product-image-wrap product-image-wrap--fallback">
-                      <img src={cartRestaurant?.logo || '/favicon.svg'} alt={m.name} className="product-fallback-logo" onError={e => { e.target.src = '/favicon.svg'; }} />
-                      <span className="product-fallback-label">SIN IMAGEN</span>
-                    </div>
-                  ) : (
-                    <div className="product-image-wrap">
-                      <img src={m.image} alt={m.name} className="product-image" loading="lazy" onError={e => { e.target.src = cartRestaurant?.logo || '/favicon.svg'; }} />
-                    </div>
-                  )}
-                  <div className="product-info">
-                    <div>
-                      <div className="daily-badge">
-                        {m.recurrence === 'weekly'
-                          ? <><RefreshCw size={10} /> Todos los {DAYS[m.dayOfWeek]}</>
-                          : <><Calendar size={10} /> Solo hoy</>
-                        }
-                      </div>
-                      <h3 className="product-name">{m.name}</h3>
-                      {m.description && <p className="product-description">{m.description}</p>}
-                    </div>
-                    <div className="product-footer">
-                      <span className="product-price">${Number(m.price).toLocaleString('es-AR')}</span>
-                      {(() => {
-                        const cartItem = items.find(i => i.product._id === m._id);
-                        const qty = cartItem ? cartItem.quantity : 0;
-                        return qty === 0 ? (
-                          <button className="btn-add" onClick={() => addItem(m)}>+</button>
-                        ) : (
-                          <div className="quantity-controls">
-                            <button className="qty-btn" onClick={() => removeItem(m._id)}>−</button>
-                            <span className="qty-value">{qty}</span>
-                            <button className="qty-btn qty-btn--add" onClick={() => addItem(m)}>+</button>
-                          </div>
-                        );
-                      })()}
-                    </div>
-                  </div>
-                </div>
+                <ProductCard
+                  key={m._id}
+                  product={m}
+                  dailyBadge={m.recurrence === 'weekly'
+                    ? <><RefreshCw size={10} /> Todos los {DAYS[m.dayOfWeek]}</>
+                    : <><Calendar size={10} /> Solo hoy</>
+                  }
+                />
               ))}
             </div>
           </section>

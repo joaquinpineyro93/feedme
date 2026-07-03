@@ -1,5 +1,16 @@
 const mongoose = require('mongoose');
 
+const variantOptionSchema = new mongoose.Schema({
+  label:    { type: String, required: true },
+  priceAdd: { type: Number, default: 0 },
+});
+
+const variantGroupSchema = new mongoose.Schema({
+  name:     { type: String, required: true },
+  required: { type: Boolean, default: false },
+  options:  { type: [variantOptionSchema], default: [] },
+});
+
 const productSchema = new mongoose.Schema({
   name: { type: String, required: true },
   description: { type: String, default: '' },
@@ -15,6 +26,7 @@ const productSchema = new mongoose.Schema({
   dayOfWeek:   { type: Number, min: 0, max: 6 },
   date:        { type: String },
   dailyActive: { type: Boolean, default: true },
+  variants:    { type: [variantGroupSchema], default: [] },
 }, { timestamps: true });
 
 module.exports = mongoose.model('Product', productSchema);

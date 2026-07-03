@@ -6,7 +6,11 @@ import api from '../api';
 const EMPTY_PRODUCT = {
   name: '', description: '', price: '', category: '', image: '', available: true,
   isDaily: false, recurrence: 'weekly', dayOfWeek: 1, date: '', dailyActive: true,
+  variants: [],
 };
+
+const EMPTY_GROUP  = { name: '', required: false, options: [] };
+const EMPTY_OPTION = { label: '', priceAdd: 0 };
 
 const DAYS = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'];
 function todayStr() { return new Date().toISOString().slice(0, 10); }
@@ -97,6 +101,7 @@ function ProductsTab({ products, setProducts, categories, setCategories, newProd
       isDaily: product.isDaily || false, recurrence: product.recurrence || 'weekly',
       dayOfWeek: product.dayOfWeek ?? 1, date: product.date || todayStr(),
       dailyActive: product.dailyActive ?? true,
+      variants: product.variants || [],
     });
     setFormError(''); setShowForm(true);
   };
@@ -116,7 +121,13 @@ function ProductsTab({ products, setProducts, categories, setCategories, newProd
     setSaving(true); setFormError('');
     try {
       const payload = {
-        ...form, price: Number(form.price), isDaily,
+        ...form,
+        price: Number(form.price),
+        isDaily,
+        variants: form.variants.map(g => ({
+          ...g,
+          options: g.options.map(o => ({ ...o, priceAdd: Number(o.priceAdd) || 0 })),
+        })),
         ...(isDaily ? {} : { recurrence: undefined, dayOfWeek: undefined, date: undefined, dailyActive: undefined }),
       };
       if (editingId) {
@@ -290,6 +301,57 @@ function ProductsTab({ products, setProducts, categories, setCategories, newProd
                   <input type="checkbox" checked={form.available} onChange={e => setForm(f => ({ ...f, available: e.target.checked }))} />
                   <span className="form-label" style={{ margin: 0 }}>Activo (visible en el menú)</span>
                 </label>
+              </div>
+
+              {/* Variantes */}
+              <div className="form-group">
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 8 }}>
+                  <label className="form-label" style={{ margin: 0 }}>Variantes</label>
+                  <button type="button" className="btn-secondary" style={{ fontSize: 12, padding: '4px 10px' }}
+                    onClick={() => setForm(f => ({ ...f, variants: [...f.variants, { ...EMPTY_GROUP, options: [] }] }))}>
+                    + Grupo
+                  </button>
+                </div>
+                {form.variants.map((group, gi) => (
+                  <div key={gi} className="variant-group-admin">
+                    <div className="variant-group-admin-header">
+                      <input
+                        className="form-input"
+                        placeholder="Nombre del grupo (ej: Relleno)"
+                        value={group.name}
+                        onChange={e => setForm(f => ({ ...f, variants: f.variants.map((g, i) => i === gi ? { ...g, name: e.target.value } : g) }))}
+                        style={{ flex: 1 }}
+                      />
+                      <label style={{ display: 'flex', alignItems: 'center', gap: 4, fontSize: 12, whiteSpace: 'nowrap' }}>
+                        <input type="checkbox" checked={group.required}
+                          onChange={e => setForm(f => ({ ...f, variants: f.variants.map((g, i) => i === gi ? { ...g, required: e.target.checked } : g) }))} />
+                        Requerido
+                      </label>
+                      <button type="button" className="btn-delete" title="Eliminar grupo"
+                        onClick={() => setForm(f => ({ ...f, variants: f.variants.filter((_, i) => i !== gi) }))}>
+                        <Trash2 size={13} />
+                      </button>
+                    </div>
+                    {group.options.map((opt, oi) => (
+                      <div key={oi} className="variant-option-admin">
+                        <input className="form-input" placeholder="Opción (ej: Muzarella)" value={opt.label}
+                          onChange={e => setForm(f => ({ ...f, variants: f.variants.map((g, i) => i === gi ? { ...g, options: g.options.map((o, j) => j === oi ? { ...o, label: e.target.value } : o) } : g) }))}
+                          style={{ flex: 1 }} />
+                        <input className="form-input" type="number" placeholder="+$0" value={opt.priceAdd}
+                          onChange={e => setForm(f => ({ ...f, variants: f.variants.map((g, i) => i === gi ? { ...g, options: g.options.map((o, j) => j === oi ? { ...o, priceAdd: e.target.value } : o) } : g) }))}
+                          style={{ width: 80 }} />
+                        <button type="button" className="btn-delete"
+                          onClick={() => setForm(f => ({ ...f, variants: f.variants.map((g, i) => i === gi ? { ...g, options: g.options.filter((_, j) => j !== oi) } : g) }))}>
+                          <X size={13} />
+                        </button>
+                      </div>
+                    ))}
+                    <button type="button" className="btn-secondary" style={{ fontSize: 12, padding: '3px 10px', marginTop: 6 }}
+                      onClick={() => setForm(f => ({ ...f, variants: f.variants.map((g, i) => i === gi ? { ...g, options: [...g.options, { ...EMPTY_OPTION }] } : g) }))}>
+                      + Opción
+                    </button>
+                  </div>
+                ))}
               </div>
 
               {formError && <p className="form-error">{formError}</p>}

@@ -3,6 +3,16 @@ import { useNavigate } from 'react-router-dom';
 import { ShoppingCart, X, Trash2 } from 'lucide-react';
 import { useCart } from '../context/CartContext';
 
+function variantSummary(product, selectedVariants) {
+  if (!selectedVariants || !product.variants?.length) return null;
+  const parts = [];
+  for (const group of product.variants) {
+    const opt = group.options.find(o => o._id === selectedVariants[group._id]);
+    if (opt) parts.push(opt.label);
+  }
+  return parts.length ? parts.join(', ') : null;
+}
+
 export default function CartDrawer({ isOpen, onClose }) {
   const { items, addItem, removeItem, deleteItem, totalItems, totalPrice, notes, setNotes } = useCart();
   const navigate = useNavigate();
@@ -14,10 +24,7 @@ export default function CartDrawer({ isOpen, onClose }) {
 
   return (
     <>
-      <div
-        className={`drawer-backdrop ${isOpen ? 'drawer-backdrop--visible' : ''}`}
-        onClick={onClose}
-      />
+      <div className={`drawer-backdrop ${isOpen ? 'drawer-backdrop--visible' : ''}`} onClick={onClose} />
 
       <div className={`cart-drawer ${isOpen ? 'cart-drawer--open' : ''}`}>
         <div className="cart-drawer-header">
@@ -34,28 +41,27 @@ export default function CartDrawer({ isOpen, onClose }) {
             </div>
           ) : (
             <ul className="cart-items">
-              {items.map(({ product, quantity }) => (
-                <li key={product._id} className="cart-item">
-                  <div className="cart-item-info">
-                    <span className="cart-item-name">{product.name}</span>
-                    {product.description && <span className="cart-item-desc">{product.description}</span>}
-                    <span className="cart-item-unit-price">${product.price.toLocaleString('es-AR')} c/u</span>
-                  </div>
-                  <div className="cart-item-right">
-                    <div className="quantity-controls">
-                      <button className="qty-btn" onClick={() => removeItem(product._id)}>−</button>
-                      <span className="qty-value">{quantity}</span>
-                      <button className="qty-btn qty-btn--add" onClick={() => addItem(product)}>+</button>
+              {items.map(({ key, product, quantity, selectedVariants, unitPrice }) => {
+                const varStr = variantSummary(product, selectedVariants);
+                return (
+                  <li key={key} className="cart-item">
+                    <div className="cart-item-info">
+                      <span className="cart-item-name">{product.name}</span>
+                      {varStr && <span className="cart-item-variants">{varStr}</span>}
+                      <span className="cart-item-unit-price">${unitPrice.toLocaleString('es-AR')} c/u</span>
                     </div>
-                    <span className="cart-item-subtotal">
-                      ${(product.price * quantity).toLocaleString('es-AR')}
-                    </span>
-                    <button className="cart-item-delete" onClick={() => deleteItem(product._id)} title="Eliminar">
-                      <Trash2 size={15} />
-                    </button>
-                  </div>
-                </li>
-              ))}
+                    <div className="cart-item-right">
+                      <div className="quantity-controls">
+                        <button className="qty-btn" onClick={() => removeItem(key)}>−</button>
+                        <span className="qty-value">{quantity}</span>
+                        <button className="qty-btn qty-btn--add" onClick={() => addItem(product, selectedVariants, unitPrice)}>+</button>
+                      </div>
+                      <span className="cart-item-subtotal">${(unitPrice * quantity).toLocaleString('es-AR')}</span>
+                      <button className="cart-item-delete" onClick={() => deleteItem(key)} title="Eliminar"><Trash2 size={15} /></button>
+                    </div>
+                  </li>
+                );
+              })}
             </ul>
           )}
         </div>
@@ -74,13 +80,10 @@ export default function CartDrawer({ isOpen, onClose }) {
               rows={2}
               style={{ marginBottom: 10 }}
             />
-            <button className="btn-checkout" onClick={handleCheckout}>
-              Finalizar compra
-            </button>
+            <button className="btn-checkout" onClick={handleCheckout}>Finalizar compra</button>
           </div>
         )}
       </div>
-
-</>
+    </>
   );
 }

@@ -1060,3 +1060,34 @@ body {
 .order-customer-field { display: flex; flex-direction: column; gap: 1px; }
 .order-field-label { font-size: 0.7rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; color: var(--text-muted); }
 .order-field-value { font-size: 0.88rem; color: var(--text); }
+
+/* Variantes admin */
+.variant-group-admin {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 10px 12px;
+  margin-bottom: 8px;
+  background: var(--bg);
+}
+.variant-group-admin-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+.variant-option-admin {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 6px;
+}
+
+.modal {
+  background: #fff;
+  border-radius: 14px;
+  padding: 28px;
+  width: 100%;
+  max-width: 480px;
+  max-height: calc(100vh - 40px);
+  overflow-y: auto;
+}

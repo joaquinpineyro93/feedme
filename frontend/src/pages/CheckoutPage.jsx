@@ -69,10 +69,17 @@ export default function CheckoutPage() {
   }
 
   const buildWhatsAppMessage = () => {
-    const lines = items.map(
-      ({ product, quantity }) =>
-        `- ${quantity}x ${product.name} — $${(product.price * quantity).toLocaleString('es-AR')}`
-    );
+    const lines = items.map(({ product, quantity, selectedVariants, unitPrice }) => {
+      const varParts = [];
+      if (selectedVariants && product.variants?.length) {
+        for (const g of product.variants) {
+          const opt = g.options.find(o => o._id === selectedVariants[g._id]);
+          if (opt) varParts.push(opt.label);
+        }
+      }
+      const varStr = varParts.length ? ` (${varParts.join(', ')})` : '';
+      return `- ${quantity}x ${product.name}${varStr} — $${(unitPrice * quantity).toLocaleString('es-AR')}`;
+    });
     const entrega = form.deliveryType === 'envio'
       ? `*Dirección:* ${form.address}`
       : `*Entrega:* A levantar`;
@@ -115,11 +122,12 @@ export default function CheckoutPage() {
     try {
       const orderHeaders = restaurant?.slug ? { 'X-Tenant': restaurant.slug } : {};
       await axios.post(`${API_URL}/api/orders`, {
-        items: items.map(({ product, quantity }) => ({
+        items: items.map(({ product, quantity, selectedVariants, unitPrice }) => ({
           productId: product._id,
           name: product.name,
-          price: product.price,
+          price: unitPrice,
           quantity,
+          selectedVariants: selectedVariants || undefined,
         })),
         customerName: form.name,
         customerPhone: form.phone,
@@ -149,13 +157,25 @@ export default function CheckoutPage() {
         <section className="checkout-section">
           <h2 className="checkout-section-title">Tu pedido</h2>
           <ul className="order-summary">
-            {items.map(({ product, quantity }) => (
-              <li key={product._id} className="order-summary-item">
-                <span className="order-item-qty">{quantity}x</span>
-                <span className="order-item-name">{product.name}</span>
-                <span className="order-item-price">${(product.price * quantity).toLocaleString('es-AR')}</span>
-              </li>
-            ))}
+            {items.map(({ key, product, quantity, selectedVariants, unitPrice }) => {
+              const varParts = [];
+              if (selectedVariants && product.variants?.length) {
+                for (const g of product.variants) {
+                  const opt = g.options.find(o => o._id === selectedVariants[g._id]);
+                  if (opt) varParts.push(opt.label);
+                }
+              }
+              return (
+                <li key={key} className="order-summary-item">
+                  <span className="order-item-qty">{quantity}x</span>
+                  <span className="order-item-name">
+                    {product.name}
+                    {varParts.length > 0 && <span className="order-item-variants"> ({varParts.join(', ')})</span>}
+                  </span>
+                  <span className="order-item-price">${(unitPrice * quantity).toLocaleString('es-AR')}</span>
+                </li>
+              );
+            })}
           </ul>
           <div className="order-total">
             <span>Total</span>

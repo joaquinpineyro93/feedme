@@ -112,7 +112,7 @@ router.post('/products/bulk', async (req, res) => {
 
 router.patch('/products/:id', async (req, res) => {
   try {
-    const product = await Product.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true });
+    const product = await Product.findByIdAndUpdate(req.params.id, { $set: req.body }, { new: true, runValidators: true });
     if (!product) return res.status(404).json({ error: 'Producto no encontrado' });
     res.json(product);
   } catch (err) {
