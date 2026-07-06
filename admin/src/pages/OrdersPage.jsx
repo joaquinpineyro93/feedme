@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
-import { FileText, MessageCircle, X, Search } from 'lucide-react';
+import { FileText, MessageCircle, Landmark, X, Search } from 'lucide-react';
 import api from '../api';
 
 const STATUS_LABELS = {
@@ -44,6 +44,13 @@ export default function OrdersPage() {
   const [loading, setLoading] = useState(true);
   const [lastCount, setLastCount] = useState(0);
   const [newAlert, setNewAlert] = useState(false);
+  const [bankTransfer, setBankTransfer] = useState(null);
+
+  useEffect(() => {
+    api.get('/api/admin/restaurant')
+      .then(({ data }) => setBankTransfer(data.paymentMethods?.bankTransfer || null))
+      .catch(() => {});
+  }, []);
 
   const fetchOrders = useCallback(async (showLoader = false) => {
     if (showLoader) setLoading(true);
@@ -155,7 +162,7 @@ export default function OrdersPage() {
               <h3 className="section-label">Activos ({activeOrders.length})</h3>
               <div className="orders-grid">
                 {activeOrders.map((order) => (
-                  <OrderCard key={order._id} order={order} onStatusChange={updateStatus} onDelete={deleteOrder} />
+                  <OrderCard key={order._id} order={order} onStatusChange={updateStatus} onDelete={deleteOrder} bankTransfer={bankTransfer} />
                 ))}
               </div>
             </section>
@@ -165,7 +172,7 @@ export default function OrdersPage() {
               <h3 className="section-label">Historial ({historyOrders.length})</h3>
               <div className="orders-grid">
                 {historyOrders.map((order) => (
-                  <OrderCard key={order._id} order={order} onStatusChange={updateStatus} onDelete={deleteOrder} />
+                  <OrderCard key={order._id} order={order} onStatusChange={updateStatus} onDelete={deleteOrder} bankTransfer={bankTransfer} />
                 ))}
               </div>
             </section>
@@ -198,7 +205,20 @@ function buildReadyMessage(order) {
   ].join('\n');
 }
 
-function OrderCard({ order, onStatusChange, onDelete }) {
+function buildBankTransferMessage(order, bankTransfer) {
+  return [
+    '---------------------------------',
+    `Hola ${order.customerName}! Estos son los datos para tu transferencia:`,
+    '---------------------------------',
+    `*Banco:* ${bankTransfer.bank}`,
+    `*Número de cuenta:* ${bankTransfer.accountNumber}`,
+    `*Monto:* $${order.total.toLocaleString('es-AR')}`,
+    '---------------------------------',
+    'Una vez realizada, envianos el comprobante. ¡Gracias!',
+  ].join('\n');
+}
+
+function OrderCard({ order, onStatusChange, onDelete, bankTransfer }) {
   const [notifyPrompt, setNotifyPrompt] = useState(false);
   const next = STATUS_NEXT[order.status];
 
@@ -264,6 +284,17 @@ function OrderCard({ order, onStatusChange, onDelete }) {
                   style={{ display: 'inline-flex', color: '#25D366' }}
                 >
                   <MessageCircle size={16} />
+                </a>
+              )}
+              {order.customerPhone && bankTransfer?.enabled && bankTransfer?.bank && (
+                <a
+                  href={`https://wa.me/${order.customerPhone.replace(/\D/g, '')}?text=${encodeURIComponent(buildBankTransferMessage(order, bankTransfer))}`}
+                  target="_blank"
+                  rel="noreferrer"
+                  title="Enviar datos de transferencia"
+                  style={{ display: 'inline-flex', color: '#6B7280' }}
+                >
+                  <Landmark size={16} />
                 </a>
               )}
             </span>
