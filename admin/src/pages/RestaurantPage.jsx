@@ -4,9 +4,19 @@ import api from '../api';
 import OpenHoursPicker from '../components/OpenHoursPicker';
 import PhoneInput from '../components/PhoneInput';
 
+const BANKS = ['BBVA', 'BROU', 'Citi Bank', 'Itaú', 'Mi Dinero', 'Prex', 'Santander', 'Scotiabank'];
+
+const DEFAULT_PAYMENT_METHODS = {
+  cash: true,
+  card: false,
+  mercadoPago: { enabled: false, link: '' },
+  bankTransfer: { enabled: false, bank: '', accountNumber: '' },
+};
+
 export default function RestaurantPage() {
   const [form, setForm] = useState({
     name: '', phone: '', address: '', openHours: '', description: '', logo: '',
+    paymentMethods: DEFAULT_PAYMENT_METHODS,
   });
   const [loading, setLoading]   = useState(true);
   const [saving, setSaving]     = useState(false);
@@ -24,6 +34,19 @@ export default function RestaurantPage() {
           openHours:   data.openHours   || '',
           description: data.description || '',
           logo:        data.logo        || '',
+          paymentMethods: {
+            cash: data.paymentMethods?.cash ?? true,
+            card: data.paymentMethods?.card ?? false,
+            mercadoPago: {
+              enabled: data.paymentMethods?.mercadoPago?.enabled ?? false,
+              link:    data.paymentMethods?.mercadoPago?.link    ?? '',
+            },
+            bankTransfer: {
+              enabled:       data.paymentMethods?.bankTransfer?.enabled       ?? false,
+              bank:          data.paymentMethods?.bankTransfer?.bank          ?? '',
+              accountNumber: data.paymentMethods?.bankTransfer?.accountNumber ?? '',
+            },
+          },
         });
       })
       .catch(() => setError('Error al cargar datos del restaurante'))
@@ -42,6 +65,19 @@ export default function RestaurantPage() {
     e.preventDefault();
     if (!form.name.trim() || !form.phone.trim()) {
       setError('Nombre y teléfono son requeridos');
+      return;
+    }
+    const { cash, card, mercadoPago, bankTransfer } = form.paymentMethods;
+    if (!cash && !card && !mercadoPago.enabled && !bankTransfer.enabled) {
+      setError('Activá al menos un medio de pago');
+      return;
+    }
+    if (mercadoPago.enabled && !mercadoPago.link.trim()) {
+      setError('Ingresá el link de pago de Mercado Pago');
+      return;
+    }
+    if (bankTransfer.enabled && (!bankTransfer.bank || !bankTransfer.accountNumber.trim())) {
+      setError('Seleccioná el banco e ingresá el número de cuenta para la transferencia');
       return;
     }
     setError('');
@@ -166,14 +202,135 @@ export default function RestaurantPage() {
                 onChange={(val) => setForm((f) => ({ ...f, openHours: val }))}
               />
             </div>
-
-            {error   && <p className="form-error">{error}</p>}
-            {success && <p className="form-success">Cambios guardados correctamente.</p>}
-
-            <button className="btn-primary" type="submit" disabled={saving}>
-              {saving ? 'Guardando...' : 'Guardar cambios'}
-            </button>
           </div>
+
+          {/* Medios de pago */}
+          <div className="section-card">
+            <h3 className="section-card-title">Medios de pago aceptados</h3>
+
+            <label className="payment-method-row">
+              <input
+                type="checkbox"
+                checked={form.paymentMethods.cash}
+                onChange={(e) => setForm((f) => ({
+                  ...f,
+                  paymentMethods: { ...f.paymentMethods, cash: e.target.checked },
+                }))}
+              />
+              <span>Efectivo</span>
+            </label>
+
+            <label className="payment-method-row">
+              <input
+                type="checkbox"
+                checked={form.paymentMethods.card}
+                onChange={(e) => setForm((f) => ({
+                  ...f,
+                  paymentMethods: { ...f.paymentMethods, card: e.target.checked },
+                }))}
+              />
+              <span>Tarjeta</span>
+            </label>
+
+            <label className="payment-method-row">
+              <input
+                type="checkbox"
+                checked={form.paymentMethods.mercadoPago.enabled}
+                onChange={(e) => setForm((f) => ({
+                  ...f,
+                  paymentMethods: {
+                    ...f.paymentMethods,
+                    mercadoPago: { ...f.paymentMethods.mercadoPago, enabled: e.target.checked },
+                  },
+                }))}
+              />
+              <span>Mercado Pago</span>
+            </label>
+
+            {form.paymentMethods.mercadoPago.enabled && (
+              <div className="form-group" style={{ marginTop: 4 }}>
+                <label className="form-label">Link de pago de Mercado Pago</label>
+                <input
+                  className="form-input"
+                  type="url"
+                  placeholder="https://mpago.la/..."
+                  value={form.paymentMethods.mercadoPago.link}
+                  onChange={(e) => setForm((f) => ({
+                    ...f,
+                    paymentMethods: {
+                      ...f.paymentMethods,
+                      mercadoPago: { ...f.paymentMethods.mercadoPago, link: e.target.value },
+                    },
+                  }))}
+                />
+              </div>
+            )}
+
+            <label className="payment-method-row">
+              <input
+                type="checkbox"
+                checked={form.paymentMethods.bankTransfer.enabled}
+                onChange={(e) => setForm((f) => ({
+                  ...f,
+                  paymentMethods: {
+                    ...f.paymentMethods,
+                    bankTransfer: { ...f.paymentMethods.bankTransfer, enabled: e.target.checked },
+                  },
+                }))}
+              />
+              <span>Transferencia bancaria</span>
+            </label>
+
+            {form.paymentMethods.bankTransfer.enabled && (
+              <>
+                <div className="form-group" style={{ marginTop: 4 }}>
+                  <label className="form-label">Entidad bancaria</label>
+                  <select
+                    className="form-input"
+                    value={form.paymentMethods.bankTransfer.bank}
+                    onChange={(e) => setForm((f) => ({
+                      ...f,
+                      paymentMethods: {
+                        ...f.paymentMethods,
+                        bankTransfer: { ...f.paymentMethods.bankTransfer, bank: e.target.value },
+                      },
+                    }))}
+                  >
+                    <option value="">Seleccioná un banco</option>
+                    {BANKS.map((bank) => (
+                      <option key={bank} value={bank}>{bank}</option>
+                    ))}
+                  </select>
+                </div>
+                <div className="form-group">
+                  <label className="form-label">Número de cuenta</label>
+                  <input
+                    className="form-input"
+                    type="text"
+                    placeholder="Ej: 000123456789"
+                    value={form.paymentMethods.bankTransfer.accountNumber}
+                    onChange={(e) => setForm((f) => ({
+                      ...f,
+                      paymentMethods: {
+                        ...f.paymentMethods,
+                        bankTransfer: { ...f.paymentMethods.bankTransfer, accountNumber: e.target.value },
+                      },
+                    }))}
+                  />
+                </div>
+              </>
+            )}
+          </div>
+        </div>
+
+        {/* Guardar */}
+        <div className="restaurant-save-bar">
+          {error   && <p className="form-error">{error}</p>}
+          {success && <p className="form-success">Cambios guardados correctamente.</p>}
+
+          <button className="btn-primary" type="submit" disabled={saving}>
+            {saving ? 'Guardando...' : 'Guardar cambios'}
+          </button>
         </div>
       </form>
     </div>

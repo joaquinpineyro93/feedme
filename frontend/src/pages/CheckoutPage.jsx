@@ -1,17 +1,24 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { ShoppingCart, CheckCircle, ArrowLeft, Banknote, CreditCard, MessageCircle } from 'lucide-react';
+import { ShoppingCart, CheckCircle, ArrowLeft, Banknote, CreditCard, Wallet, Landmark, MessageCircle } from 'lucide-react';
 import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
 import PhoneInput from '../components/PhoneInput';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001';
 
-const PAYMENT_METHODS = [
-  { value: 'Efectivo', label: 'Efectivo', icon: <Banknote size={18} /> },
-  { value: 'Tarjeta', label: 'Tarjeta', icon: <CreditCard size={18} /> },
-];
+const DEFAULT_PAYMENT_METHODS = { cash: true, card: true, mercadoPago: { enabled: false, link: '' }, bankTransfer: { enabled: false } };
+
+function getPaymentOptions(restaurant) {
+  const pm = restaurant?.paymentMethods || DEFAULT_PAYMENT_METHODS;
+  const options = [];
+  if (pm.cash) options.push({ value: 'Efectivo', label: 'Efectivo', icon: <Banknote size={18} /> });
+  if (pm.card) options.push({ value: 'Tarjeta', label: 'Tarjeta', icon: <CreditCard size={18} /> });
+  if (pm.mercadoPago?.enabled) options.push({ value: 'Mercado Pago', label: 'Mercado Pago', icon: <Wallet size={18} />, link: pm.mercadoPago.link });
+  if (pm.bankTransfer?.enabled) options.push({ value: 'Transferencia bancaria', label: 'Transferencia bancaria', icon: <Landmark size={18} /> });
+  return options;
+}
 
 function getSavedProfile(uid) {
   try {
@@ -50,6 +57,15 @@ export default function CheckoutPage() {
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const [errors, setErrors] = useState({});
+
+  const paymentOptions = getPaymentOptions(restaurant);
+
+  useEffect(() => {
+    if (paymentOptions.length === 0) return;
+    if (!paymentOptions.some(o => o.value === form.payment)) {
+      setForm(f => ({ ...f, payment: paymentOptions[0].value }));
+    }
+  }, [restaurant]);
 
   const acceptingOrders = restaurant?.acceptingOrders !== false;
 
@@ -136,6 +152,11 @@ export default function CheckoutPage() {
 
     saveProfile(user?.uid, { name: form.name, phone: form.phone, address: form.address });
     window.open(waLink, '_blank');
+
+    if (form.payment === 'Mercado Pago') {
+      const mpLink = paymentOptions.find(o => o.value === 'Mercado Pago')?.link;
+      if (mpLink) window.open(mpLink, '_blank');
+    }
 
     try {
       const orderHeaders = restaurant?.slug ? { 'X-Tenant': restaurant.slug } : {};
@@ -260,7 +281,7 @@ export default function CheckoutPage() {
         <section className="checkout-section">
           <h2 className="checkout-section-title">Método de pago</h2>
           <div className="payment-options">
-            {PAYMENT_METHODS.map(({ value, label, icon }) => (
+            {paymentOptions.map(({ value, label, icon }) => (
               <label key={value} className={`payment-option ${form.payment === value ? 'payment-option--selected' : ''}`}>
                 <input
                   type="radio"

@@ -693,6 +693,24 @@ body {
 .restaurant-left  { display: flex; flex-direction: column; gap: 20px; }
 .restaurant-right { display: flex; flex-direction: column; gap: 20px; }
 
+.restaurant-save-bar {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 16px;
+  margin-top: 4px;
+  padding-top: 20px;
+  border-top: 1px solid var(--border);
+}
+.restaurant-save-bar .form-error,
+.restaurant-save-bar .form-success {
+  margin: 0;
+}
+.restaurant-save-bar .btn-primary {
+  min-width: 160px;
+}
+
 .section-card {
   background: var(--card-bg);
   border: 1px solid var(--border);
@@ -703,6 +721,21 @@ body {
   gap: 14px;
 }
 .section-card-title { font-size: 0.78rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-muted); }
+
+.payment-method-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.9rem;
+  color: var(--text);
+  cursor: pointer;
+}
+.payment-method-row input[type="checkbox"] {
+  width: 17px;
+  height: 17px;
+  accent-color: var(--accent);
+  cursor: pointer;
+}
 
 /* Logo upload */
 .logo-upload-area {

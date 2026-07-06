@@ -11,6 +11,22 @@ const dailyMenuSchema = new mongoose.Schema({
   active:      { type: Boolean, default: true },
 }, { _id: true });
 
+const BANKS = ['BBVA', 'BROU', 'Citi Bank', 'Itaú', 'Mi Dinero', 'Prex', 'Santander', 'Scotiabank'];
+
+const paymentMethodsSchema = new mongoose.Schema({
+  cash:        { type: Boolean, default: true },
+  card:        { type: Boolean, default: false },
+  mercadoPago: {
+    enabled: { type: Boolean, default: false },
+    link:    { type: String, default: '' },
+  },
+  bankTransfer: {
+    enabled:       { type: Boolean, default: false },
+    bank:          { type: String, enum: [...BANKS, ''], default: '' },
+    accountNumber: { type: String, default: '' },
+  },
+}, { _id: false });
+
 const restaurantSchema = new mongoose.Schema({
   name: { type: String, required: true },
   slug: { type: String, required: true, unique: true },
@@ -23,6 +39,7 @@ const restaurantSchema = new mongoose.Schema({
   acceptingOrders: { type: Boolean, default: true },
   categories: { type: [String], default: ['General'] },
   dailyMenus: { type: [dailyMenuSchema], default: [] },
+  paymentMethods: { type: paymentMethodsSchema, default: () => ({}) },
 }, { timestamps: true });
 
 module.exports = mongoose.model('Restaurant', restaurantSchema);
