@@ -85,9 +85,9 @@ function Hero() {
 
 function HowItWorks() {
   const steps = [
-    { n: '1', title: 'Escribinos por WhatsApp', desc: 'Mandanos un mensaje contándonos tu negocio: nombre del local, rubro y qué productos querés ofrecer. Te respondemos enseguida.' },
-    { n: '2', title: 'Armamos tu carta digital', desc: 'En menos de 24 hs tenés tu catálogo online listo para compartir con tus clientes.' },
-    { n: '3', title: 'Recibís pedidos por WhatsApp', desc: 'Tus clientes eligen del menú y te envían el pedido directo a tu WhatsApp.' },
+    { n: '1', title: 'Creá tu cuenta', desc: 'Registrá tu local en minutos: nombre, rubro y datos de contacto. Sin instalaciones ni pasos técnicos.' },
+    { n: '2', title: 'Armá tu carta digital', desc: 'Cargá tus productos, precios, fotos y variantes desde el panel, a tu ritmo y cuando quieras.' },
+    { n: '3', title: 'Recibís pedidos por WhatsApp', desc: 'Compartís el link de tu carta y tus clientes te envían el pedido directo a tu WhatsApp.' },
     { n: '4', title: 'Gestionás desde el panel', desc: 'Actualizás estados, notificás al cliente y llevás el historial desde el backoffice.' },
   ];
   return (
