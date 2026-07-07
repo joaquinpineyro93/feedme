@@ -4,6 +4,7 @@ import {
   Pencil, Zap, Globe, Lock, RefreshCw,
   Check, ArrowRight, Smartphone
 } from 'lucide-react';
+import { Analytics } from '@vercel/analytics/react';
 import SplashScreen from './components/SplashScreen';
 
 const DEMO_URL = 'https://tu-local.pedi.uy/';
@@ -288,6 +289,7 @@ export default function App() {
       <DemoStrip />
       <Contact />
       <Footer />
+      <Analytics />
     </>
   );
 }
