@@ -1,5 +1,5 @@
-import { UtensilsCrossed } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
+import Bubble from './Bubble';
 
 export default function LoginModal({ onClose }) {
   const { loginWithGoogle } = useAuth();
@@ -17,7 +17,7 @@ export default function LoginModal({ onClose }) {
     <div className="login-modal-backdrop" onClick={onClose}>
       <div className="login-modal" onClick={e => e.stopPropagation()}>
         <div className="login-modal-icon">
-          <UtensilsCrossed size={32} color="#F59E0B" />
+          <Bubble size={32} />
         </div>
         <h2 className="login-modal-title">Iniciá sesión para continuar</h2>
         <p className="login-modal-sub">

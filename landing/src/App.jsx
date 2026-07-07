@@ -1,24 +1,42 @@
 import { useState, useCallback } from 'react';
 import {
-  UtensilsCrossed, ShoppingCart, MessageCircle, BarChart2,
+  ShoppingCart, MessageCircle, BarChart2,
   Pencil, Zap, Globe, Lock, RefreshCw,
   Check, ArrowRight, Smartphone
 } from 'lucide-react';
 import SplashScreen from './components/SplashScreen';
 
-const DEMO_URL = 'http://localhost:5173';
+const DEMO_URL = 'https://umari.pedi.uy/';
 const WA_LINK = "https://wa.me/59899566170?text=Hola%2C%20deseo%20tener%20mi%20local%20en%20pedi.uy";
+
+/* Brand ------------------------------------------------------------------ */
+function Bubble({ size = 34 }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 64 64" fill="none" aria-hidden="true">
+      <path d="M12 10h40a6 6 0 0 1 6 6v24a6 6 0 0 1-6 6H30l-12 10v-10h-6a6 6 0 0 1-6-6V16a6 6 0 0 1 6-6Z" fill="#F2A31A" />
+      <path d="M28 20v24M28 20c-3 0-5 2-5 6s2 5 5 5M36 20v9c0 2 1 3 3 3s3-1 3-3v-9M39 20v24" stroke="#141210" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
+function Wordmark({ size = '26px', color = 'var(--dark)' }) {
+  return (
+    <span className="wordmark" style={{ fontSize: size, color }}>
+      ped<span className="wordmark-i">&#305;<span className="wordmark-acc" /></span>
+    </span>
+  );
+}
 
 function Nav() {
   return (
     <nav className="nav">
       <a href="#" className="nav-brand">
-        <div className="nav-brand-icon">
-          <UtensilsCrossed size={18} color="#111827" />
-        </div>
-        <span className="nav-brand-name">Pedi</span>
+        <Bubble size={32} />
+        <Wordmark size="26px" />
       </a>
-      <a href={WA_LINK} target="_blank" rel="noreferrer" className="nav-cta">Contactar</a>
+      <a href={WA_LINK} target="_blank" rel="noreferrer" className="nav-cta">
+        <MessageCircle size={16} /> Contactar
+      </a>
     </nav>
   );
 }
@@ -26,55 +44,61 @@ function Nav() {
 function Hero() {
   return (
     <section className="hero">
+      <div className="hero-inner">
+        <div className="hero-copy">
+          <div className="hero-badge"><Zap size={13} /> Tu menú en la web</div>
+          <h1 className="hero-title">
+            Pedidos online para tu negocio, <span>sin comisiones, sin app.</span>
+          </h1>
+          <p className="hero-sub">
+            Creá tu catálogo digital y tus clientes te piden directo por WhatsApp.
+            Vos lo gestionás todo desde un panel simple.
+          </p>
+          <div className="hero-actions">
+            <a href={WA_LINK} target="_blank" rel="noreferrer" className="btn-primary">
+              <MessageCircle size={19} /> Quiero mi local
+            </a>
+            <a href="#demo" className="btn-ghost">
+              <Smartphone size={18} /> Ver demo
+            </a>
+          </div>
+          <div className="hero-trust">
+            <span><Check size={16} /> Sin comisiones por venta</span>
+            <span><Check size={16} /> Sin apps que instalar</span>
+            <span><Check size={16} /> Listo en minutos</span>
+          </div>
+        </div>
 
-      <div className="hero-badge">
-        <Zap size={12} /> Tu menú en la web
-      </div>
-      <h1 className="hero-title">
-        Pedidos online para tu negocio<br />
-        <span>sin comisiones, sin app</span>
-      </h1>
-      <p className="hero-sub">
-        Crea tu catalogo digital y tus clientes te piden directo por WhatsApp.
-        Vos lo gestionás todo desde un panel simple.
-      </p>
-      <div className="hero-actions">
-        <a href={WA_LINK} target="_blank" rel="noreferrer" className="btn-primary">
-          <MessageCircle size={18} /> Contactar
-        </a>
-      </div>
-
-      <div className="hero-visual">
-        <div className="phone-mockup">
-          <div className="phone-notch"><div className="phone-notch-pill" /></div>
-          <div className="phone-screen">
-            <div className="phone-header">
-              <div className="phone-header-logo">
-                <UtensilsCrossed size={13} color="#111827" />
-              </div>
-              <div>
-                <div className="phone-header-name">La Pizzería</div>
-                <div className="phone-header-sub">Las mejores pizzas</div>
-              </div>
-            </div>
-            <div className="phone-product-card">
-              <img
-                className="phone-product-img"
-                src="https://images.unsplash.com/photo-1604382354936-07c5d9983bd3?w=400&h=200&fit=crop"
-                alt="Pizza"
-              />
-              <div className="phone-product-body">
-                <div className="phone-product-name">Pizza Clásica</div>
-                <div className="phone-product-desc">Salsa, mozzarella, albahaca fresca</div>
-                <div className="phone-product-footer">
-                  <span className="phone-product-price">$1.500</span>
-                  <span className="phone-add-btn">+ Agregar</span>
+        <div className="hero-visual">
+          <div className="phone-mockup">
+            <div className="phone-notch"><div className="phone-notch-pill" /></div>
+            <div className="phone-screen">
+              <div className="phone-header">
+                <div className="phone-header-logo">🍕</div>
+                <div>
+                  <div className="phone-header-name">La Pizzería</div>
+                  <div className="phone-header-sub">Las mejores pizzas</div>
                 </div>
               </div>
-            </div>
-            <div className="phone-cart-bar">
-              <span className="phone-cart-text">Ver pedido · 2 items</span>
-              <span className="phone-cart-text">$3.200 →</span>
+              <div className="phone-product-card">
+                <img
+                  className="phone-product-img"
+                  src="https://images.unsplash.com/photo-1604382354936-07c5d9983bd3?w=400&h=200&fit=crop"
+                  alt="Pizza"
+                />
+                <div className="phone-product-body">
+                  <div className="phone-product-name">Pizza Clásica</div>
+                  <div className="phone-product-desc">Salsa, mozzarella, albahaca fresca</div>
+                  <div className="phone-product-footer">
+                    <span className="phone-product-price">$1.500</span>
+                    <span className="phone-add-btn">+ Agregar</span>
+                  </div>
+                </div>
+              </div>
+              <div className="phone-cart-bar">
+                <span className="phone-cart-text">Ver pedido · 2 items</span>
+                <span className="phone-cart-text">$3.200 →</span>
+              </div>
             </div>
           </div>
         </div>
@@ -83,18 +107,30 @@ function Hero() {
   );
 }
 
+function Marquee() {
+  const items = 'Sin comisiones • Pedidos por WhatsApp • Carta digital propia • Panel de gestión • Sin apps • Historial de ventas • ';
+  return (
+    <div className="marquee">
+      <div className="marquee-track">
+        <span>{items.repeat(2)}</span>
+        <span>{items.repeat(2)}</span>
+      </div>
+    </div>
+  );
+}
+
 function HowItWorks() {
   const steps = [
-    { n: '1', title: 'Creá tu cuenta', desc: 'Registrá tu local en minutos: nombre, rubro y datos de contacto. Sin instalaciones ni pasos técnicos.' },
-    { n: '2', title: 'Armá tu carta digital', desc: 'Cargá tus productos, precios, fotos y variantes desde el panel, a tu ritmo y cuando quieras.' },
+    { n: '1', title: 'Creá tu cuenta', desc: 'Registrá tu local en minutos: nombre, rubro y datos de contacto. Sin pasos técnicos.' },
+    { n: '2', title: 'Armá tu carta digital', desc: 'Cargá tus productos, precios, fotos y variantes desde el panel, a tu ritmo.' },
     { n: '3', title: 'Recibís pedidos por WhatsApp', desc: 'Compartís el link de tu carta y tus clientes te envían el pedido directo a tu WhatsApp.' },
     { n: '4', title: 'Gestionás desde el panel', desc: 'Actualizás estados, notificás al cliente y llevás el historial desde el backoffice.' },
   ];
   return (
-    <section className="section">
+    <section className="section" id="como">
       <div className="section-center">
         <p className="section-label">Cómo funciona</p>
-        <h2 className="section-title">Tené tu menú en la web<br />en simples pasos</h2>
+        <h2 className="section-title">Tené tu menú en la web en simples pasos</h2>
         <p className="section-sub">Sin instalaciones, sin aprendizaje técnico. Solo compartís el link y empezás a recibir pedidos.</p>
       </div>
       <div className="steps-grid">
@@ -126,7 +162,7 @@ function Features() {
       <section className="section">
         <div className="section-center">
           <p className="section-label">Funcionalidades</p>
-          <h2 className="section-title">Todo lo que necesitás<br />para vender online</h2>
+          <h2 className="section-title">Todo lo que necesitás para vender online</h2>
           <p className="section-sub">Sin complicaciones técnicas. Listo para usar desde el día uno.</p>
         </div>
         <div className="features-grid">
@@ -148,15 +184,13 @@ function HowToReceive() {
     <section className="section">
       <div className="section-center">
         <p className="section-label">Flexibilidad</p>
-        <h2 className="section-title">Elegí cómo recibir<br />tus pedidos</h2>
+        <h2 className="section-title">Elegí cómo recibir tus pedidos</h2>
         <p className="section-sub">Dos modos según el tamaño y ritmo de tu negocio.</p>
       </div>
       <div className="receive-grid">
         <div className="receive-card">
           <div className="receive-card-header">
-            <div className="receive-icon">
-              <MessageCircle size={24} />
-            </div>
+            <div className="receive-icon"><MessageCircle size={24} /></div>
             <div>
               <div className="receive-title">Solo WhatsApp</div>
               <div className="receive-tag">Simple</div>
@@ -174,9 +208,7 @@ function HowToReceive() {
 
         <div className="receive-card receive-card--featured">
           <div className="receive-card-header">
-            <div className="receive-icon receive-icon--accent">
-              <BarChart2 size={24} />
-            </div>
+            <div className="receive-icon receive-icon--accent"><BarChart2 size={24} /></div>
             <div>
               <div className="receive-title">WhatsApp + Panel de gestión</div>
               <div className="receive-tag receive-tag--accent">Completo</div>
@@ -188,7 +220,7 @@ function HowToReceive() {
           <ul className="receive-list">
             <li><Check size={14} /> Todo lo del modo Simple</li>
             <li><Check size={14} /> Panel con estado de cada pedido</li>
-            <li><Check size={14} /> Notificación automática al cliente cuando está listo</li>
+            <li><Check size={14} /> Notificación automática al cliente</li>
             <li><Check size={14} /> Historial con filtros por fecha</li>
             <li><Check size={14} /> Estadísticas de ventas</li>
           </ul>
@@ -200,76 +232,28 @@ function HowToReceive() {
 
 function DemoStrip() {
   return (
-    <div className="demo-strip">
+    <div className="demo-strip" id="demo">
       <h2>Probá la experiencia en vivo</h2>
       <p>Así va a ver tu menú digital cualquier cliente desde su celular.</p>
-      <a href={DEMO_URL} target="_blank" rel="noreferrer" className="btn-primary">
-        <Smartphone size={18} /> Abrir Demo <ArrowRight size={16} />
+      <a href={DEMO_URL} target="_blank" rel="noreferrer" className="btn-dark">
+        <Smartphone size={18} /> Abrir demo <ArrowRight size={16} />
       </a>
     </div>
   );
 }
 
-function Pricing() {
-  const free = [
-    'Hasta 20 productos',
-    'Panel de pedidos',
-    'Gestión de categorías',
-    'Historial básico (7 días)',
-  ];
-  const pro = [
-    'Productos ilimitados',
-    'Historial completo',
-    'Notificaciones al cliente',
-    'Logo y datos del local',
-    'Soporte prioritario',
-    'Onboarding personalizado',
-  ];
-  return (
-    <section className="section section-center">
-      <p className="section-label">Precios</p>
-      <h2 className="section-title">Simple y transparente</h2>
-      <p className="section-sub" style={{ margin: '0 auto' }}>
-        Empezá gratis y escalá cuando estés listo.
-      </p>
-      <div className="pricing-grid">
-        <div className="plan-card">
-          <div className="plan-name">Gratis</div>
-          <div className="plan-price">$0 <span>/ mes</span></div>
-          <p className="plan-desc">Para probar la plataforma sin compromiso.</p>
-          <ul className="plan-features">
-            {free.map(f => <li key={f}><Check size={15} />{f}</li>)}
-          </ul>
-          <a href={WA_LINK} target="_blank" rel="noreferrer" className="plan-cta outline">Contactar</a>
-        </div>
-        <div className="plan-card featured">
-          <div className="plan-badge">Más popular</div>
-          <div className="plan-name">Pro</div>
-          <div className="plan-price">$25 <span>USD / mes</span></div>
-          <p className="plan-desc">Todo lo que necesita un negocio en crecimiento.</p>
-          <ul className="plan-features">
-            {pro.map(f => <li key={f}><Check size={15} />{f}</li>)}
-          </ul>
-          <a href={WA_LINK} target="_blank" rel="noreferrer" className="plan-cta">Contactar</a>
-        </div>
-      </div>
-    </section>
-  );
-}
-
 function Contact() {
   return (
-    <div id="contacto" className="contact-bg">
+    <div id="contacto">
       <section className="section">
         <div className="contact-wrap">
           <p className="section-label">Contacto</p>
           <h2 className="section-title">Quiero mi local</h2>
-          <a href={WA_LINK} target="_blank" rel="noreferrer" className="form-submit" style={{ display: 'inline-flex', textDecoration: 'none', marginTop: 24 }}>
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" style={{ flexShrink: 0 }}>
-              <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/>
-              <path d="M12 0C5.373 0 0 5.373 0 12c0 2.123.554 4.117 1.528 5.847L.057 23.882l6.19-1.449A11.945 11.945 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.8 9.8 0 01-5.001-1.367l-.358-.214-3.724.872.931-3.613-.234-.372A9.79 9.79 0 012.182 12C2.182 6.57 6.57 2.182 12 2.182S21.818 6.57 21.818 12 17.43 21.818 12 21.818z"/>
-            </svg>
-            Contactar
+          <p className="section-sub" style={{ margin: '0 auto 1.5rem' }}>
+            Escribinos por WhatsApp y en minutos tenés tu carta digital funcionando.
+          </p>
+          <a href={WA_LINK} target="_blank" rel="noreferrer" className="btn-primary" style={{ marginTop: 8 }}>
+            <MessageCircle size={20} /> Contactar por WhatsApp
           </a>
         </div>
       </section>
@@ -281,10 +265,7 @@ function Footer() {
   return (
     <footer className="footer">
       <div className="footer-brand">
-        <div className="footer-brand-icon">
-          <UtensilsCrossed size={14} color="#111827" />
-        </div>
-        <span className="footer-brand-name">Pedi</span>
+        <Wordmark size="24px" color="#fff" />
       </div>
       <p className="footer-tagline">Tu menú en la web &mdash; &copy; {new Date().getFullYear()} Pedi</p>
     </footer>
@@ -300,10 +281,11 @@ export default function App() {
       {splash && <SplashScreen onDone={onSplashDone} />}
       <Nav />
       <Hero />
+      <Marquee />
       <HowItWorks />
       <Features />
       <HowToReceive />
-
+      <DemoStrip />
       <Contact />
       <Footer />
     </>

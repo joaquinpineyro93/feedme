@@ -1,6 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ShoppingCart, X, Trash2 } from 'lucide-react';
+import { X, Trash2 } from 'lucide-react';
 import { useCart } from '../context/CartContext';
 
 function variantSummary(product, selectedVariants) {
@@ -22,6 +22,11 @@ export default function CartDrawer({ isOpen, onClose }) {
     navigate('/checkout');
   };
 
+  const handleGoToMenu = () => {
+    onClose();
+    navigate('/');
+  };
+
   return (
     <>
       <div className={`drawer-backdrop ${isOpen ? 'drawer-backdrop--visible' : ''}`} onClick={onClose} />
@@ -35,9 +40,8 @@ export default function CartDrawer({ isOpen, onClose }) {
         <div className="cart-drawer-body">
           {items.length === 0 ? (
             <div className="cart-empty">
-              <ShoppingCart size={40} strokeWidth={1.5} className="cart-empty-icon" />
-              <p>Tu carrito está vacío</p>
-              <p className="cart-empty-sub">Agregá productos del menú</p>
+              <p>Todavía no agregaste nada de la carta.</p>
+              <button className="btn-dark-cta" style={{ marginTop: 20 }} onClick={handleGoToMenu}>Ver la carta</button>
             </div>
           ) : (
             <ul className="cart-items">

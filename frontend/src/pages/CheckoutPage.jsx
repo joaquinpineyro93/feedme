@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { ShoppingCart, CheckCircle, ArrowLeft, Banknote, CreditCard, Wallet, Landmark, MessageCircle } from 'lucide-react';
+import { ShoppingCart, Check, ArrowLeft, Banknote, CreditCard, Wallet, Landmark, MessageCircle } from 'lucide-react';
 import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
 import PhoneInput from '../components/PhoneInput';
@@ -97,11 +97,11 @@ export default function CheckoutPage() {
     return (
       <div className="app-container">
         <div className="success-screen">
-          <CheckCircle size={64} strokeWidth={1.5} className="success-icon" />
+          <div className="success-icon-badge"><Check size={30} /></div>
           <h2 className="success-title">¡Pedido enviado!</h2>
-          <p className="success-sub">Revisá tu WhatsApp para confirmar el pedido con el local.</p>
-          <button className="btn-checkout" onClick={() => { clearCart(); navigate('/'); }}>
-            Volver al menú
+          <p className="success-sub">Tu pedido fue enviado por WhatsApp a {restaurant?.name || 'el local'}. En breve te confirman los tiempos.</p>
+          <button className="btn-dark-cta" onClick={() => { clearCart(); navigate('/'); }}>
+            Volver a la carta
           </button>
         </div>
       </div>
