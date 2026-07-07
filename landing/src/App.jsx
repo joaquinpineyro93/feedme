@@ -67,6 +67,7 @@ function Hero() {
             <span><Check size={16} /> Sin comisiones por venta</span>
             <span><Check size={16} /> Sin apps que instalar</span>
             <span><Check size={16} /> Listo en minutos</span>
+            <span><Check size={16} /> Solicitá tu prueba por un mes sin costo</span>
           </div>
         </div>
 
