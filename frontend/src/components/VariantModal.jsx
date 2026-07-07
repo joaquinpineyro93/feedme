@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { createPortal } from 'react-dom';
 import { X } from 'lucide-react';
 
 export default function VariantModal({ product, onConfirm, onClose }) {
@@ -21,7 +22,7 @@ export default function VariantModal({ product, onConfirm, onClose }) {
     onConfirm(selected, product.price + totalAdd);
   };
 
-  return (
+  return createPortal(
     <div className="variant-overlay" onClick={onClose}>
       <div className="variant-sheet" onClick={e => e.stopPropagation()}>
         <div className="variant-sheet-header">
@@ -29,7 +30,12 @@ export default function VariantModal({ product, onConfirm, onClose }) {
             <h3 className="variant-sheet-title">{product.name}</h3>
             {product.description && <p className="variant-sheet-desc">{product.description}</p>}
           </div>
-          <button className="variant-sheet-close" onClick={onClose}><X size={20} /></button>
+          <div className="variant-sheet-header-right">
+            <button className="variant-sheet-close" onClick={onClose}><X size={20} /></button>
+            <span className="variant-total">
+              ${(product.price + totalAdd).toLocaleString('es-AR')}
+            </span>
+          </div>
         </div>
 
         <div className="variant-sheet-body">
@@ -58,14 +64,12 @@ export default function VariantModal({ product, onConfirm, onClose }) {
         </div>
 
         <div className="variant-sheet-footer">
-          <span className="variant-total">
-            ${(product.price + totalAdd).toLocaleString('es-AR')}
-          </span>
           <button className="btn-add-variant" onClick={handleConfirm} disabled={!canConfirm}>
             Agregar al pedido
           </button>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }

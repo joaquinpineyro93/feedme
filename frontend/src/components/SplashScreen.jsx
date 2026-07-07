@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import BubbleInverted from './BubbleInverted';
 
 export default function SplashScreen({ onDone }) {
   const [fading, setFading] = useState(false);
@@ -13,7 +14,7 @@ export default function SplashScreen({ onDone }) {
     <div className={`splash-screen${fading ? ' splash-screen--fade' : ''}`}>
       <div className="splash-logo-wrap">
         <div className="splash-icon">
-          <img src="/favicon.svg" alt="Pedi" width="72" height="72" />
+          <BubbleInverted size={72} />
         </div>
         <span className="splash-wordmark">
           ped<span className="wordmark-i">&#305;<span className="wordmark-acc" /></span>

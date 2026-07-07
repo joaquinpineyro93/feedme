@@ -1095,7 +1095,8 @@ body {
 
 .payment-option--selected {
   border-color: var(--accent);
-  background: rgba(242,163,26,.08);
+  background: var(--accent);
+  color: var(--header-bg);
 }
 
 .payment-icon {
@@ -1566,7 +1567,7 @@ body {
   color: var(--text-secondary); transition: all .15s;
 }
 .delivery-btn--active {
-  border-color: var(--header-bg); background: var(--header-bg); color: var(--accent);
+  border-color: var(--accent); background: var(--accent); color: var(--header-bg);
 }
 
 .product-image-wrap--fallback {
@@ -1752,6 +1753,13 @@ body {
   padding: 0;
   flex-shrink: 0;
 }
+.variant-sheet-header-right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 8px;
+  flex-shrink: 0;
+}
 .variant-sheet-body {
   overflow-y: auto;
   padding: 16px 20px;
@@ -1802,7 +1810,10 @@ body {
 }
 .variant-option--selected {
   border-color: var(--accent, #F59E0B);
-  background: #FFFBEB;
+  background: var(--accent, #F59E0B);
+}
+.variant-option--selected input[type="radio"] {
+  accent-color: var(--header-bg, #141210);
 }
 .variant-option-label {
   flex: 1;
@@ -1829,7 +1840,7 @@ body {
 }
 .btn-add-variant {
   flex: 1;
-  background: var(--accent, #F59E0B);
+  background: var(--green, #1FA463);
   color: #fff;
   border: none;
   border-radius: 10px;
