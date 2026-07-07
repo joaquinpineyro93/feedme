@@ -683,6 +683,57 @@ body {
 }
 .total-cell { font-weight: 700; white-space: nowrap; }
 
+/* Stats page */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 16px;
+  margin-bottom: 20px;
+}
+.stats-card {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 18px 20px;
+}
+.stats-card-title {
+  font-size: 0.95rem;
+  font-weight: 700;
+  margin-bottom: 14px;
+}
+.stats-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.stats-list-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--border);
+}
+.stats-list-row:last-child { border-bottom: none; padding-bottom: 0; }
+.stats-list-rank {
+  width: 24px;
+  height: 24px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  background: var(--bg);
+  color: var(--text-muted);
+  font-size: 0.75rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.stats-list-info { display: flex; flex-direction: column; flex: 1; min-width: 0; }
+.stats-list-name { font-weight: 600; font-size: 0.88rem; }
+.stats-list-sub { font-size: 0.75rem; color: var(--text-muted); }
+.stats-list-metric { display: flex; flex-direction: column; align-items: flex-end; flex-shrink: 0; }
+.stats-list-value { font-weight: 700; font-size: 0.88rem; white-space: nowrap; }
+.stats-chart-card { padding: 20px; }
+
 /* Restaurant page */
 .restaurant-grid {
   display: grid;

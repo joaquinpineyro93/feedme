@@ -45,6 +45,65 @@ router.get('/orders/history', async (req, res) => {
   }
 });
 
+router.get('/orders/stats', async (req, res) => {
+  try {
+    const { restaurantId } = req.user;
+    const { from, to } = req.query;
+    if (!from || !to) return res.status(400).json({ error: 'from y to son requeridos' });
+    const start = new Date(from);
+    const end = new Date(to);
+    end.setDate(end.getDate() + 1);
+    const filter = { createdAt: { $gte: start, $lt: end } };
+    if (restaurantId) filter.restaurantId = restaurantId;
+    const orders = await Order.find(filter).sort({ createdAt: 1 });
+    const validOrders = orders.filter(o => o.status !== 'cancelled');
+
+    // Top clients by purchase count (name + phone identifies a customer)
+    const clientMap = new Map();
+    for (const o of validOrders) {
+      const key = `${o.customerName.trim().toLowerCase()}|${o.customerPhone.trim()}`;
+      const entry = clientMap.get(key) || { name: o.customerName, phone: o.customerPhone, orders: 0, total: 0 };
+      entry.orders += 1;
+      entry.total += o.total;
+      clientMap.set(key, entry);
+    }
+    const topClients = [...clientMap.values()].sort((a, b) => b.orders - a.orders).slice(0, 10);
+
+    // Top products by quantity sold
+    const productMap = new Map();
+    for (const o of validOrders) {
+      for (const item of o.items) {
+        const entry = productMap.get(item.name) || { name: item.name, quantity: 0, revenue: 0 };
+        entry.quantity += item.quantity;
+        entry.revenue += item.price * item.quantity;
+        productMap.set(item.name, entry);
+      }
+    }
+    const topProducts = [...productMap.values()].sort((a, b) => b.quantity - a.quantity).slice(0, 3);
+
+    // Daily timeline: order count + revenue per day
+    const dayMap = new Map();
+    for (const o of validOrders) {
+      const day = o.createdAt.toISOString().slice(0, 10);
+      const entry = dayMap.get(day) || { date: day, orders: 0, revenue: 0 };
+      entry.orders += 1;
+      entry.revenue += o.total;
+      dayMap.set(day, entry);
+    }
+    const timeline = [...dayMap.values()].sort((a, b) => a.date.localeCompare(b.date));
+
+    res.json({
+      totalOrders: validOrders.length,
+      totalRevenue: validOrders.reduce((sum, o) => sum + o.total, 0),
+      topClients,
+      topProducts,
+      timeline,
+    });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 router.patch('/orders/:id/status', async (req, res) => {
   try {
     const { status } = req.body;
