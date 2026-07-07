@@ -1,15 +1,13 @@
 import React, { useState } from 'react';
 import { useCart } from '../context/CartContext';
 import VariantModal from './VariantModal';
-
-const FALLBACK_IMG = '/favicon.svg';
+import Bubble from './Bubble';
 
 export default function ProductCard({ product, dailyBadge }) {
   const { items, addItem, removeItem, restaurant } = useCart();
   const [showVariants, setShowVariants] = useState(false);
 
   const hasVariants = product.variants?.length > 0;
-  const fallback = restaurant?.logo || FALLBACK_IMG;
   const acceptingOrders = restaurant?.acceptingOrders !== false;
 
   // Para productos sin variantes: item único
@@ -40,12 +38,12 @@ export default function ProductCard({ product, dailyBadge }) {
       <div className={`product-card ${dailyBadge ? 'product-card--daily' : ''}`}>
         {!product.image ? (
           <div className="product-image-wrap product-image-wrap--fallback">
-            <img src={fallback} alt={product.name} className="product-fallback-logo" onError={e => { e.target.src = FALLBACK_IMG; }} />
+            <Bubble size={28} />
             <span className="product-fallback-label">SIN IMAGEN</span>
           </div>
         ) : (
           <div className="product-image-wrap">
-            <img src={product.image} alt={product.name} className="product-image" loading="lazy" onError={e => { e.target.src = fallback; }} />
+            <img src={product.image} alt={product.name} className="product-image" loading="lazy" />
           </div>
         )}
         <div className="product-info">

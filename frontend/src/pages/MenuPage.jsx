@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import axios from 'axios';
-import { Search, X, ShoppingCart, AlertTriangle, Star, RefreshCw, Calendar, ArrowUpDown, Check } from 'lucide-react';
+import { Search, X, AlertTriangle, Star, RefreshCw, Calendar, ArrowUpDown, Check } from 'lucide-react';
 import Header from '../components/Header';
 import ProductCard from '../components/ProductCard';
 import CartDrawer from '../components/CartDrawer';
@@ -48,7 +48,7 @@ export default function MenuPage() {
   const [sortOrder, setSortOrder] = useState('');
   const [sortOpen, setSortOpen] = useState(false);
   const sortRef = useRef(null);
-  const { totalItems, setRestaurant: setCartRestaurant } = useCart();
+  const { totalItems, totalPrice, setRestaurant: setCartRestaurant } = useCart();
 
   useEffect(() => {
     async function fetchData() {
@@ -246,14 +246,24 @@ export default function MenuPage() {
             </div>
           </section>
         ))}
+
+        {!loading && !error && (
+          <div className="powered-by-footer">
+            <a href="https://pedi.uy" target="_blank" rel="noopener noreferrer">
+              <span className="powered-by-label">Powered by</span>
+              <span className="powered-by-wordmark">
+                ped<span className="wordmark-i">&#305;<span className="wordmark-acc" /></span>
+              </span>
+            </a>
+          </div>
+        )}
       </main>
       </div>{/* /content-card */}
 
       {totalItems > 0 && (
         <button className="floating-cart" onClick={() => setCartOpen(true)}>
-          <ShoppingCart size={20} className="floating-cart-icon" />
           <span className="floating-cart-text">Ver pedido</span>
-          <span className="floating-cart-badge">{totalItems}</span>
+          <span className="floating-cart-summary">{totalItems} · ${totalPrice.toLocaleString('es-AR')}</span>
         </button>
       )}
 

@@ -1,6 +1,7 @@
 import React from 'react';
-import { UtensilsCrossed, LogOut, UserCircle, Clock } from 'lucide-react';
+import { LogOut, UserCircle, Clock } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
+import Bubble from './Bubble';
 
 const DAY_NAMES = ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'];
 
@@ -76,7 +77,7 @@ export default function Header({ restaurant }) {
                 referrerPolicy="no-referrer"
               />
             ) : (
-              <UserCircle size={32} color="#F59E0B" />
+              <UserCircle size={32} color="#F2A31A" />
             )}
             <button className="header-logout" onClick={logout} title="Cerrar sesión">
               <LogOut size={15} />
@@ -87,8 +88,16 @@ export default function Header({ restaurant }) {
 
       {/* Bottom-left: name + description + badges */}
       <div className="header-hero-content">
-        {!logo && <UtensilsCrossed size={40} color="#F59E0B" strokeWidth={1.5} style={{ marginBottom: 8 }} />}
-        <h1 className="header-hero-title">{name}</h1>
+        <div className="header-hero-name-row">
+          {logo ? (
+            <div className="header-hero-avatar header-hero-avatar--img">
+              <img src={logo} alt={name} className="header-hero-avatar-img" />
+            </div>
+          ) : (
+            <Bubble size={38} />
+          )}
+          <h1 className="header-hero-title">{name}</h1>
+        </div>
         {description && <p className="header-hero-sub">{description}</p>}
         <div className="header-hero-badges">
           {!acceptingOrders && <span className="hero-badge hero-badge--closed">No acepta pedidos en el momento</span>}

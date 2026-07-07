@@ -15,7 +15,9 @@ export default function SplashScreen({ onDone }) {
         <div className="splash-icon">
           <img src="/favicon.svg" alt="Pedi" width="72" height="72" />
         </div>
-        <span className="splash-wordmark">PEDI</span>
+        <span className="splash-wordmark">
+          ped<span className="wordmark-i">&#305;<span className="wordmark-acc" /></span>
+        </span>
         <div className="splash-progress-track">
           <div className="splash-progress-bar" />
         </div>
