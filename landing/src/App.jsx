@@ -122,7 +122,7 @@ function Marquee() {
 
 function HowItWorks() {
   const steps = [
-    { n: '1', title: 'Creá tu cuenta', desc: 'Registrá tu local en minutos: nombre, rubro y datos de contacto. Sin pasos técnicos.' },
+    { n: '1', title: 'Nos escribís', desc: 'Nos contás sobre tu negocio por WhatsApp y te ayudamos a dar de alta tu cuenta. Sin pasos técnicos.' },
     { n: '2', title: 'Armá tu carta digital', desc: 'Cargá tus productos, precios, fotos y variantes desde el panel, a tu ritmo.' },
     { n: '3', title: 'Recibís pedidos por WhatsApp', desc: 'Compartís el link de tu carta y tus clientes te envían el pedido directo a tu WhatsApp.' },
     { n: '4', title: 'Gestionás desde el panel', desc: 'Actualizás estados, notificás al cliente y llevás el historial desde el backoffice.' },
@@ -153,7 +153,7 @@ function Features() {
     { icon: <MessageCircle size={20} />, title: 'Pedidos por WhatsApp', desc: 'El mensaje llega listo, formateado, directo a tu número.' },
     { icon: <BarChart2 size={20} />, title: 'Panel de gestión', desc: 'Seguí cada pedido, marcá estados y notificá al cliente.' },
     { icon: <Pencil size={20} />, title: 'Editor de productos', desc: 'Agregá, editá o desactivás productos en cualquier momento.' },
-    { icon: <RefreshCw size={20} />, title: 'Historial de pedidos', desc: 'Filtrá por fechas y analizá las ventas de tu negocio.' },
+    { icon: <RefreshCw size={20} />, title: 'Historial de pedidos', desc: 'Filtrá por fechas y mirá el resumen de ventas de tu negocio.' },
     { icon: <Lock size={20} />, title: 'Acceso seguro', desc: 'Panel protegido con usuario y contraseña para tu equipo.' },
     { icon: <ShoppingCart size={20} />, title: 'Carrito inteligente', desc: 'Tus clientes arman su pedido con cantidades y variantes.' },
     { icon: <Zap size={20} />, title: 'Sin comisiones', desc: 'Pagás solo la suscripción. Cada venta es 100% tuya.' },
@@ -221,9 +221,9 @@ function HowToReceive() {
           <ul className="receive-list">
             <li><Check size={14} /> Todo lo del modo Simple</li>
             <li><Check size={14} /> Panel con estado de cada pedido</li>
-            <li><Check size={14} /> Notificación automática al cliente</li>
+            <li><Check size={14} /> Marcás el pedido como listo y avisás al cliente</li>
             <li><Check size={14} /> Historial con filtros por fecha</li>
-            <li><Check size={14} /> Estadísticas de ventas</li>
+            <li><Check size={14} /> Resumen de ventas</li>
           </ul>
         </div>
       </div>
