@@ -6,7 +6,7 @@ import {
 } from 'lucide-react';
 import SplashScreen from './components/SplashScreen';
 
-const DEMO_URL = 'https://umari.pedi.uy/';
+const DEMO_URL = 'https://tu-local.pedi.uy/';
 const WA_LINK = "https://wa.me/59899566170?text=Hola%2C%20deseo%20tener%20mi%20local%20en%20pedi.uy";
 
 /* Brand ------------------------------------------------------------------ */
