@@ -8,7 +8,7 @@ import { Analytics } from '@vercel/analytics/react';
 import SplashScreen from './components/SplashScreen';
 
 const DEMO_URL = 'https://tu-local.pedi.uy/';
-const WA_LINK = "https://wa.me/59899566170?text=Hola%2C%20deseo%20tener%20mi%20local%20en%20pedi.uy";
+const WA_LINK = "https://wa.me/59899566170?text=%C2%A1Hola%21%20Quiero%20probar%20Ped%C3%AD%20para%20mi%20negocio.";
 
 /* Brand ------------------------------------------------------------------ */
 function Bubble({ size = 34 }) {
@@ -269,7 +269,7 @@ function Footer() {
       <div className="footer-brand">
         <Wordmark size="24px" color="#fff" />
       </div>
-      <p className="footer-tagline">Tu menú en la web &mdash; &copy; {new Date().getFullYear()} Pedi</p>
+      <p className="footer-tagline">Pedidos online para tu negocio &mdash; &copy; {new Date().getFullYear()} Pedi</p>
     </footer>
   );
 }
