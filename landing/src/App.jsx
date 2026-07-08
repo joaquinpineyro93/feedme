@@ -51,8 +51,9 @@ function Hero() {
             Pedidos online para tu negocio, <span>sin comisiones, sin app.</span>
           </h1>
           <p className="hero-sub">
-            Creá tu catálogo digital y tus clientes te piden directo por WhatsApp.
-            Vos lo gestionás todo desde un panel simple.
+            Tus clientes piden desde tu carta digital y el pedido te llega directo
+            por WhatsApp. Vos gestionás todo (pedidos, productos y estadísticas)
+            desde un panel simple.
           </p>
           <div className="hero-actions">
             <a href={WA_LINK} target="_blank" rel="noreferrer" className="btn-primary">
