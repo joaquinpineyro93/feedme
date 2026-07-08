@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { BrowserRouter, Routes, Route, NavLink, Navigate, useLocation } from 'react-router-dom';
-import { UtensilsCrossed } from 'lucide-react';
 import { AuthProvider, useAuth } from './context/AuthContext';
+import Bubble from './components/Bubble';
 import LoginPage from './pages/LoginPage';
 import OrdersPage from './pages/OrdersPage';
 import ProductsPage from './pages/ProductsPage';
@@ -53,7 +53,7 @@ function AdminLayout() {
         <div className="sidebar-logo">
           {logo
             ? <img src={logo} alt={name} className="sidebar-logo-img" />
-            : <UtensilsCrossed size={28} color="#fff" className="sidebar-logo-icon" />
+            : <Bubble size={28} />
           }
           {loading
             ? <span className="sidebar-logo-text-skeleton" />
