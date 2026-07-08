@@ -17,3 +17,8 @@ export function daysAgo(n) {
   d.setDate(d.getDate() - n);
   return dateStringInAppTz(d);
 }
+
+// Primer día del mes corriente ("YYYY-MM-DD") según el calendario en GMT-3.
+export function startOfMonth() {
+  return `${today().slice(0, 7)}-01`;
+}

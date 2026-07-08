@@ -3,7 +3,7 @@ import {
   ResponsiveContainer, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend,
 } from 'recharts';
 import api from '../api';
-import { today, daysAgo } from '../utils/date';
+import { today, startOfMonth } from '../utils/date';
 
 function formatDay(iso) {
   const [, m, d] = iso.split('-');
@@ -13,7 +13,7 @@ function formatDay(iso) {
 export default function StatsPage() {
   const [stats, setStats] = useState(null);
   const [loading, setLoading] = useState(false);
-  const [from, setFrom] = useState(daysAgo(30));
+  const [from, setFrom] = useState(startOfMonth());
   const [to, setTo] = useState(today());
   const [error, setError] = useState('');
 

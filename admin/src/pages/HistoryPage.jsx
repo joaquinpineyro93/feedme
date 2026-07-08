@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import * as XLSX from 'xlsx';
 import { Download, X } from 'lucide-react';
 import api from '../api';
-import { today, daysAgo } from '../utils/date';
+import { today, startOfMonth } from '../utils/date';
 
 const STATUS_LABELS = {
   pending: 'Pendiente',
@@ -23,7 +23,7 @@ const STATUS_COLORS = {
 export default function HistoryPage() {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [from, setFrom] = useState(daysAgo(7));
+  const [from, setFrom] = useState(startOfMonth());
   const [to, setTo] = useState(today());
   const [error, setError] = useState('');
 
