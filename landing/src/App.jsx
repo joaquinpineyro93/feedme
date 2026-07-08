@@ -47,7 +47,6 @@ function Hero() {
     <section className="hero">
       <div className="hero-inner">
         <div className="hero-copy">
-          <div className="hero-badge"><Zap size={13} /> Tu menú en la web</div>
           <h1 className="hero-title">
             Pedidos online para tu negocio, <span>sin comisiones, sin app.</span>
           </h1>
@@ -75,31 +74,39 @@ function Hero() {
           <div className="phone-mockup">
             <div className="phone-notch"><div className="phone-notch-pill" /></div>
             <div className="phone-screen">
-              <div className="phone-header">
-                <div className="phone-header-logo">🍕</div>
-                <div>
-                  <div className="phone-header-name">La Pizzería</div>
-                  <div className="phone-header-sub">Las mejores pizzas</div>
+              <div
+                className="phone-hero"
+                style={{ backgroundImage: 'url(https://images.unsplash.com/photo-1604382354936-07c5d9983bd3?w=400&h=300&fit=crop)' }}
+              >
+                <div className="phone-hero-overlay" />
+                <div className="phone-hero-content">
+                  <div className="phone-hero-name-row">
+                    <div className="phone-hero-avatar">🍕</div>
+                    <span className="phone-hero-title">La Pizzería</span>
+                  </div>
+                  <span className="phone-hero-badge">Abierto</span>
                 </div>
               </div>
-              <div className="phone-product-card">
-                <img
-                  className="phone-product-img"
-                  src="https://images.unsplash.com/photo-1604382354936-07c5d9983bd3?w=400&h=200&fit=crop"
-                  alt="Pizza"
-                />
-                <div className="phone-product-body">
-                  <div className="phone-product-name">Pizza Clásica</div>
-                  <div className="phone-product-desc">Salsa, mozzarella, albahaca fresca</div>
-                  <div className="phone-product-footer">
-                    <span className="phone-product-price">$1.500</span>
-                    <span className="phone-add-btn">+ Agregar</span>
+              <div className="phone-sheet">
+                <div className="phone-product-card">
+                  <img
+                    className="phone-product-img"
+                    src="https://images.unsplash.com/photo-1604382354936-07c5d9983bd3?w=200&h=200&fit=crop"
+                    alt="Pizza"
+                  />
+                  <div className="phone-product-body">
+                    <div className="phone-product-name">Pizza Clásica</div>
+                    <div className="phone-product-desc">Salsa, mozzarella, albahaca fresca</div>
+                    <div className="phone-product-footer">
+                      <span className="phone-product-price">$1.500</span>
+                      <span className="phone-add-btn">+</span>
+                    </div>
                   </div>
                 </div>
               </div>
               <div className="phone-cart-bar">
-                <span className="phone-cart-text">Ver pedido · 2 items</span>
-                <span className="phone-cart-text">$3.200 →</span>
+                <span className="phone-cart-text">Ver pedido</span>
+                <span className="phone-cart-summary">2 · $3.200</span>
               </div>
             </div>
           </div>

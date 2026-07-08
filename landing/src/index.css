@@ -214,33 +214,82 @@ a { color: var(--accent-dark); }
 @keyframes floaty { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
 .phone-notch { height: 26px; background: #141210; display: flex; align-items: center; justify-content: center; }
 .phone-notch-pill { width: 78px; height: 7px; background: #2c2820; border-radius: 100px; }
-.phone-screen { background: #F6F2EA; }
-.phone-header { background: #141210; padding: 13px 14px; display: flex; align-items: center; gap: 9px; }
-.phone-header-logo {
-  width: 30px; height: 30px;
+.phone-screen { background: #FAF6EF; }
+
+.phone-hero {
+  position: relative;
+  height: 150px;
+  background: #141210 center/cover no-repeat;
+  display: flex;
+  align-items: flex-end;
+  overflow: hidden;
+}
+.phone-hero-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(20,18,16,0) 38%, rgba(20,18,16,.82) 82%, rgba(20,18,16,.9) 100%);
+}
+.phone-hero-content {
+  position: relative;
+  z-index: 1;
+  padding: 0 12px 12px;
+  width: 100%;
+  text-align: left;
+}
+.phone-hero-name-row {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  margin-bottom: 6px;
+}
+.phone-hero-avatar {
+  width: 24px; height: 24px;
   background: var(--accent);
-  border-radius: 8px;
+  border-radius: 7px;
   display: flex; align-items: center; justify-content: center;
-  font-size: 15px;
+  font-size: 12px;
+  flex-shrink: 0;
 }
-.phone-header-name { font-size: 0.78rem; font-weight: 700; color: #fff; font-family: 'Bricolage Grotesque', sans-serif; }
-.phone-header-sub { font-size: 0.62rem; color: #a39c8f; }
+.phone-hero-title { font-size: 0.85rem; font-weight: 800; color: #fff; font-family: 'Bricolage Grotesque', sans-serif; letter-spacing: -0.01em; }
+.phone-hero-badge {
+  display: inline-flex; align-items: center; gap: 5px;
+  background: rgba(31,164,99,.9); color: #fff;
+  font-size: 0.62rem; font-weight: 700;
+  padding: 4px 9px; border-radius: 100px;
+}
+.phone-hero-badge::before { content: ''; width: 5px; height: 5px; border-radius: 50%; background: #fff; }
+
+.phone-sheet {
+  background: #FAF6EF;
+  border-radius: 18px 18px 0 0;
+  margin-top: -14px;
+  position: relative;
+  z-index: 2;
+  padding: 14px 12px;
+}
 .phone-product-card {
-  background: white; margin: 10px; border-radius: 13px; overflow: hidden;
-  box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+  background: white; border: 1px solid #EFE6D6; border-radius: 13px; overflow: hidden;
+  display: flex; align-items: center; gap: 10px; padding: 9px;
 }
-.phone-product-img { width: 100%; height: 96px; object-fit: cover; display: block; }
-.phone-product-body { padding: 10px 12px; }
+.phone-product-img { width: 58px; height: 58px; flex-shrink: 0; object-fit: cover; display: block; border-radius: 10px; }
+.phone-product-body { flex: 1; min-width: 0; }
 .phone-product-name { font-size: 0.82rem; font-weight: 700; color: #1A1613; }
 .phone-product-desc { font-size: 0.68rem; color: #8a857a; margin-top: 1px; }
-.phone-product-footer { display: flex; align-items: center; justify-content: space-between; margin-top: 9px; }
-.phone-product-price { font-size: 0.95rem; font-weight: 800; color: var(--accent-dark); font-family: 'Bricolage Grotesque', sans-serif; }
-.phone-add-btn { background: var(--accent); color: #141210; font-size: 0.68rem; font-weight: 700; padding: 5px 11px; border-radius: 8px; }
+.phone-product-footer { display: flex; align-items: center; justify-content: space-between; margin-top: 8px; }
+.phone-product-price { font-size: 0.9rem; font-weight: 800; color: var(--accent-dark); font-family: 'Bricolage Grotesque', sans-serif; }
+.phone-add-btn {
+  width: 24px; height: 24px;
+  background: var(--wa); color: #fff;
+  font-size: 0.85rem; font-weight: 700;
+  border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+}
 .phone-cart-bar {
-  background: var(--wa); margin: 0 10px 12px; border-radius: 11px;
+  background: #141210; margin: 8px 12px 22px; border-radius: 12px;
   padding: 11px 14px; display: flex; align-items: center; justify-content: space-between;
 }
-.phone-cart-text { font-size: 0.72rem; font-weight: 700; color: #fff; }
+.phone-cart-text { font-size: 0.72rem; font-weight: 700; color: #FAF6EF; }
+.phone-cart-summary { font-size: 0.78rem; font-weight: 800; color: #FAF6EF; font-family: 'Bricolage Grotesque', sans-serif; }
 
 /* Marquee ---------------------------------------------------------------- */
 .marquee {
