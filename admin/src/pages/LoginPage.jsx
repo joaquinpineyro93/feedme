@@ -2,6 +2,9 @@ import { useState } from 'react';
 import { UtensilsCrossed } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 
+// Registro deshabilitado temporalmente: el único alta de local es vía WhatsApp.
+const REGISTER_ENABLED = false;
+
 export default function LoginPage() {
   const { login, register } = useAuth();
   const [mode, setMode] = useState('login');
@@ -19,8 +22,8 @@ export default function LoginPage() {
     setError('');
     setLoading(true);
     try {
-      if (mode === 'login') await login(username, password);
-      else await register(username, password);
+      if (mode === 'register' && REGISTER_ENABLED) await register(username, password);
+      else await login(username, password);
     } catch (err) {
       setError(err.response?.data?.error || 'Error inesperado');
     } finally {
@@ -50,20 +53,22 @@ export default function LoginPage() {
             <h2 className="login-form-title">Bienvenido</h2>
             <p className="login-form-sub">Ingresá con tu usuario y contraseña</p>
 
-            <div className="login-tabs">
-              <button
-                className={`login-tab ${mode === 'login' ? 'active' : ''}`}
-                onClick={() => { setMode('login'); setError(''); }}
-              >
-                Iniciar sesión
-              </button>
-              <button
-                className={`login-tab ${mode === 'register' ? 'active' : ''}`}
-                onClick={() => { setMode('register'); setError(''); }}
-              >
-                Registrarse
-              </button>
-            </div>
+            {REGISTER_ENABLED && (
+              <div className="login-tabs">
+                <button
+                  className={`login-tab ${mode === 'login' ? 'active' : ''}`}
+                  onClick={() => { setMode('login'); setError(''); }}
+                >
+                  Iniciar sesión
+                </button>
+                <button
+                  className={`login-tab ${mode === 'register' ? 'active' : ''}`}
+                  onClick={() => { setMode('register'); setError(''); }}
+                >
+                  Registrarse
+                </button>
+              </div>
+            )}
 
             <form className="login-form" onSubmit={handleSubmit}>
               <div className="form-group">
@@ -91,7 +96,7 @@ export default function LoginPage() {
               </div>
               {error && <p className="form-error">{error}</p>}
               <button className="btn-primary" type="submit" disabled={loading}>
-                {loading ? 'Cargando...' : mode === 'login' ? 'Entrar' : 'Crear cuenta'}
+                {loading ? 'Cargando...' : mode === 'register' && REGISTER_ENABLED ? 'Crear cuenta' : 'Entrar'}
               </button>
             </form>
           </div>
