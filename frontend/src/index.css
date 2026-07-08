@@ -1103,6 +1103,46 @@ body {
   font-size: 20px;
 }
 
+.bank-details-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  margin-top: 10px;
+  padding: 12px 14px;
+  border: 1.5px dashed var(--border);
+  border-radius: var(--radius-md);
+  background: var(--bg);
+  color: var(--text-primary);
+  font-size: 13.5px;
+  font-weight: 600;
+  cursor: pointer;
+  text-align: left;
+  transition: border-color 0.15s, background 0.15s;
+}
+
+.bank-details-row:hover {
+  border-color: var(--accent);
+  background: #fff;
+}
+
+.bank-details-row svg {
+  flex-shrink: 0;
+  color: var(--text-secondary);
+}
+
+.bank-details-text {
+  flex: 1;
+  min-width: 0;
+}
+
+.bank-details-copied {
+  flex-shrink: 0;
+  color: var(--green);
+  font-size: 12px;
+  font-weight: 700;
+}
+
 .form-error {
   color: var(--danger);
   font-size: 13px;

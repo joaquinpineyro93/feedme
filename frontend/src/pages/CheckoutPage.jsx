@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { ShoppingCart, Check, ArrowLeft, Banknote, CreditCard, Wallet, Landmark, MessageCircle } from 'lucide-react';
+import { ShoppingCart, Check, ArrowLeft, Banknote, CreditCard, Wallet, Landmark, MessageCircle, Copy } from 'lucide-react';
 import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
 import PhoneInput from '../components/PhoneInput';
@@ -57,6 +57,7 @@ export default function CheckoutPage() {
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const [errors, setErrors] = useState({});
+  const [copied, setCopied] = useState(false);
 
   const paymentOptions = getPaymentOptions(restaurant);
 
@@ -184,6 +185,21 @@ export default function CheckoutPage() {
     setSuccess(true);
   };
 
+  const bankTransfer = restaurant?.paymentMethods?.bankTransfer;
+  const bankDetailsText = bankTransfer?.enabled
+    ? `${bankTransfer.bank} - Cuenta: ${bankTransfer.accountNumber}`
+    : '';
+
+  const handleCopyBankDetails = async () => {
+    try {
+      await navigator.clipboard.writeText(bankDetailsText);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch (err) {
+      console.error('Error al copiar:', err.message);
+    }
+  };
+
   return (
     <div className="app-container">
       <div className="checkout-header">
@@ -295,6 +311,18 @@ export default function CheckoutPage() {
               </label>
             ))}
           </div>
+
+          {form.payment === 'Transferencia bancaria' && bankTransfer?.enabled && (
+            <button
+              type="button"
+              className="bank-details-row"
+              onClick={handleCopyBankDetails}
+            >
+              <span className="bank-details-text">{bankDetailsText}</span>
+              <Copy size={15} />
+              {copied && <span className="bank-details-copied">¡Copiado!</span>}
+            </button>
+          )}
         </section>
 
         <button className="btn-whatsapp" type="submit" disabled={loading}>
