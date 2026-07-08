@@ -235,7 +235,7 @@ function OrderCard({ order, onStatusChange, onDelete, bankTransfer }) {
     if (notify) {
       const msg = buildReadyMessage(order);
       const phone = order.customerPhone.replace(/\D/g, '');
-      window.open(`https://wa.me/${phone}?text=${encodeURIComponent(msg)}`, '_blank');
+      window.open(`https://api.whatsapp.com/send?phone=${phone}&text=${encodeURIComponent(msg)}`, '_blank');
     }
     onStatusChange(order._id, 'ready');
   };
@@ -288,7 +288,7 @@ function OrderCard({ order, onStatusChange, onDelete, bankTransfer }) {
               )}
               {order.customerPhone && bankTransfer?.enabled && bankTransfer?.bank && (
                 <a
-                  href={`https://wa.me/${order.customerPhone.replace(/\D/g, '')}?text=${encodeURIComponent(buildBankTransferMessage(order, bankTransfer))}`}
+                  href={`https://api.whatsapp.com/send?phone=${order.customerPhone.replace(/\D/g, '')}&text=${encodeURIComponent(buildBankTransferMessage(order, bankTransfer))}`}
                   target="_blank"
                   rel="noreferrer"
                   title="Enviar datos de transferencia"

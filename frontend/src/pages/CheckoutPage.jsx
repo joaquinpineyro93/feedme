@@ -5,6 +5,7 @@ import { ShoppingCart, Check, ArrowLeft, Banknote, CreditCard, Wallet, Landmark,
 import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
 import PhoneInput from '../components/PhoneInput';
+import { playSuccessSound } from '../utils/sound';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001';
 
@@ -87,6 +88,9 @@ export default function CheckoutPage() {
 
   const acceptingOrders = restaurant?.acceptingOrders !== false;
 
+  const isFormValid = form.name.trim() && form.phone.trim() &&
+    (form.deliveryType !== 'envio' || form.address.trim());
+
   if (items.length === 0 && !success) {
     return (
       <div className="app-container">
@@ -166,7 +170,7 @@ export default function CheckoutPage() {
 
     const waMessage = buildWhatsAppMessage();
     const phone = (restaurant?.phone || '').replace(/\D/g, '');
-    const waLink = `https://wa.me/${phone}?text=${encodeURIComponent(waMessage)}`;
+    const waLink = `https://api.whatsapp.com/send?phone=${phone}&text=${encodeURIComponent(waMessage)}`;
 
     saveProfile(user?.uid, { name: form.name, phone: form.phone, address: form.address });
     window.open(waLink, '_blank');
@@ -200,6 +204,7 @@ export default function CheckoutPage() {
 
     setLoading(false);
     setSuccess(true);
+    setTimeout(playSuccessSound, 500);
   };
 
   const bankTransfer = restaurant?.paymentMethods?.bankTransfer;
@@ -342,7 +347,7 @@ export default function CheckoutPage() {
           )}
         </section>
 
-        <button className="btn-whatsapp" type="submit" disabled={loading}>
+        <button className="btn-whatsapp" type="submit" disabled={loading || !isFormValid}>
           {loading ? 'Enviando...' : <><MessageCircle size={18} /> Confirmar pedido</>}
         </button>
       </form>

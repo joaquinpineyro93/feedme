@@ -1290,14 +1290,18 @@ body {
 }
 
 .btn-dark-cta {
-  background: var(--header-bg);
-  color: var(--accent);
+  background: var(--accent);
+  color: #fff;
   border: none;
   border-radius: var(--radius-md);
   padding: 12px 22px;
   font-size: 14px;
   font-weight: 700;
   cursor: pointer;
+}
+
+.btn-dark-cta:hover {
+  background: var(--accent-dark);
 }
 
 /* =============================================
