@@ -20,6 +20,14 @@ function getPaymentOptions(restaurant) {
   return options;
 }
 
+function getFulfillmentOptions(restaurant) {
+  const fm = restaurant?.fulfillmentMethods;
+  const options = [];
+  if (fm?.delivery !== false) options.push({ value: 'envio', label: 'Envío' });
+  if (fm?.pickup !== false) options.push({ value: 'levantar', label: 'A levantar' });
+  return options;
+}
+
 function getSavedProfile(uid) {
   try {
     const key = uid ? `pedi_profile_${uid}` : 'pedi_profile_guest';
@@ -60,11 +68,20 @@ export default function CheckoutPage() {
   const [copied, setCopied] = useState(false);
 
   const paymentOptions = getPaymentOptions(restaurant);
+  const fulfillmentOptions = getFulfillmentOptions(restaurant);
 
   useEffect(() => {
     if (paymentOptions.length === 0) return;
     if (!paymentOptions.some(o => o.value === form.payment)) {
       setForm(f => ({ ...f, payment: paymentOptions[0].value }));
+    }
+  }, [restaurant]);
+
+  useEffect(() => {
+    if (fulfillmentOptions.length === 0) return;
+    if (!fulfillmentOptions.some(o => o.value === form.deliveryType)) {
+      const next = fulfillmentOptions[0].value;
+      setForm(f => ({ ...f, deliveryType: next, address: next === 'envio' ? f.address : '' }));
     }
   }, [restaurant]);
 
@@ -260,23 +277,23 @@ export default function CheckoutPage() {
           </label>
 
           {/* Delivery type */}
-          <div className="form-label" style={{ marginBottom: 0 }}>Tipo de entrega</div>
-          <div className="delivery-toggle">
-            <button
-              type="button"
-              className={`delivery-btn ${form.deliveryType === 'envio' ? 'delivery-btn--active' : ''}`}
-              onClick={() => setForm(f => ({ ...f, deliveryType: 'envio' }))}
-            >
-              Envío
-            </button>
-            <button
-              type="button"
-              className={`delivery-btn ${form.deliveryType === 'levantar' ? 'delivery-btn--active' : ''}`}
-              onClick={() => setForm(f => ({ ...f, deliveryType: 'levantar', address: '' }))}
-            >
-              A levantar
-            </button>
-          </div>
+          {fulfillmentOptions.length > 1 && (
+            <>
+              <div className="form-label" style={{ marginBottom: 0 }}>Tipo de entrega</div>
+              <div className="delivery-toggle">
+                {fulfillmentOptions.map(({ value, label }) => (
+                  <button
+                    key={value}
+                    type="button"
+                    className={`delivery-btn ${form.deliveryType === value ? 'delivery-btn--active' : ''}`}
+                    onClick={() => setForm(f => ({ ...f, deliveryType: value, address: value === 'envio' ? f.address : '' }))}
+                  >
+                    {label}
+                  </button>
+                ))}
+              </div>
+            </>
+          )}
 
           {form.deliveryType === 'envio' && (
             <label className="form-label">

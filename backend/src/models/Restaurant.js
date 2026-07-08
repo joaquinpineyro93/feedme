@@ -27,6 +27,11 @@ const paymentMethodsSchema = new mongoose.Schema({
   },
 }, { _id: false });
 
+const fulfillmentMethodsSchema = new mongoose.Schema({
+  delivery: { type: Boolean, default: true },
+  pickup:   { type: Boolean, default: true },
+}, { _id: false });
+
 const restaurantSchema = new mongoose.Schema({
   name: { type: String, required: true },
   slug: { type: String, required: true, unique: true },
@@ -40,6 +45,7 @@ const restaurantSchema = new mongoose.Schema({
   categories: { type: [String], default: ['General'] },
   dailyMenus: { type: [dailyMenuSchema], default: [] },
   paymentMethods: { type: paymentMethodsSchema, default: () => ({}) },
+  fulfillmentMethods: { type: fulfillmentMethodsSchema, default: () => ({}) },
 }, { timestamps: true });
 
 module.exports = mongoose.model('Restaurant', restaurantSchema);

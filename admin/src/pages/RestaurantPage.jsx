@@ -14,10 +14,13 @@ const DEFAULT_PAYMENT_METHODS = {
   bankTransfer: { enabled: false, bank: '', accountNumber: '' },
 };
 
+const DEFAULT_FULFILLMENT_METHODS = { delivery: true, pickup: true };
+
 export default function RestaurantPage() {
   const [form, setForm] = useState({
     name: '', phone: '', address: '', openHours: '', description: '', logo: '',
     paymentMethods: DEFAULT_PAYMENT_METHODS,
+    fulfillmentMethods: DEFAULT_FULFILLMENT_METHODS,
   });
   const [loading, setLoading]   = useState(true);
   const [saving, setSaving]     = useState(false);
@@ -47,6 +50,10 @@ export default function RestaurantPage() {
               bank:          data.paymentMethods?.bankTransfer?.bank          ?? '',
               accountNumber: data.paymentMethods?.bankTransfer?.accountNumber ?? '',
             },
+          },
+          fulfillmentMethods: {
+            delivery: data.fulfillmentMethods?.delivery ?? true,
+            pickup:   data.fulfillmentMethods?.pickup   ?? true,
           },
         });
       })
@@ -79,6 +86,11 @@ export default function RestaurantPage() {
     }
     if (bankTransfer.enabled && (!bankTransfer.bank || !bankTransfer.accountNumber.trim())) {
       setError('Seleccioná el banco e ingresá el número de cuenta para la transferencia');
+      return;
+    }
+    const { delivery, pickup } = form.fulfillmentMethods;
+    if (!delivery && !pickup) {
+      setError('Activá al menos un método de envío');
       return;
     }
     setError('');
@@ -321,6 +333,35 @@ export default function RestaurantPage() {
                 </div>
               </>
             )}
+          </div>
+
+          {/* Métodos de envío */}
+          <div className="section-card">
+            <h3 className="section-card-title">Métodos de envío/take away disponibles</h3>
+
+            <label className="payment-method-row">
+              <input
+                type="checkbox"
+                checked={form.fulfillmentMethods.delivery}
+                onChange={(e) => setForm((f) => ({
+                  ...f,
+                  fulfillmentMethods: { ...f.fulfillmentMethods, delivery: e.target.checked },
+                }))}
+              />
+              <span>Envío</span>
+            </label>
+
+            <label className="payment-method-row">
+              <input
+                type="checkbox"
+                checked={form.fulfillmentMethods.pickup}
+                onChange={(e) => setForm((f) => ({
+                  ...f,
+                  fulfillmentMethods: { ...f.fulfillmentMethods, pickup: e.target.checked },
+                }))}
+              />
+              <span>Retiro (take away)</span>
+            </label>
           </div>
         </div>
 
