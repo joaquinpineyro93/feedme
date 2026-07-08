@@ -1,11 +1,14 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import axios from 'axios';
+import { toZonedTime, format } from 'date-fns-tz';
 import { Search, X, AlertTriangle, Star, RefreshCw, Calendar, ArrowUpDown, Check } from 'lucide-react';
 import Header from '../components/Header';
 import ProductCard from '../components/ProductCard';
 import CartDrawer from '../components/CartDrawer';
 import SplashScreen from '../components/SplashScreen';
 import { useCart } from '../context/CartContext';
+
+const APP_TIMEZONE = 'America/Montevideo';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001';
 
@@ -21,9 +24,9 @@ const MOCK_PRODUCTS = [
 ];
 
 function getTodayMenus(products = []) {
-  const now = new Date();
-  const todayDow  = now.getDay();
-  const todayDate = now.toISOString().slice(0, 10);
+  const nowInAppTz = toZonedTime(new Date(), APP_TIMEZONE);
+  const todayDow  = nowInAppTz.getDay();
+  const todayDate = format(nowInAppTz, 'yyyy-MM-dd', { timeZone: APP_TIMEZONE });
 
   return products.filter(p => {
     if (!p.isDaily || !p.dailyActive) return false;

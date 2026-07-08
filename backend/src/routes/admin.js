@@ -3,6 +3,7 @@ const auth = require('../middleware/auth');
 const Order = require('../models/Order');
 const Product = require('../models/Product');
 const Restaurant = require('../models/Restaurant');
+const { startOfDayInAppTz, toDateStringInAppTz } = require('../utils/dateHelpers');
 
 // All admin routes require auth
 router.use(auth);
@@ -16,9 +17,9 @@ router.get('/orders', async (req, res) => {
     if (restaurantId) filter.restaurantId = restaurantId;
     if (status && status !== 'all') filter.status = status;
     if (date) {
-      const start = new Date(date);
-      const end = new Date(date);
-      end.setDate(end.getDate() + 1);
+      const start = startOfDayInAppTz(date);
+      const end = new Date(start);
+      end.setUTCDate(end.getUTCDate() + 1);
       filter.createdAt = { $gte: start, $lt: end };
     }
     const orders = await Order.find(filter).sort({ createdAt: -1 });
@@ -33,9 +34,9 @@ router.get('/orders/history', async (req, res) => {
     const { restaurantId } = req.user;
     const { from, to } = req.query;
     if (!from || !to) return res.status(400).json({ error: 'from y to son requeridos' });
-    const start = new Date(from);
-    const end = new Date(to);
-    end.setDate(end.getDate() + 1);
+    const start = startOfDayInAppTz(from);
+    const end = startOfDayInAppTz(to);
+    end.setUTCDate(end.getUTCDate() + 1);
     const filter = { createdAt: { $gte: start, $lt: end } };
     if (restaurantId) filter.restaurantId = restaurantId;
     const orders = await Order.find(filter).sort({ createdAt: -1 });
@@ -50,9 +51,9 @@ router.get('/orders/stats', async (req, res) => {
     const { restaurantId } = req.user;
     const { from, to } = req.query;
     if (!from || !to) return res.status(400).json({ error: 'from y to son requeridos' });
-    const start = new Date(from);
-    const end = new Date(to);
-    end.setDate(end.getDate() + 1);
+    const start = startOfDayInAppTz(from);
+    const end = startOfDayInAppTz(to);
+    end.setUTCDate(end.getUTCDate() + 1);
     const filter = { createdAt: { $gte: start, $lt: end } };
     if (restaurantId) filter.restaurantId = restaurantId;
     const orders = await Order.find(filter).sort({ createdAt: 1 });
@@ -84,7 +85,7 @@ router.get('/orders/stats', async (req, res) => {
     // Daily timeline: order count + revenue per day
     const dayMap = new Map();
     for (const o of validOrders) {
-      const day = o.createdAt.toISOString().slice(0, 10);
+      const day = toDateStringInAppTz(o.createdAt);
       const entry = dayMap.get(day) || { date: day, orders: 0, revenue: 0 };
       entry.orders += 1;
       entry.revenue += o.total;

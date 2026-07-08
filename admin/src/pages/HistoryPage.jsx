@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import * as XLSX from 'xlsx';
 import { Download, X } from 'lucide-react';
 import api from '../api';
+import { today, daysAgo } from '../utils/date';
 
 const STATUS_LABELS = {
   pending: 'Pendiente',
@@ -18,15 +19,6 @@ const STATUS_COLORS = {
   delivered: '#6B7280',
   cancelled: '#EF4444',
 };
-
-function today() {
-  return new Date().toISOString().slice(0, 10);
-}
-function daysAgo(n) {
-  const d = new Date();
-  d.setDate(d.getDate() - n);
-  return d.toISOString().slice(0, 10);
-}
 
 export default function HistoryPage() {
   const [orders, setOrders] = useState([]);

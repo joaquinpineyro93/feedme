@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { Plus, Pencil, Trash2, Calendar, RefreshCw, ImagePlus } from 'lucide-react';
 import api from '../api';
+import { today as todayStr } from '../utils/date';
 
 const DAYS = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'];
 
@@ -8,10 +9,6 @@ const EMPTY = {
   name: '', description: '', price: '', image: '',
   recurrence: 'weekly', dayOfWeek: 1, date: '', active: true,
 };
-
-function todayStr() {
-  return new Date().toISOString().slice(0, 10);
-}
 
 export default function DailyMenuPage() {
   const [menus, setMenus]       = useState([]);

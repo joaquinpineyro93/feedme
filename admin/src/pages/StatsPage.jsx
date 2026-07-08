@@ -3,15 +3,8 @@ import {
   ResponsiveContainer, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend,
 } from 'recharts';
 import api from '../api';
+import { today, daysAgo } from '../utils/date';
 
-function today() {
-  return new Date().toISOString().slice(0, 10);
-}
-function daysAgo(n) {
-  const d = new Date();
-  d.setDate(d.getDate() - n);
-  return d.toISOString().slice(0, 10);
-}
 function formatDay(iso) {
   const [, m, d] = iso.split('-');
   return `${d}/${m}`;

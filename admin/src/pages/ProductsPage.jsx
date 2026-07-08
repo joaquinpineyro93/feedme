@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { Pencil, X, Check, Trash2, ImagePlus, Upload, Download, Star } from 'lucide-react';
 import * as XLSX from 'xlsx';
 import api from '../api';
+import { today as todayStr } from '../utils/date';
 
 const EMPTY_PRODUCT = {
   name: '', description: '', price: '', category: '', image: '', available: true,
@@ -13,7 +14,6 @@ const EMPTY_GROUP  = { name: '', required: false, options: [] };
 const EMPTY_OPTION = { label: '', priceAdd: 0 };
 
 const DAYS = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'];
-function todayStr() { return new Date().toISOString().slice(0, 10); }
 
 export default function ProductsPage() {
   const newProductRef  = useRef(null);
