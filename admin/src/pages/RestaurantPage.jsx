@@ -1,8 +1,9 @@
 import { useState, useEffect, useRef } from 'react';
-import { UtensilsCrossed, MapPin, Clock } from 'lucide-react';
+import { MapPin, Clock } from 'lucide-react';
 import api from '../api';
 import OpenHoursPicker from '../components/OpenHoursPicker';
 import PhoneInput from '../components/PhoneInput';
+import Bubble from '../components/Bubble';
 
 const BANKS = ['BBVA', 'BROU', 'Citi Bank', 'Itaú', 'Mi Dinero', 'Prex', 'Santander', 'Scotiabank'];
 
@@ -142,7 +143,7 @@ export default function RestaurantPage() {
             <div className="restaurant-preview-card">
               {form.logo
                 ? <img src={form.logo} alt="logo" className="preview-logo-img" />
-                : <div className="preview-logo-placeholder"><UtensilsCrossed size={32} /></div>
+                : <div className="preview-logo-placeholder"><Bubble size={32} /></div>
               }
               <div className="preview-info">
                 <strong>{form.name || 'Nombre del local'}</strong>

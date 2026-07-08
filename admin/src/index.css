@@ -1,12 +1,12 @@
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 :root {
-  --accent: #F59E0B;
-  --accent-dark: #D97706;
+  --accent: #F2A31A;
+  --accent-dark: #D98A00;
   --bg: #F3F4F6;
-  --sidebar-bg: #1F2937;
+  --sidebar-bg: #141210;
   --sidebar-text: #D1D5DB;
-  --sidebar-active: #F59E0B;
+  --sidebar-active: #F2A31A;
   --card-bg: #FFFFFF;
   --text: #111827;
   --text-muted: #6B7280;
@@ -19,10 +19,12 @@
   --radius-sm: 8px;
   --radius-md: 12px;
   --shadow-lg: 0 8px 32px rgba(0,0,0,0.15);
+  --font-display: 'Bricolage Grotesque', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-body: 'Hanken Grotesk', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
 }
 
 body {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-family: var(--font-body);
   background: var(--bg);
   color: var(--text);
   font-size: 14px;
@@ -43,6 +45,27 @@ body {
   position: fixed;
   top: 0; left: 0; bottom: 0;
 }
+/* Brand wordmark ---------------------------------------------------------- */
+.wordmark {
+  font-family: var(--font-display);
+  font-weight: 800;
+  letter-spacing: -0.04em;
+  line-height: 1;
+  display: inline-flex;
+}
+.wordmark-i { position: relative; }
+.wordmark-acc {
+  position: absolute;
+  top: 0.07em;
+  left: 0.04em;
+  width: 0.30em;
+  height: 0.11em;
+  background: var(--accent);
+  border-radius: 0.06em;
+  transform: rotate(-28deg);
+  transform-origin: left center;
+}
+
 .sidebar-logo {
   display: flex;
   align-items: center;
@@ -59,7 +82,7 @@ body {
   border: 2px solid rgba(255,255,255,0.2);
   flex-shrink: 0;
 }
-.sidebar-logo-text { color: #fff; font-weight: 700; font-size: 1rem; }
+.sidebar-logo-text { font-family: var(--font-display); color: #fff; font-weight: 700; font-size: 1rem; }
 .sidebar-logo-text-skeleton {
   width: 110px;
   height: 1rem;
@@ -160,7 +183,7 @@ body {
   justify-content: space-between;
   margin-bottom: 24px;
 }
-.page-title { font-size: 1.4rem; font-weight: 700; }
+.page-title { font-family: var(--font-display); font-size: 1.4rem; font-weight: 700; }
 .section-label {
   font-size: 0.8rem;
   font-weight: 600;
@@ -517,7 +540,7 @@ body {
   max-width: 480px;
 }
 .modal--wide { max-width: 720px; }
-.modal-title { font-size: 1.1rem; font-weight: 700; margin-bottom: 20px; }
+.modal-title { font-family: var(--font-display); font-size: 1.1rem; font-weight: 700; margin-bottom: 20px; }
 .modal-form { display: flex; flex-direction: column; gap: 14px; }
 .modal-actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 6px; }
 .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
@@ -900,10 +923,6 @@ body {
 }
 
 .login-brand-icon {
-  width: 52px;
-  height: 52px;
-  background: var(--accent);
-  border-radius: 14px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -912,9 +931,6 @@ body {
 
 .login-brand-name {
   font-size: 3rem;
-  font-weight: 800;
-  color: #fff;
-  letter-spacing: -1px;
   line-height: 1;
 }
 
@@ -952,6 +968,7 @@ body {
 }
 
 .login-form-title {
+  font-family: var(--font-display);
   font-size: 1.6rem;
   font-weight: 800;
   color: var(--text);

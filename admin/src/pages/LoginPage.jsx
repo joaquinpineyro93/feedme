@@ -1,6 +1,7 @@
 import { useState } from 'react';
-import { UtensilsCrossed } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
+import Bubble from '../components/Bubble';
+import Wordmark from '../components/Wordmark';
 
 // Registro deshabilitado temporalmente: el único alta de local es vía WhatsApp.
 const REGISTER_ENABLED = false;
@@ -39,9 +40,9 @@ export default function LoginPage() {
         <div className="login-brand">
           <div className="login-brand-inner">
             <div className="login-brand-icon">
-              <UtensilsCrossed size={28} color="#fff" strokeWidth={1.8} />
+              <Bubble size={52} />
             </div>
-            <div className="login-brand-name">Pedi</div>
+            <div className="login-brand-name"><Wordmark size="1em" color="#fff" /></div>
             <div className="login-brand-tag">admin</div>
             <p className="login-brand-sub">Gestioná tu local desde un solo lugar</p>
           </div>
