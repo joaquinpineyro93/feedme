@@ -418,7 +418,7 @@ a { color: var(--accent-dark); }
 .splash-screen {
   position: fixed;
   inset: 0;
-  background: var(--dark);
+  background: var(--cream);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -432,17 +432,17 @@ a { color: var(--accent-dark); }
   font-family: 'Bricolage Grotesque', sans-serif;
   font-size: 40px;
   font-weight: 800;
-  color: var(--cream);
+  color: var(--dark);
   letter-spacing: -0.04em;
   display: inline-flex;
 }
 .splash-wordmark .wordmark-i { position: relative; }
 .splash-progress-track {
   width: 120px; height: 3px;
-  background: rgba(255,255,255,0.15);
+  background: var(--cream2);
   border-radius: 99px; overflow: hidden; margin-top: 6px;
 }
-.splash-progress-bar { height: 100%; background: var(--accent); border-radius: 99px; animation: splash-fill 1.7s ease forwards; }
+.splash-progress-bar { height: 100%; background: var(--dark); border-radius: 99px; animation: splash-fill 1.7s ease forwards; }
 @keyframes splash-fill { from { width: 0%; } to { width: 100%; } }
 
 @media (max-width: 700px) {
