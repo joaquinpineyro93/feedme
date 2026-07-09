@@ -667,8 +667,8 @@ body {
 .floating-cart {
   position: fixed;
   bottom: 24px;
-  left: 12px;
-  right: 12px;
+  left: 50%;
+  transform: translateX(-50%);
   background: var(--header-bg);
   color: var(--bg);
   border: none;
@@ -685,13 +685,12 @@ body {
   transition: transform 0.15s;
   white-space: nowrap;
   box-shadow: 0 18px 34px -14px rgba(20,18,16,.6);
-  width: auto;
+  width: calc(100% - 24px);
   max-width: calc(var(--max-w) - 24px);
-  margin: 0 auto;
 }
 
 .floating-cart:active {
-  transform: scale(0.97);
+  transform: translateX(-50%) scale(0.97);
 }
 
 .floating-cart-text {
@@ -997,6 +996,29 @@ body {
 
 .order-item-price {
   font-weight: 600;
+  color: var(--text-primary);
+}
+
+.order-notes {
+  margin-top: 12px;
+  padding: 8px 10px;
+  background: #FFFBEB;
+  border-radius: 8px;
+}
+
+.order-notes-label {
+  display: block;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  color: var(--text-secondary);
+  margin-bottom: 2px;
+}
+
+.order-notes-text {
+  font-size: 13px;
+  font-style: italic;
   color: var(--text-primary);
 }
 
@@ -1572,7 +1594,6 @@ body {
   /* Floating cart: centered */
   .floating-cart {
     left: 50%;
-    right: auto;
     transform: translateX(-50%);
     max-width: 400px;
     width: max-content;

@@ -253,6 +253,12 @@ export default function CheckoutPage() {
               );
             })}
           </ul>
+          {notes?.trim() && (
+            <div className="order-notes">
+              <span className="order-notes-label">Observaciones</span>
+              <p className="order-notes-text">{notes.trim()}</p>
+            </div>
+          )}
           <div className="order-total">
             <span>Total</span>
             <span className="order-total-price">${totalPrice.toLocaleString('es-AR')}</span>
@@ -268,7 +274,6 @@ export default function CheckoutPage() {
             <input
               className={`form-input ${errors.name ? 'form-input--error' : ''}`}
               type="text"
-              placeholder="Ej: Juan García"
               value={form.name}
               onChange={e => setForm(f => ({ ...f, name: e.target.value }))}
             />
@@ -311,7 +316,6 @@ export default function CheckoutPage() {
               <input
                 className={`form-input ${errors.address ? 'form-input--error' : ''}`}
                 type="text"
-                placeholder="Ej: Av. Corrientes 1234, Piso 2"
                 value={form.address}
                 onChange={e => setForm(f => ({ ...f, address: e.target.value }))}
               />
