@@ -178,7 +178,6 @@ export default function CheckoutPage() {
     const waLink = `https://api.whatsapp.com/send?phone=${phone}&text=${encodeURIComponent(waMessage)}`;
 
     saveProfile(user?.uid, { name: form.name, phone: form.phone, address: form.address });
-    window.open(waLink, '_blank');
 
     if (form.payment === 'Mercado Pago') {
       const mpLink = paymentOptions.find(o => o.value === 'Mercado Pago')?.link;
@@ -210,6 +209,7 @@ export default function CheckoutPage() {
     setLoading(false);
     setSuccess(true);
     setTimeout(playSuccessSound, 500);
+    setTimeout(() => window.open(waLink, '_blank'), 1000);
   };
 
   const bankTransfer = restaurant?.paymentMethods?.bankTransfer;
