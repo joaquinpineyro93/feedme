@@ -279,39 +279,11 @@ export default function RestaurantPage() {
               <span>Tarjeta</span>
             </label>
 
-            <label className="payment-method-row">
-              <input
-                type="checkbox"
-                checked={form.paymentMethods.mercadoPago.enabled}
-                onChange={(e) => setForm((f) => ({
-                  ...f,
-                  paymentMethods: {
-                    ...f.paymentMethods,
-                    mercadoPago: { ...f.paymentMethods.mercadoPago, enabled: e.target.checked },
-                  },
-                }))}
-              />
+            <label className="payment-method-row payment-method-row--disabled" title="Próximamente disponible">
+              <input type="checkbox" checked={false} disabled />
               <span>Mercado Pago</span>
+              <span className="payment-method-soon">Próximamente</span>
             </label>
-
-            {form.paymentMethods.mercadoPago.enabled && (
-              <div className="form-group" style={{ marginTop: 4 }}>
-                <label className="form-label">Link de pago de Mercado Pago</label>
-                <input
-                  className="form-input"
-                  type="url"
-                  placeholder="https://mpago.la/..."
-                  value={form.paymentMethods.mercadoPago.link}
-                  onChange={(e) => setForm((f) => ({
-                    ...f,
-                    paymentMethods: {
-                      ...f.paymentMethods,
-                      mercadoPago: { ...f.paymentMethods.mercadoPago, link: e.target.value },
-                    },
-                  }))}
-                />
-              </div>
-            )}
 
             <label className="payment-method-row">
               <input

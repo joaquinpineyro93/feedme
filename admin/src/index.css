@@ -810,6 +810,22 @@ body {
   accent-color: var(--accent);
   cursor: pointer;
 }
+.payment-method-row--disabled {
+  color: var(--text-muted);
+  cursor: not-allowed;
+}
+.payment-method-row--disabled input[type="checkbox"] {
+  cursor: not-allowed;
+}
+.payment-method-soon {
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  background: var(--bg);
+  border-radius: 20px;
+  padding: 2px 8px;
+  margin-left: 2px;
+}
 
 /* Logo upload */
 .logo-upload-area {
