@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { FileText, MessageCircle, Landmark, X, Search } from 'lucide-react';
 import api from '../api';
+import { playSuccessSound } from '../utils/sound';
 
 const STATUS_LABELS = {
   pending: 'Pendiente',
@@ -42,8 +43,9 @@ export default function OrdersPage() {
   const [filter, setFilter] = useState('all');
   const [search, setSearch] = useState('');
   const [loading, setLoading] = useState(true);
-  const [lastCount, setLastCount] = useState(0);
+  const [knownIds, setKnownIds] = useState(null);
   const [newAlert, setNewAlert] = useState(false);
+  const [newOrderIds, setNewOrderIds] = useState(new Set());
   const [bankTransfer, setBankTransfer] = useState(null);
 
   useEffect(() => {
@@ -58,18 +60,33 @@ export default function OrdersPage() {
       const params = filter !== 'all' ? { status: filter } : {};
       const { data } = await api.get('/api/admin/orders', { params });
       setOrders(data);
-      // Alert if new orders came in
-      if (lastCount > 0 && data.length > lastCount) {
-        setNewAlert(true);
-        setTimeout(() => setNewAlert(false), 4000);
-      }
-      setLastCount(data.length);
+      const currentIds = new Set(data.map((o) => o._id));
+      // Highlight and alert for orders not seen in the previous fetch
+      setKnownIds((prevIds) => {
+        if (prevIds) {
+          const freshIds = data.filter((o) => !prevIds.has(o._id)).map((o) => o._id);
+          if (freshIds.length > 0) {
+            setNewAlert(true);
+            playSuccessSound();
+            setTimeout(() => setNewAlert(false), 4000);
+            setNewOrderIds((prev) => new Set([...prev, ...freshIds]));
+            setTimeout(() => {
+              setNewOrderIds((prev) => {
+                const next = new Set(prev);
+                freshIds.forEach((id) => next.delete(id));
+                return next;
+              });
+            }, 5000);
+          }
+        }
+        return currentIds;
+      });
     } catch (err) {
       console.error(err);
     } finally {
       setLoading(false);
     }
-  }, [filter, lastCount]);
+  }, [filter]);
 
   useEffect(() => {
     fetchOrders(true);
@@ -162,7 +179,7 @@ export default function OrdersPage() {
               <h3 className="section-label">Activos ({activeOrders.length})</h3>
               <div className="orders-grid">
                 {activeOrders.map((order) => (
-                  <OrderCard key={order._id} order={order} onStatusChange={updateStatus} onDelete={deleteOrder} bankTransfer={bankTransfer} />
+                  <OrderCard key={order._id} order={order} onStatusChange={updateStatus} onDelete={deleteOrder} bankTransfer={bankTransfer} isNew={newOrderIds.has(order._id)} />
                 ))}
               </div>
             </section>
@@ -218,7 +235,7 @@ function buildBankTransferMessage(order, bankTransfer) {
   ].join('\n');
 }
 
-function OrderCard({ order, onStatusChange, onDelete, bankTransfer }) {
+function OrderCard({ order, onStatusChange, onDelete, bankTransfer, isNew }) {
   const [notifyPrompt, setNotifyPrompt] = useState(false);
   const next = STATUS_NEXT[order.status];
 
@@ -240,7 +257,7 @@ function OrderCard({ order, onStatusChange, onDelete, bankTransfer }) {
     onStatusChange(order._id, 'ready');
   };
   return (
-    <div className="order-card">
+    <div className={`order-card ${isNew ? 'order-card--new' : ''}`}>
       <div className="order-card-header">
         <div>
           <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>

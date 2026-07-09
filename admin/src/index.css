@@ -297,6 +297,16 @@ body {
   display: flex;
   flex-direction: column;
   gap: 9px;
+  transition: border-color 2s ease, box-shadow 2s ease;
+}
+.order-card--new {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(242, 163, 26, 0.35);
+  animation: order-card-pulse 1s ease-in-out 2;
+}
+@keyframes order-card-pulse {
+  0%, 100% { box-shadow: 0 0 0 3px rgba(242, 163, 26, 0.35); }
+  50% { box-shadow: 0 0 0 6px rgba(242, 163, 26, 0.15); }
 }
 .order-card-header {
   display: flex;
