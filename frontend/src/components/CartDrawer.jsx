@@ -7,8 +7,13 @@ function variantSummary(product, selectedVariants) {
   if (!selectedVariants || !product.variants?.length) return null;
   const parts = [];
   for (const group of product.variants) {
-    const opt = group.options.find(o => o._id === selectedVariants[group._id]);
-    if (opt) parts.push(opt.label);
+    if (group.type === 'extra') {
+      const ids = selectedVariants[group._id] || [];
+      group.options.filter(o => ids.includes(o._id)).forEach(o => parts.push(o.label));
+    } else {
+      const opt = group.options.find(o => o._id === selectedVariants[group._id]);
+      if (opt) parts.push(opt.label);
+    }
   }
   return parts.length ? parts.join(', ') : null;
 }

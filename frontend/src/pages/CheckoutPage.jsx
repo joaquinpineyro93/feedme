@@ -45,8 +45,13 @@ function getVariantParts(product, selectedVariants) {
   if (!selectedVariants || !product.variants?.length) return [];
   const parts = [];
   for (const g of product.variants) {
-    const opt = g.options.find(o => o._id === selectedVariants[g._id]);
-    if (opt) parts.push(opt.label);
+    if (g.type === 'extra') {
+      const ids = selectedVariants[g._id] || [];
+      g.options.filter(o => ids.includes(o._id)).forEach(o => parts.push(o.label));
+    } else {
+      const opt = g.options.find(o => o._id === selectedVariants[g._id]);
+      if (opt) parts.push(opt.label);
+    }
   }
   return parts;
 }

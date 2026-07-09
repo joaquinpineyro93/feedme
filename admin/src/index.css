@@ -1273,6 +1273,11 @@ body {
   gap: 6px;
   margin-bottom: 6px;
 }
+.variant-group-admin-hint {
+  font-size: 11px;
+  color: var(--text-muted);
+  margin: -4px 0 8px;
+}
 
 .modal {
   background: #fff;
@@ -1283,3 +1288,4 @@ body {
   max-height: calc(100vh - 40px);
   overflow-y: auto;
 }
+.modal--wide { max-width: 720px; }

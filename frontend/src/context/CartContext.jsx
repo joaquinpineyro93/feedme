@@ -4,7 +4,10 @@ const CartContext = createContext(null);
 
 function itemKey(productId, selectedVariants) {
   if (!selectedVariants || Object.keys(selectedVariants).length === 0) return productId;
-  const varStr = Object.entries(selectedVariants).sort().map(([k, v]) => `${k}:${v}`).join('|');
+  const varStr = Object.entries(selectedVariants)
+    .sort(([a], [b]) => a.localeCompare(b))
+    .map(([k, v]) => `${k}:${Array.isArray(v) ? [...v].sort().join(',') : v}`)
+    .join('|');
   return `${productId}__${varStr}`;
 }
 

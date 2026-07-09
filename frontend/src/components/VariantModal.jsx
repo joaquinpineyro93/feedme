@@ -6,16 +6,31 @@ export default function VariantModal({ product, onConfirm, onClose }) {
   const groups = product.variants || [];
   const [selected, setSelected] = useState(() => {
     const init = {};
-    groups.forEach(g => { init[g._id] = null; });
+    groups.forEach(g => { init[g._id] = g.type === 'extra' ? [] : null; });
     return init;
   });
 
   const totalAdd = groups.reduce((sum, g) => {
+    if (g.type === 'extra') {
+      const ids = selected[g._id] || [];
+      return sum + g.options.filter(o => ids.includes(o._id)).reduce((s, o) => s + (o.priceAdd || 0), 0);
+    }
     const opt = g.options.find(o => o._id === selected[g._id]);
     return sum + (opt?.priceAdd || 0);
   }, 0);
 
-  const canConfirm = groups.every(g => !g.required || selected[g._id] !== null);
+  const canConfirm = groups.every(g => {
+    if (!g.required) return true;
+    return g.type === 'extra' ? (selected[g._id] || []).length > 0 : selected[g._id] !== null;
+  });
+
+  const toggleExtra = (groupId, optionId) => {
+    setSelected(s => {
+      const ids = s[groupId] || [];
+      const next = ids.includes(optionId) ? ids.filter(id => id !== optionId) : [...ids, optionId];
+      return { ...s, [groupId]: next };
+    });
+  };
 
   const handleConfirm = () => {
     if (!canConfirm) return;
@@ -39,28 +54,40 @@ export default function VariantModal({ product, onConfirm, onClose }) {
         </div>
 
         <div className="variant-sheet-body">
-          {groups.map(group => (
-            <div key={group._id} className="variant-group">
-              <div className="variant-group-header">
-                <span className="variant-group-name">{group.name}</span>
-                {group.required && <span className="variant-required-badge">Requerido</span>}
+          {groups.map(group => {
+            const isExtra = group.type === 'extra';
+            return (
+              <div key={group._id} className="variant-group">
+                <div className="variant-group-header">
+                  <span className="variant-group-name">{group.name}</span>
+                  {group.required && (
+                    <span className="variant-required-badge">{isExtra ? 'Mínimo 1' : 'Requerido'}</span>
+                  )}
+                </div>
+                <div className="variant-options">
+                  {group.options.map(opt => {
+                    const isSelected = isExtra
+                      ? (selected[group._id] || []).includes(opt._id)
+                      : selected[group._id] === opt._id;
+                    return (
+                      <label key={opt._id} className={`variant-option ${isSelected ? 'variant-option--selected' : ''}`}>
+                        <input
+                          type={isExtra ? 'checkbox' : 'radio'}
+                          name={isExtra ? undefined : group._id}
+                          checked={isSelected}
+                          onChange={() => isExtra
+                            ? toggleExtra(group._id, opt._id)
+                            : setSelected(s => ({ ...s, [group._id]: opt._id }))}
+                        />
+                        <span className="variant-option-label">{opt.label}</span>
+                        {opt.priceAdd > 0 && <span className="variant-option-price">+${opt.priceAdd.toLocaleString('es-AR')}</span>}
+                      </label>
+                    );
+                  })}
+                </div>
               </div>
-              <div className="variant-options">
-                {group.options.map(opt => (
-                  <label key={opt._id} className={`variant-option ${selected[group._id] === opt._id ? 'variant-option--selected' : ''}`}>
-                    <input
-                      type="radio"
-                      name={group._id}
-                      checked={selected[group._id] === opt._id}
-                      onChange={() => setSelected(s => ({ ...s, [group._id]: opt._id }))}
-                    />
-                    <span className="variant-option-label">{opt.label}</span>
-                    {opt.priceAdd > 0 && <span className="variant-option-price">+${opt.priceAdd.toLocaleString('es-AR')}</span>}
-                  </label>
-                ))}
-              </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
 
         <div className="variant-sheet-footer">
