@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { createPortal } from 'react-dom';
-import { X } from 'lucide-react';
+import { X, ChevronDown } from 'lucide-react';
 
 export default function VariantModal({ product, onConfirm, onClose }) {
   const groups = product.variants || [];
@@ -9,6 +9,13 @@ export default function VariantModal({ product, onConfirm, onClose }) {
     groups.forEach(g => { init[g._id] = g.type === 'extra' ? [] : null; });
     return init;
   });
+  const [collapsed, setCollapsed] = useState(() => {
+    const init = {};
+    groups.forEach(g => { init[g._id] = g.options.length > 3; });
+    return init;
+  });
+
+  const toggleCollapsed = (groupId) => setCollapsed(c => ({ ...c, [groupId]: !c[groupId] }));
 
   const totalAdd = groups.reduce((sum, g) => {
     if (g.type === 'extra') {
@@ -56,35 +63,45 @@ export default function VariantModal({ product, onConfirm, onClose }) {
         <div className="variant-sheet-body">
           {groups.map(group => {
             const isExtra = group.type === 'extra';
+            const isCollapsible = group.options.length > 3;
+            const isCollapsed = isCollapsible && collapsed[group._id];
             return (
               <div key={group._id} className="variant-group">
-                <div className="variant-group-header">
+                <div
+                  className={`variant-group-header ${isCollapsible ? 'variant-group-header--collapsible' : ''}`}
+                  onClick={isCollapsible ? () => toggleCollapsed(group._id) : undefined}
+                >
                   <span className="variant-group-name">{group.name}</span>
                   {group.required && (
                     <span className="variant-required-badge">{isExtra ? 'Mínimo 1' : 'Requerido'}</span>
                   )}
+                  {isCollapsible && (
+                    <ChevronDown size={18} className={`variant-group-chevron ${isCollapsed ? '' : 'variant-group-chevron--open'}`} />
+                  )}
                 </div>
-                <div className="variant-options">
-                  {group.options.map(opt => {
-                    const isSelected = isExtra
-                      ? (selected[group._id] || []).includes(opt._id)
-                      : selected[group._id] === opt._id;
-                    return (
-                      <label key={opt._id} className={`variant-option ${isSelected ? 'variant-option--selected' : ''}`}>
-                        <input
-                          type={isExtra ? 'checkbox' : 'radio'}
-                          name={isExtra ? undefined : group._id}
-                          checked={isSelected}
-                          onChange={() => isExtra
-                            ? toggleExtra(group._id, opt._id)
-                            : setSelected(s => ({ ...s, [group._id]: opt._id }))}
-                        />
-                        <span className="variant-option-label">{opt.label}</span>
-                        {opt.priceAdd > 0 && <span className="variant-option-price">+${opt.priceAdd.toLocaleString('es-AR')}</span>}
-                      </label>
-                    );
-                  })}
-                </div>
+                {!isCollapsed && (
+                  <div className="variant-options">
+                    {group.options.map(opt => {
+                      const isSelected = isExtra
+                        ? (selected[group._id] || []).includes(opt._id)
+                        : selected[group._id] === opt._id;
+                      return (
+                        <label key={opt._id} className={`variant-option ${isSelected ? 'variant-option--selected' : ''}`}>
+                          <input
+                            type={isExtra ? 'checkbox' : 'radio'}
+                            name={isExtra ? undefined : group._id}
+                            checked={isSelected}
+                            onChange={() => isExtra
+                              ? toggleExtra(group._id, opt._id)
+                              : setSelected(s => ({ ...s, [group._id]: opt._id }))}
+                          />
+                          <span className="variant-option-label">{opt.label}</span>
+                          {opt.priceAdd > 0 && <span className="variant-option-price">+${opt.priceAdd.toLocaleString('es-AR')}</span>}
+                        </label>
+                      );
+                    })}
+                  </div>
+                )}
               </div>
             );
           })}

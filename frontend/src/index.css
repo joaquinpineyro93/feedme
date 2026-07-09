@@ -1819,10 +1819,15 @@ body {
   gap: 8px;
   margin-bottom: 10px;
 }
+.variant-group-header--collapsible {
+  cursor: pointer;
+  user-select: none;
+}
 .variant-group-name {
   font-size: 0.9rem;
   font-weight: 600;
   color: #111827;
+  flex: 1;
 }
 .variant-required-badge {
   font-size: 0.7rem;
@@ -1831,6 +1836,14 @@ body {
   padding: 2px 7px;
   border-radius: 20px;
   font-weight: 600;
+}
+.variant-group-chevron {
+  color: #9CA3AF;
+  flex-shrink: 0;
+  transition: transform 0.15s;
+}
+.variant-group-chevron--open {
+  transform: rotate(180deg);
 }
 .variant-options {
   display: flex;
@@ -1847,7 +1860,8 @@ body {
   cursor: pointer;
   transition: border-color 0.15s, background 0.15s;
 }
-.variant-option input[type="radio"] {
+.variant-option input[type="radio"],
+.variant-option input[type="checkbox"] {
   accent-color: var(--accent, #F59E0B);
   width: 16px;
   height: 16px;
@@ -1857,7 +1871,8 @@ body {
   border-color: var(--accent, #F59E0B);
   background: var(--accent, #F59E0B);
 }
-.variant-option--selected input[type="radio"] {
+.variant-option--selected input[type="radio"],
+.variant-option--selected input[type="checkbox"] {
   accent-color: var(--header-bg, #141210);
 }
 .variant-option-label {
