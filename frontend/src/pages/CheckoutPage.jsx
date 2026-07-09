@@ -126,7 +126,7 @@ export default function CheckoutPage() {
         <div className="success-screen">
           <div className="success-icon-badge"><Check size={30} /></div>
           <h2 className="success-title">¡Pedido enviado!</h2>
-          <p className="success-sub">Tu pedido fue enviado por WhatsApp a {restaurant?.name || 'el local'}. En breve te confirman los tiempos.</p>
+          <p className="success-sub">Enviado a {restaurant?.name || 'el local'}</p>
           <button className="btn-dark-cta" onClick={() => { clearCart(); navigate('/'); }}>
             Volver a la carta
           </button>
