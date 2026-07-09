@@ -667,8 +667,8 @@ body {
 .floating-cart {
   position: fixed;
   bottom: 24px;
-  left: 50%;
-  transform: translateX(-50%);
+  left: 12px;
+  right: 12px;
   background: var(--header-bg);
   color: var(--bg);
   border: none;
@@ -685,12 +685,13 @@ body {
   transition: transform 0.15s;
   white-space: nowrap;
   box-shadow: 0 18px 34px -14px rgba(20,18,16,.6);
-  width: 100%;
-  max-width: calc(var(--max-w) - 32px);
+  width: auto;
+  max-width: calc(var(--max-w) - 24px);
+  margin: 0 auto;
 }
 
 .floating-cart:active {
-  transform: translateX(-50%) scale(0.97);
+  transform: scale(0.97);
 }
 
 .floating-cart-text {
