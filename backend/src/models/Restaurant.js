@@ -40,6 +40,7 @@ const restaurantSchema = new mongoose.Schema({
   description: { type: String },
   openHours: { type: String },
   logo: { type: String },
+  heroImage: { type: String },
   active: { type: Boolean, default: true },
   acceptingOrders: { type: Boolean, default: true },
   categories: { type: [String], default: ['General'] },

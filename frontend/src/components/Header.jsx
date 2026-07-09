@@ -56,13 +56,14 @@ export default function Header({ restaurant }) {
   const name        = restaurant?.name        || '';
   const description = restaurant?.description || '';
   const logo        = restaurant?.logo;
+  const heroImage    = restaurant?.heroImage || logo;
   const openHours   = restaurant?.openHours;
   const open        = isOpenNow(openHours);
   const acceptingOrders = restaurant?.acceptingOrders !== false;
   const { user, logout } = useAuth();
 
   return (
-    <header className="header-hero" style={logo ? { backgroundImage: `url(${logo})` } : {}}>
+    <header className="header-hero" style={heroImage ? { backgroundImage: `url(${heroImage})` } : {}}>
       <div className="header-hero-overlay" />
 
       {/* Auth — top right */}

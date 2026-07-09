@@ -18,7 +18,7 @@ const DEFAULT_FULFILLMENT_METHODS = { delivery: true, pickup: true };
 
 export default function RestaurantPage() {
   const [form, setForm] = useState({
-    name: '', phone: '', address: '', openHours: '', description: '', logo: '',
+    name: '', phone: '', address: '', openHours: '', description: '', logo: '', heroImage: '',
     paymentMethods: DEFAULT_PAYMENT_METHODS,
     fulfillmentMethods: DEFAULT_FULFILLMENT_METHODS,
   });
@@ -27,6 +27,7 @@ export default function RestaurantPage() {
   const [success, setSuccess]   = useState(false);
   const [error, setError]       = useState('');
   const fileRef = useRef(null);
+  const heroFileRef = useRef(null);
 
   useEffect(() => {
     api.get('/api/admin/restaurant')
@@ -38,6 +39,7 @@ export default function RestaurantPage() {
           openHours:   data.openHours   || '',
           description: data.description || '',
           logo:        data.logo        || '',
+          heroImage:   data.heroImage   || '',
           paymentMethods: {
             cash: data.paymentMethods?.cash ?? true,
             card: data.paymentMethods?.card ?? false,
@@ -61,11 +63,11 @@ export default function RestaurantPage() {
       .finally(() => setLoading(false));
   }, []);
 
-  const handleFileChange = (e) => {
+  const handleFileChange = (field) => (e) => {
     const file = e.target.files[0];
     if (!file) return;
     const reader = new FileReader();
-    reader.onload = (ev) => setForm((f) => ({ ...f, logo: ev.target.result }));
+    reader.onload = (ev) => setForm((f) => ({ ...f, [field]: ev.target.result }));
     reader.readAsDataURL(file);
   };
 
@@ -136,7 +138,7 @@ export default function RestaurantPage() {
               type="file"
               accept="image/*"
               style={{ display: 'none' }}
-              onChange={handleFileChange}
+              onChange={handleFileChange('logo')}
             />
             {form.logo && (
               <button
@@ -145,6 +147,38 @@ export default function RestaurantPage() {
                 onClick={() => { setForm((f) => ({ ...f, logo: '' })); fileRef.current.value = ''; }}
               >
                 Quitar logo
+              </button>
+            )}
+          </div>
+
+          {/* Imagen de portada (hero) */}
+          <div className="section-card">
+            <h3 className="section-card-title">Imagen de portada</h3>
+            <div className="logo-upload-area hero-upload-area" onClick={() => heroFileRef.current.click()}>
+              {form.heroImage ? (
+                <img src={form.heroImage} alt="Portada" className="hero-preview-img" />
+              ) : (
+                <div className="logo-upload-placeholder">
+                  <span className="logo-upload-icon">+</span>
+                  <span>Subir portada</span>
+                  <span style={{ fontSize: '0.75rem', color: '#9CA3AF' }}>JPG o PNG, apaisada</span>
+                </div>
+              )}
+            </div>
+            <input
+              ref={heroFileRef}
+              type="file"
+              accept="image/*"
+              style={{ display: 'none' }}
+              onChange={handleFileChange('heroImage')}
+            />
+            {form.heroImage && (
+              <button
+                type="button"
+                className="btn-secondary"
+                onClick={() => { setForm((f) => ({ ...f, heroImage: '' })); heroFileRef.current.value = ''; }}
+              >
+                Quitar portada
               </button>
             )}
           </div>
