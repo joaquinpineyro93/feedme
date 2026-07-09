@@ -5,11 +5,13 @@ import { CartProvider } from './context/CartContext';
 import { AuthProvider } from './context/AuthContext';
 import MenuPage from './pages/MenuPage';
 import CheckoutPage from './pages/CheckoutPage';
+import ScrollToTop from './components/ScrollToTop';
 export default function App() {
   return (
     <AuthProvider>
       <CartProvider>
         <BrowserRouter>
+          <ScrollToTop />
           <Routes>
             <Route path="/" element={<MenuPage />} />
             <Route path="/checkout" element={<CheckoutPage />} />
