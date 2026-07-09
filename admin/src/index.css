@@ -828,6 +828,8 @@ body {
 .logo-preview-img { width: 100%; height: 100%; object-fit: contain; padding: 12px; }
 .logo-upload-placeholder { display: flex; flex-direction: column; align-items: center; gap: 6px; color: var(--text-muted); font-size: 0.85rem; }
 .logo-upload-icon { font-size: 2rem; line-height: 1; color: var(--border); }
+.hero-upload-area { height: 110px; }
+.hero-preview-img { width: 100%; height: 100%; object-fit: cover; }
 
 /* Restaurant preview card */
 .restaurant-preview-card {
