@@ -7,6 +7,7 @@ const variantOptionSchema = new mongoose.Schema({
 
 const variantGroupSchema = new mongoose.Schema({
   name:     { type: String, required: true },
+  type:     { type: String, enum: ['variant', 'extra'], default: 'variant' },
   required: { type: Boolean, default: false },
   options:  { type: [variantOptionSchema], default: [] },
 });

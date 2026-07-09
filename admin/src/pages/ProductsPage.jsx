@@ -10,7 +10,7 @@ const EMPTY_PRODUCT = {
   variants: [],
 };
 
-const EMPTY_GROUP  = { name: '', required: false, options: [] };
+const EMPTY_GROUP  = { name: '', type: 'variant', required: false, options: [] };
 const EMPTY_OPTION = { label: '', priceAdd: 0 };
 
 const DAYS = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'];
@@ -233,7 +233,7 @@ function ProductsTab({ products, setProducts, categories, setCategories, newProd
       {/* Producto modal */}
       {showForm && (
         <div className="modal-overlay">
-          <div className="modal" onClick={e => e.stopPropagation()}>
+          <div className="modal modal--wide" onClick={e => e.stopPropagation()}>
             <h3 className="modal-title">{editingId ? 'Editar producto' : 'Nuevo producto'}</h3>
             <form onSubmit={handleSave} className="modal-form">
               <div className="form-group">
@@ -305,12 +305,36 @@ function ProductsTab({ products, setProducts, categories, setCategories, newProd
 
               {/* Variantes */}
               <div className="form-group">
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 8 }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 8, gap: 8 }}>
                   <label className="form-label" style={{ margin: 0 }}>Variantes</label>
-                  <button type="button" className="btn-secondary" style={{ fontSize: 12, padding: '4px 10px' }}
-                    onClick={() => setForm(f => ({ ...f, variants: [...f.variants, { ...EMPTY_GROUP, options: [] }] }))}>
-                    + Grupo
-                  </button>
+                  <div style={{ display: 'flex', gap: 8 }}>
+                    <select
+                      className="form-input"
+                      value=""
+                      style={{ fontSize: 12, padding: '4px 8px', width: 'auto' }}
+                      onChange={e => {
+                        const source = products.find(p => p._id === e.target.value);
+                        if (!source) return;
+                        const copiedGroups = (source.variants || []).map(g => ({
+                          name: g.name,
+                          type: g.type || 'variant',
+                          required: g.required,
+                          options: g.options.map(o => ({ label: o.label, priceAdd: o.priceAdd })),
+                        }));
+                        setForm(f => ({ ...f, variants: [...f.variants, ...copiedGroups] }));
+                        e.target.value = '';
+                      }}
+                    >
+                      <option value="" disabled>Copiar de otro producto...</option>
+                      {products.filter(p => p._id !== editingId && p.variants?.length > 0).map(p => (
+                        <option key={p._id} value={p._id}>{p.name}</option>
+                      ))}
+                    </select>
+                    <button type="button" className="btn-secondary" style={{ fontSize: 12, padding: '4px 10px' }}
+                      onClick={() => setForm(f => ({ ...f, variants: [...f.variants, { ...EMPTY_GROUP, options: [] }] }))}>
+                      + Grupo
+                    </button>
+                  </div>
                 </div>
                 {form.variants.map((group, gi) => (
                   <div key={gi} className="variant-group-admin">
@@ -322,16 +346,30 @@ function ProductsTab({ products, setProducts, categories, setCategories, newProd
                         onChange={e => setForm(f => ({ ...f, variants: f.variants.map((g, i) => i === gi ? { ...g, name: e.target.value } : g) }))}
                         style={{ flex: 1 }}
                       />
+                      <select
+                        className="form-input"
+                        value={group.type || 'variant'}
+                        onChange={e => setForm(f => ({ ...f, variants: f.variants.map((g, i) => i === gi ? { ...g, type: e.target.value } : g) }))}
+                        style={{ width: 110, flexShrink: 0 }}
+                      >
+                        <option value="variant">Variante</option>
+                        <option value="extra">Extra</option>
+                      </select>
                       <label style={{ display: 'flex', alignItems: 'center', gap: 4, fontSize: 12, whiteSpace: 'nowrap' }}>
                         <input type="checkbox" checked={group.required}
                           onChange={e => setForm(f => ({ ...f, variants: f.variants.map((g, i) => i === gi ? { ...g, required: e.target.checked } : g) }))} />
-                        Requerido
+                        {group.type === 'extra' ? 'Mínimo 1' : 'Requerido'}
                       </label>
                       <button type="button" className="btn-delete" title="Eliminar grupo"
                         onClick={() => setForm(f => ({ ...f, variants: f.variants.filter((_, i) => i !== gi) }))}>
                         <Trash2 size={13} />
                       </button>
                     </div>
+                    <p className="variant-group-admin-hint">
+                      {group.type === 'extra'
+                        ? 'Extra: el cliente puede sumar varias opciones a la vez (ej: agregar panceta y huevo).'
+                        : 'Variante: el cliente elige una sola opción (ej: milanesa de carne o de pollo).'}
+                    </p>
                     {group.options.map((opt, oi) => (
                       <div key={oi} className="variant-option-admin">
                         <input className="form-input" placeholder="Opción (ej: Muzarella)" value={opt.label}
