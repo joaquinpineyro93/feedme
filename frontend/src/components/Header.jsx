@@ -24,32 +24,39 @@ function isOpenNow(openHours) {
   if (!openHours) return null;
   const now = new Date();
   const todayName = DAY_NAMES[now.getDay()];
+  const yesterdayName = DAY_NAMES[(now.getDay() + 6) % 7];
   const cur = now.getHours() * 60 + now.getMinutes();
 
   // Support multi-block format: "Lun-Vie: 12:00-23:00 | Sáb-Dom: 13:00-00:00"
   const blocks = openHours.split('|').map(s => s.trim());
+  let hasValidBlock = false;
   for (const block of blocks) {
     const colonIdx = block.indexOf(':');
     if (colonIdx === -1) continue;
     const daysPart = block.slice(0, colonIdx).trim();
     const timePart = block.slice(colonIdx + 1).trim();
     const days = expandDays(daysPart);
-    if (days.length && !days.includes(todayName)) continue;
     const timeMatch = timePart.match(/(\d{1,2}):(\d{2})\s*[-–]\s*(\d{1,2}):(\d{2})/);
     if (!timeMatch) continue;
+    hasValidBlock = true;
     let open  = parseInt(timeMatch[1]) * 60 + parseInt(timeMatch[2]);
     let close = parseInt(timeMatch[3]) * 60 + parseInt(timeMatch[4]);
-    if (close <= open) close += 24 * 60;
-    const adjustedCur = cur < open ? cur + 24 * 60 : cur;
-    if (adjustedCur >= open && adjustedCur < close) return true;
+    const crossesMidnight = close <= open;
+    if (crossesMidnight) close += 24 * 60;
+
+    // Case 1: block applies to today — check current time normally (extending past midnight if it crosses).
+    if (!days.length || days.includes(todayName)) {
+      const adjustedCur = cur < open ? cur + 24 * 60 : cur;
+      if (adjustedCur >= open && adjustedCur < close) return true;
+    }
+
+    // Case 2: block applies to yesterday and crosses midnight — current time (early hours) may still fall within it.
+    if (crossesMidnight && (!days.length || days.includes(yesterdayName))) {
+      if (cur < (close - 24 * 60)) return true;
+    }
   }
-  // If we found blocks for today but none matched, return false; if no blocks at all, null
-  const todayBlocks = blocks.filter(b => {
-    const colonIdx = b.indexOf(':');
-    if (colonIdx === -1) return false;
-    return expandDays(b.slice(0, colonIdx).trim()).includes(todayName);
-  });
-  return todayBlocks.length > 0 ? false : null;
+  // If we found any valid block but none matched the current moment, return false; if no blocks at all, null
+  return hasValidBlock ? false : null;
 }
 
 export default function Header({ restaurant }) {

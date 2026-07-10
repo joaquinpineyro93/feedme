@@ -128,7 +128,7 @@ export default function CheckoutPage() {
           <h2 className="success-title">¡Pedido enviado!</h2>
           <p className="success-sub">Enviado a {restaurant?.name || 'el local'}</p>
           <button className="btn-dark-cta" onClick={() => { clearCart(); navigate('/'); }}>
-            Volver a la carta
+            Volver al menú
           </button>
         </div>
       </div>
