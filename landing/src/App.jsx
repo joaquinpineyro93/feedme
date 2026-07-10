@@ -52,8 +52,9 @@ function Hero() {
           </h1>
           <p className="hero-sub">
             Tus clientes piden desde tu carta digital y el pedido te llega directo
-            por WhatsApp. Vos gestionás todo (pedidos, productos y estadísticas)
-            desde un panel simple.
+            a un panel centralizado. Vos gestionás todo (pedidos, productos y
+            estadísticas) desde un solo lugar, y podés avisarle al cliente por
+            WhatsApp cuando esté listo.
           </p>
           <div className="hero-actions">
             <a href={WA_LINK} target="_blank" rel="noreferrer" className="btn-primary">
@@ -118,7 +119,7 @@ function Hero() {
 }
 
 function Marquee() {
-  const items = 'Sin comisiones • Pedidos por WhatsApp • Carta digital propia • Panel de gestión • Sin apps • Historial de ventas • ';
+  const items = 'Sin comisiones • Panel centralizado de pedidos • Carta digital propia • Panel de gestión • Sin apps • Historial de ventas • ';
   return (
     <div className="marquee">
       <div className="marquee-track">
@@ -133,8 +134,8 @@ function HowItWorks() {
   const steps = [
     { n: '1', title: 'Nos escribís', desc: 'Nos contás sobre tu negocio por WhatsApp y te ayudamos a dar de alta tu cuenta. Sin pasos técnicos.' },
     { n: '2', title: 'Armá tu carta digital', desc: 'Cargá tus productos, precios, fotos y variantes desde el panel, a tu ritmo.' },
-    { n: '3', title: 'Recibís pedidos por WhatsApp', desc: 'Compartís el link de tu carta y tus clientes te envían el pedido directo a tu WhatsApp.' },
-    { n: '4', title: 'Gestionás desde el panel', desc: 'Actualizás estados, notificás al cliente y llevás el historial desde el backoffice.' },
+    { n: '3', title: 'Recibís todo en tu panel', desc: 'Compartís el link de tu carta y cada pedido entra directo a tu panel, ordenado y listo para preparar.' },
+    { n: '4', title: 'Actualizás y avisás', desc: 'Marcás cada pedido como en preparación, listo o entregado, y le avisás al cliente por WhatsApp con un click.' },
   ];
   return (
     <section className="section" id="como">
@@ -159,8 +160,8 @@ function HowItWorks() {
 function Features() {
   const list = [
     { icon: <Globe size={20} />, title: 'Carta digital propia', desc: 'URL personalizada para tu local, sin apps que instalar.' },
-    { icon: <MessageCircle size={20} />, title: 'Pedidos por WhatsApp', desc: 'El mensaje llega listo, formateado, directo a tu número.' },
-    { icon: <BarChart2 size={20} />, title: 'Panel de gestión', desc: 'Seguí cada pedido, marcá estados y notificá al cliente.' },
+    { icon: <BarChart2 size={20} />, title: 'Panel centralizado', desc: 'Cada pedido entra directo a tu panel, ordenado y listo para gestionar.' },
+    { icon: <MessageCircle size={20} />, title: 'Aviso por WhatsApp', desc: 'Con un click le avisás al cliente que su pedido está en camino o listo.' },
     { icon: <Pencil size={20} />, title: 'Editor de productos', desc: 'Agregá, editá o desactivás productos en cualquier momento.' },
     { icon: <RefreshCw size={20} />, title: 'Historial de pedidos', desc: 'Filtrá por fechas y mirá el resumen de ventas de tu negocio.' },
     { icon: <Lock size={20} />, title: 'Acceso seguro', desc: 'Panel protegido con usuario y contraseña para tu equipo.' },
@@ -193,44 +194,26 @@ function HowToReceive() {
   return (
     <section className="section">
       <div className="section-center">
-        <p className="section-label">Flexibilidad</p>
-        <h2 className="section-title">Elegí cómo recibir tus pedidos</h2>
-        <p className="section-sub">Dos modos según el tamaño y ritmo de tu negocio.</p>
+        <p className="section-label">Gestión</p>
+        <h2 className="section-title">Todos tus pedidos, en un solo panel</h2>
+        <p className="section-sub">Nada de andar mirando el chat: cada pedido entra ordenado a tu backoffice.</p>
       </div>
-      <div className="receive-grid">
-        <div className="receive-card">
-          <div className="receive-card-header">
-            <div className="receive-icon"><MessageCircle size={24} /></div>
-            <div>
-              <div className="receive-title">Solo WhatsApp</div>
-              <div className="receive-tag">Simple</div>
-            </div>
-          </div>
-          <p className="receive-desc">
-            Cada pedido llega a tu WhatsApp listo y formateado. Vos lo leés, lo preparás y respondés al cliente directamente desde el chat. Ideal para negocios chicos o que recién arrancan.
-          </p>
-          <ul className="receive-list">
-            <li><Check size={14} /> Pedido llega al WhatsApp del local</li>
-            <li><Check size={14} /> Mensaje pre-armado con detalle completo</li>
-            <li><Check size={14} /> Sin pasos extra, sin panel</li>
-          </ul>
-        </div>
-
+      <div className="receive-grid receive-grid--single">
         <div className="receive-card receive-card--featured">
           <div className="receive-card-header">
             <div className="receive-icon receive-icon--accent"><BarChart2 size={24} /></div>
             <div>
-              <div className="receive-title">WhatsApp + Panel de gestión</div>
-              <div className="receive-tag receive-tag--accent">Completo</div>
+              <div className="receive-title">Panel de gestión centralizado</div>
+              <div className="receive-tag receive-tag--accent">Backoffice</div>
             </div>
           </div>
           <p className="receive-desc">
-            Además de recibir el pedido por WhatsApp, lo gestionás desde el backoffice: marcás estados, notificás al cliente cuando está listo y llevás el historial de todas tus ventas.
+            Cada pedido que hace un cliente entra directo a tu panel, ordenado y con todos los datos listos: qué pidió, cómo lo paga y cómo lo recibe. Vos marcás el estado, llevás el historial y, si querés, le avisás al cliente por WhatsApp cuando esté listo.
           </p>
           <ul className="receive-list">
-            <li><Check size={14} /> Todo lo del modo Simple</li>
-            <li><Check size={14} /> Panel con estado de cada pedido</li>
-            <li><Check size={14} /> Marcás el pedido como listo y avisás al cliente</li>
+            <li><Check size={14} /> Pedido llega al panel en tiempo real, con todo el detalle</li>
+            <li><Check size={14} /> Marcás el pedido como en preparación, listo o entregado</li>
+            <li><Check size={14} /> Aviso directo al WhatsApp del cliente con un click</li>
             <li><Check size={14} /> Historial con filtros por fecha</li>
             <li><Check size={14} /> Resumen de ventas</li>
           </ul>
