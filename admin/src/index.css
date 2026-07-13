@@ -768,17 +768,39 @@ body {
 .stats-chart-card { padding: 20px; }
 
 /* Restaurant page */
-.restaurant-grid {
+.section-tabs {
+  display: flex;
+  gap: 6px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 20px;
+}
+.section-tab {
+  padding: 10px 18px;
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  cursor: pointer;
+  transition: color 0.15s, border-color 0.15s;
+}
+.section-tab:hover { color: var(--text); }
+.section-tab--active {
+  color: var(--accent);
+  border-bottom-color: var(--accent);
+}
+
+.section-tab-grid {
   display: grid;
   grid-template-columns: 300px 1fr;
   gap: 20px;
   align-items: start;
 }
-.restaurant-left  { display: flex; flex-direction: column; gap: 20px; }
-.restaurant-right { display: flex; flex-direction: column; gap: 20px; }
+.section-tab-col { display: flex; flex-direction: column; gap: 20px; }
+.section-tab-col--wide { grid-column: 1 / -1; max-width: 560px; }
 
-.restaurant-save-bar {
-  grid-column: 1 / -1;
+.section-tab-save-bar {
   display: flex;
   align-items: center;
   justify-content: flex-end;
@@ -787,11 +809,11 @@ body {
   padding-top: 20px;
   border-top: 1px solid var(--border);
 }
-.restaurant-save-bar .form-error,
-.restaurant-save-bar .form-success {
+.section-tab-save-bar .form-error,
+.section-tab-save-bar .form-success {
   margin: 0;
 }
-.restaurant-save-bar .btn-primary {
+.section-tab-save-bar .btn-primary {
   min-width: 160px;
 }
 
