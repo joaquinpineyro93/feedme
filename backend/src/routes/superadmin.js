@@ -2,7 +2,9 @@ const router = require('express').Router();
 const jwt = require('jsonwebtoken');
 const Restaurant = require('../models/Restaurant');
 const User = require('../models/User');
+const Order = require('../models/Order');
 const superAuth = require('../middleware/superauth');
+const { startOfDayInAppTz, toDateStringInAppTz } = require('../utils/dateHelpers');
 
 const SECRET = process.env.SUPERADMIN_JWT_SECRET || 'superadmin_dev_secret';
 
@@ -122,6 +124,69 @@ router.put('/restaurants/:id/user', async (req, res) => {
   } catch (err) {
     if (err.code === 11000) return res.status(400).json({ error: 'Ese usuario ya está en uso' });
     res.status(400).json({ error: err.message });
+  }
+});
+
+// Aggregated sales stats across all restaurants (or a subset), filtered by date range
+router.get('/stats', async (req, res) => {
+  try {
+    const { from, to, restaurantIds } = req.query;
+    if (!from || !to) return res.status(400).json({ error: 'from y to son requeridos' });
+    const start = startOfDayInAppTz(from);
+    const end = startOfDayInAppTz(to);
+    end.setUTCDate(end.getUTCDate() + 1);
+
+    const filter = { createdAt: { $gte: start, $lt: end } };
+    if (restaurantIds) {
+      const ids = restaurantIds.split(',').map((s) => s.trim()).filter(Boolean);
+      if (ids.length) filter.restaurantId = { $in: ids };
+    }
+
+    const [orders, restaurants] = await Promise.all([
+      Order.find(filter).sort({ createdAt: 1 }),
+      Restaurant.find().select('name slug'),
+    ]);
+    const restaurantById = new Map(restaurants.map((r) => [String(r._id), r]));
+    const validOrders = orders.filter((o) => o.status !== 'cancelled');
+
+    // Sales ranked by restaurant
+    const restaurantMap = new Map();
+    for (const o of validOrders) {
+      const key = String(o.restaurantId);
+      const r = restaurantById.get(key);
+      const entry = restaurantMap.get(key) || {
+        restaurantId: key,
+        name: r?.name || 'Local eliminado',
+        slug: r?.slug || '',
+        orders: 0,
+        revenue: 0,
+      };
+      entry.orders += 1;
+      entry.revenue += o.total;
+      restaurantMap.set(key, entry);
+    }
+    const byRestaurant = [...restaurantMap.values()].sort((a, b) => b.revenue - a.revenue);
+
+    // Daily timeline: order count + revenue per day, across all restaurants
+    const dayMap = new Map();
+    for (const o of validOrders) {
+      const day = toDateStringInAppTz(o.createdAt);
+      const entry = dayMap.get(day) || { date: day, orders: 0, revenue: 0 };
+      entry.orders += 1;
+      entry.revenue += o.total;
+      dayMap.set(day, entry);
+    }
+    const timeline = [...dayMap.values()].sort((a, b) => a.date.localeCompare(b.date));
+
+    res.json({
+      totalOrders: validOrders.length,
+      totalRevenue: validOrders.reduce((sum, o) => sum + o.total, 0),
+      totalRestaurants: byRestaurant.length,
+      byRestaurant,
+      timeline,
+    });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
   }
 });
 
