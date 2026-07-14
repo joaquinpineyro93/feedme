@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import api from './api';
 import OpenHoursPicker from './OpenHoursPicker';
 import PhoneInput from './PhoneInput';
+import StatsPage from './StatsPage';
 import './index.css';
 
 // ---- Icons (inline SVG to avoid lucide dep) ----
@@ -25,6 +26,11 @@ const Icon = {
   Store: () => (
     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
       <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/>
+    </svg>
+  ),
+  BarChart: () => (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <line x1="12" y1="20" x2="12" y2="10"/><line x1="18" y1="20" x2="18" y2="4"/><line x1="6" y1="20" x2="6" y2="16"/>
     </svg>
   ),
   Plus: () => (
@@ -497,6 +503,7 @@ function RestaurantsPage() {
 // ---- App shell ----
 export default function App() {
   const [authed, setAuthed] = useState(() => !!localStorage.getItem('superadmin_token'));
+  const [view, setView] = useState('restaurants');
 
   const logout = () => {
     localStorage.removeItem('superadmin_token');
@@ -514,8 +521,17 @@ export default function App() {
           </div>
           Superadmin
         </div>
-        <button className="sidebar-nav-item active">
+        <button
+          className={`sidebar-nav-item${view === 'restaurants' ? ' active' : ''}`}
+          onClick={() => setView('restaurants')}
+        >
           <Icon.Store /> Locales
+        </button>
+        <button
+          className={`sidebar-nav-item${view === 'stats' ? ' active' : ''}`}
+          onClick={() => setView('stats')}
+        >
+          <Icon.BarChart /> Métricas
         </button>
         <div className="sidebar-footer">
           <button className="sidebar-nav-item" onClick={logout}>
@@ -524,7 +540,7 @@ export default function App() {
         </div>
       </aside>
       <main className="main-content">
-        <RestaurantsPage />
+        {view === 'restaurants' ? <RestaurantsPage /> : <StatsPage />}
       </main>
     </div>
   );
