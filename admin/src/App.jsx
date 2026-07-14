@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { BrowserRouter, Routes, Route, NavLink, Navigate, useLocation } from 'react-router-dom';
+import { Menu, X } from 'lucide-react';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import Bubble from './components/Bubble';
 import LoginPage from './pages/LoginPage';
@@ -15,6 +16,7 @@ function AdminLayout() {
   const { user, logout } = useAuth();
   const [restaurant, setRestaurant] = useState(null);
   const [togglingOrders, setTogglingOrders] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
   const location = useLocation();
 
   useEffect(() => {
@@ -25,6 +27,8 @@ function AdminLayout() {
       })
       .catch(() => {});
   }, []); // load once on mount
+
+  useEffect(() => { setSidebarOpen(false); }, [location.pathname]);
 
   if (!user) return <Navigate to="/login" replace />;
 
@@ -49,7 +53,30 @@ function AdminLayout() {
 
   return (
     <div className="admin-layout">
-      <aside className="sidebar">
+      <div className="mobile-topbar">
+        <button
+          type="button"
+          className="mobile-topbar-btn"
+          onClick={() => setSidebarOpen(true)}
+          aria-label="Abrir menú"
+        >
+          <Menu size={22} />
+        </button>
+        <span className="mobile-topbar-title">{name}</span>
+      </div>
+      <div
+        className={`sidebar-backdrop${sidebarOpen ? ' sidebar-backdrop--open' : ''}`}
+        onClick={() => setSidebarOpen(false)}
+      />
+      <aside className={`sidebar${sidebarOpen ? ' sidebar--open' : ''}`}>
+        <button
+          type="button"
+          className="mobile-topbar-btn sidebar-close-btn"
+          onClick={() => setSidebarOpen(false)}
+          aria-label="Cerrar menú"
+        >
+          <X size={20} />
+        </button>
         <div className="sidebar-logo">
           {logo
             ? <img src={logo} alt={name} className="sidebar-logo-img" />

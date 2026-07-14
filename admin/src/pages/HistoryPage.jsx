@@ -170,10 +170,12 @@ export default function HistoryPage() {
                   </td>
                   <td>{order.customerName}</td>
                   <td className="address-cell">{order.address}</td>
-                  <td className="items-cell">
-                    {order.items.map((item, i) => (
-                      <span key={i} className="item-pill">{item.quantity}x {item.name}</span>
-                    ))}
+                  <td>
+                    <div className="items-cell">
+                      {order.items.map((item, i) => (
+                        <span key={i} className="item-pill">{item.quantity}x {item.name}</span>
+                      ))}
+                    </div>
                   </td>
                   <td>{order.paymentMethod}</td>
                   <td className="total-cell">${order.total.toLocaleString('es-AR')}</td>
