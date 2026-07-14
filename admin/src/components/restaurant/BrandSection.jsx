@@ -1,7 +1,6 @@
 import { useState, useRef } from 'react';
-import { MapPin, Clock } from 'lucide-react';
 import api from '../../api';
-import Bubble from '../Bubble';
+import HeaderPreview from './HeaderPreview';
 
 export default function BrandSection({ restaurant, onSaved }) {
   const [logo, setLogo]           = useState(restaurant.logo || '');
@@ -37,8 +36,8 @@ export default function BrandSection({ restaurant, onSaved }) {
   };
 
   return (
-    <form className="section-tab-grid" onSubmit={handleSave}>
-      <div className="section-tab-col">
+    <form className="section-tab-wrap" onSubmit={handleSave}>
+      <div className="section-tab-grid">
         <div className="section-card">
           <h3 className="section-card-title">Logo del local</h3>
           <div className="logo-upload-area" onClick={() => fileRef.current.click()}>
@@ -102,30 +101,24 @@ export default function BrandSection({ restaurant, onSaved }) {
         </div>
       </div>
 
-      <div className="section-tab-col">
-        <div className="section-card">
-          <h3 className="section-card-title">Vista previa</h3>
-          <div className="restaurant-preview-card">
-            {logo
-              ? <img src={logo} alt="logo" className="preview-logo-img" />
-              : <div className="preview-logo-placeholder"><Bubble size={32} /></div>
-            }
-            <div className="preview-info">
-              <strong>{restaurant.name || 'Nombre del local'}</strong>
-              {restaurant.description && <span>{restaurant.description}</span>}
-              {restaurant.address   && <span><MapPin size={13} style={{ verticalAlign: 'middle', marginRight: 3 }} />{restaurant.address}</span>}
-              {restaurant.openHours && <span><Clock size={13} style={{ verticalAlign: 'middle', marginRight: 3 }} />{restaurant.openHours}</span>}
-            </div>
-          </div>
-        </div>
+      <div className="section-card" style={{ marginTop: 20 }}>
+        <h3 className="section-card-title">Vista previa</h3>
+        <HeaderPreview
+          name={restaurant.name}
+          description={restaurant.description}
+          logo={logo}
+          heroImage={heroImage}
+          openHours={restaurant.openHours}
+          acceptingOrders={restaurant.acceptingOrders !== false}
+        />
+      </div>
 
-        <div className="section-tab-save-bar">
-          {error   && <p className="form-error">{error}</p>}
-          {success && <p className="form-success">Cambios guardados correctamente.</p>}
-          <button className="btn-primary" type="submit" disabled={saving}>
-            {saving ? 'Guardando...' : 'Guardar cambios'}
-          </button>
-        </div>
+      <div className="section-tab-save-bar">
+        {error   && <p className="form-error">{error}</p>}
+        {success && <p className="form-success">Cambios guardados correctamente.</p>}
+        <button className="btn-primary" type="submit" disabled={saving}>
+          {saving ? 'Guardando...' : 'Guardar cambios'}
+        </button>
       </div>
     </form>
   );

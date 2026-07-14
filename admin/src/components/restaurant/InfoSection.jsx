@@ -36,8 +36,8 @@ export default function InfoSection({ restaurant, onSaved }) {
   };
 
   return (
-    <form className="section-tab-grid" onSubmit={handleSave}>
-      <div className="section-tab-col section-tab-col--wide">
+    <form className="section-tab-wrap" onSubmit={handleSave}>
+      <div className="section-tab-col">
         <div className="section-card">
           <h3 className="section-card-title">Información básica</h3>
 
