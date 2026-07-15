@@ -32,6 +32,10 @@ const fulfillmentMethodsSchema = new mongoose.Schema({
   pickup:   { type: Boolean, default: true },
 }, { _id: false });
 
+const notificationSettingsSchema = new mongoose.Schema({
+  whatsappOrders: { type: Boolean, default: false },
+}, { _id: false });
+
 const restaurantSchema = new mongoose.Schema({
   name: { type: String, required: true },
   slug: { type: String, required: true, unique: true },
@@ -47,6 +51,7 @@ const restaurantSchema = new mongoose.Schema({
   dailyMenus: { type: [dailyMenuSchema], default: [] },
   paymentMethods: { type: paymentMethodsSchema, default: () => ({}) },
   fulfillmentMethods: { type: fulfillmentMethodsSchema, default: () => ({}) },
+  notifications: { type: notificationSettingsSchema, default: () => ({}) },
 }, { timestamps: true });
 
 module.exports = mongoose.model('Restaurant', restaurantSchema);

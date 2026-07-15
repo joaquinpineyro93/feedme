@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback, useRef } from 'react';
 import { FileText, MessageCircle, Landmark, X, Search, SlidersHorizontal, ChevronDown } from 'lucide-react';
 import api from '../api';
 import { playSuccessSound } from '../utils/sound';
+import { notifyNewOrder } from '../utils/desktopNotifications';
 
 const STATUS_LABELS = {
   pending: 'Pendiente',
@@ -79,10 +80,12 @@ export default function OrdersPage() {
       // Highlight and alert for orders not seen in the previous fetch
       setKnownIds((prevIds) => {
         if (prevIds) {
-          const freshIds = data.filter((o) => !prevIds.has(o._id)).map((o) => o._id);
+          const freshOrders = data.filter((o) => !prevIds.has(o._id));
+          const freshIds = freshOrders.map((o) => o._id);
           if (freshIds.length > 0) {
             setNewAlert(true);
             playSuccessSound();
+            notifyNewOrder(freshOrders[0]);
             setTimeout(() => setNewAlert(false), 4000);
             setNewOrderIds((prev) => new Set([...prev, ...freshIds]));
             setTimeout(() => {

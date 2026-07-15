@@ -4,12 +4,14 @@ import BrandSection from '../components/restaurant/BrandSection';
 import InfoSection from '../components/restaurant/InfoSection';
 import PaymentMethodsSection from '../components/restaurant/PaymentMethodsSection';
 import FulfillmentSection from '../components/restaurant/FulfillmentSection';
+import NotificationsSection from '../components/restaurant/NotificationsSection';
 
 const TABS = [
-  { key: 'brand',   label: 'Marca',        Component: BrandSection },
-  { key: 'info',    label: 'Información',  Component: InfoSection },
-  { key: 'payment', label: 'Pagos',        Component: PaymentMethodsSection },
-  { key: 'ship',    label: 'Envío',        Component: FulfillmentSection },
+  { key: 'brand',   label: 'Marca',          Component: BrandSection },
+  { key: 'info',    label: 'Información',    Component: InfoSection },
+  { key: 'payment', label: 'Pagos',          Component: PaymentMethodsSection },
+  { key: 'ship',    label: 'Envío',          Component: FulfillmentSection },
+  { key: 'notif',   label: 'Notificaciones', Component: NotificationsSection },
 ];
 
 export default function RestaurantPage() {
