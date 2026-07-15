@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { BrowserRouter, Routes, Route, NavLink, Navigate, useLocation } from 'react-router-dom';
 import { Menu, X } from 'lucide-react';
 import { AuthProvider, useAuth } from './context/AuthContext';
+import { OrdersProvider, useOrders } from './context/OrdersContext';
 import Bubble from './components/Bubble';
 import LoginPage from './pages/LoginPage';
 import OrdersPage from './pages/OrdersPage';
@@ -14,6 +15,7 @@ import './index.css';
 
 function AdminLayout() {
   const { user, logout } = useAuth();
+  const { unseenCount } = useOrders();
   const [restaurant, setRestaurant] = useState(null);
   const [togglingOrders, setTogglingOrders] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -105,7 +107,10 @@ function AdminLayout() {
           </div>
         )}
         <nav className="sidebar-nav">
-          <NavLink className={({ isActive }) => `sidebar-link${isActive ? ' active' : ''}`} to="/pedidos">Pedidos</NavLink>
+          <NavLink className={({ isActive }) => `sidebar-link${isActive ? ' active' : ''}`} to="/pedidos">
+            Pedidos
+            {unseenCount > 0 && <span className="sidebar-badge">{unseenCount}</span>}
+          </NavLink>
           <NavLink className={({ isActive }) => `sidebar-link${isActive ? ' active' : ''}`} to="/productos">Productos</NavLink>
           <NavLink className={({ isActive }) => `sidebar-link${isActive ? ' active' : ''}`} to="/historico">Historico</NavLink>
           <NavLink className={({ isActive }) => `sidebar-link${isActive ? ' active' : ''}`} to="/estadisticas">Estadisticas</NavLink>
@@ -148,9 +153,11 @@ function AuthGuard() {
 export default function App() {
   return (
     <AuthProvider>
-      <BrowserRouter>
-        <AuthGuard />
-      </BrowserRouter>
+      <OrdersProvider>
+        <BrowserRouter>
+          <AuthGuard />
+        </BrowserRouter>
+      </OrdersProvider>
     </AuthProvider>
   );
 }

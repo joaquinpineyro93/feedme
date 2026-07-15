@@ -136,7 +136,9 @@ body {
 
 .sidebar-nav { flex: 1; padding: 16px 0; }
 .sidebar-link {
-  display: block;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   width: 100%;
   text-align: left;
   padding: 12px 20px;
@@ -151,6 +153,21 @@ body {
 }
 .sidebar-link:hover { background: #374151; color: #fff; }
 .sidebar-link.active { color: var(--sidebar-active); border-left-color: var(--sidebar-active); background: #374151; }
+
+.sidebar-badge {
+  background: var(--accent);
+  color: #1a1a1a;
+  font-size: 0.72rem;
+  font-weight: 700;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 5px;
+  border-radius: 999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+}
 .sidebar-footer {
   padding: 16px 20px;
   border-top: 1px solid #374151;
