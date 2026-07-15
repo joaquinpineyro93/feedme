@@ -200,7 +200,7 @@ export default function CheckoutPage() {
         paymentMethod: form.payment,
         notes: notes?.trim() || '',
         total: totalPrice,
-        whatsappSent: true,
+        whatsappSent: !!restaurant?.notifications?.whatsappOrders,
       }, { headers: orderHeaders });
     } catch (err) {
       console.error('Error guardando pedido:', err.message);
@@ -209,7 +209,9 @@ export default function CheckoutPage() {
     setLoading(false);
     setSuccess(true);
     setTimeout(playSuccessSound, 500);
-    setTimeout(() => window.open(waLink, '_blank'), 1000);
+    if (restaurant?.notifications?.whatsappOrders) {
+      setTimeout(() => window.open(waLink, '_blank'), 1000);
+    }
   };
 
   const bankTransfer = restaurant?.paymentMethods?.bankTransfer;
