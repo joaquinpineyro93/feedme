@@ -1,8 +1,7 @@
-import { useState, useEffect, useCallback, useRef } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { FileText, MessageCircle, Landmark, X, Search, SlidersHorizontal, ChevronDown } from 'lucide-react';
 import api from '../api';
-import { playSuccessSound } from '../utils/sound';
-import { notifyNewOrder } from '../utils/desktopNotifications';
+import { useOrders } from '../context/OrdersContext';
 
 const STATUS_LABELS = {
   pending: 'Pendiente',
@@ -42,16 +41,16 @@ function formatDate(dateStr) {
 const FILTER_OPTIONS = ['all', 'pending', 'preparing', 'ready', 'delivered', 'cancelled'];
 
 export default function OrdersPage() {
-  const [orders, setOrders] = useState([]);
+  const { orders, loading, newOrderIds, fetchOrders, markOrdersSeen } = useOrders();
   const [filter, setFilter] = useState('all');
   const [search, setSearch] = useState('');
-  const [loading, setLoading] = useState(true);
-  const [knownIds, setKnownIds] = useState(null);
-  const [newAlert, setNewAlert] = useState(false);
-  const [newOrderIds, setNewOrderIds] = useState(new Set());
   const [bankTransfer, setBankTransfer] = useState(null);
   const [filterMenuOpen, setFilterMenuOpen] = useState(false);
   const filterMenuRef = useRef(null);
+
+  useEffect(() => {
+    markOrdersSeen();
+  }, [markOrdersSeen]);
 
   useEffect(() => {
     if (!filterMenuOpen) return;
@@ -70,53 +69,10 @@ export default function OrdersPage() {
       .catch(() => {});
   }, []);
 
-  const fetchOrders = useCallback(async (showLoader = false) => {
-    if (showLoader) setLoading(true);
-    try {
-      const params = filter !== 'all' ? { status: filter } : {};
-      const { data } = await api.get('/api/admin/orders', { params });
-      setOrders(data);
-      const currentIds = new Set(data.map((o) => o._id));
-      // Highlight and alert for orders not seen in the previous fetch
-      setKnownIds((prevIds) => {
-        if (prevIds) {
-          const freshOrders = data.filter((o) => !prevIds.has(o._id));
-          const freshIds = freshOrders.map((o) => o._id);
-          if (freshIds.length > 0) {
-            setNewAlert(true);
-            playSuccessSound();
-            notifyNewOrder(freshOrders[0]);
-            setTimeout(() => setNewAlert(false), 4000);
-            setNewOrderIds((prev) => new Set([...prev, ...freshIds]));
-            setTimeout(() => {
-              setNewOrderIds((prev) => {
-                const next = new Set(prev);
-                freshIds.forEach((id) => next.delete(id));
-                return next;
-              });
-            }, 5000);
-          }
-        }
-        return currentIds;
-      });
-    } catch (err) {
-      console.error(err);
-    } finally {
-      setLoading(false);
-    }
-  }, [filter]);
-
-  useEffect(() => {
-    setKnownIds(null);
-    fetchOrders(true);
-    const interval = setInterval(() => fetchOrders(false), 15000);
-    return () => clearInterval(interval);
-  }, [filter]);
-
   const updateStatus = async (id, status) => {
     try {
-      const { data } = await api.patch(`/api/admin/orders/${id}/status`, { status });
-      setOrders((prev) => prev.map((o) => (o._id === id ? data : o)));
+      await api.patch(`/api/admin/orders/${id}/status`, { status });
+      fetchOrders(false);
     } catch (err) {
       alert('Error al actualizar estado');
     }
@@ -126,7 +82,7 @@ export default function OrdersPage() {
     if (!confirm('¿Eliminar este pedido definitivamente? Esta acción no se puede deshacer.')) return;
     try {
       await api.delete(`/api/admin/orders/${id}`);
-      setOrders((prev) => prev.filter((o) => o._id !== id));
+      fetchOrders(false);
     } catch (err) {
       alert('Error al eliminar el pedido');
     }
@@ -143,16 +99,14 @@ export default function OrdersPage() {
     );
   };
 
-  const filteredOrders = orders.filter(matchesSearch);
+  const matchesFilter = (o) => filter === 'all' || o.status === filter;
+
+  const filteredOrders = orders.filter((o) => matchesFilter(o) && matchesSearch(o));
   const activeOrders = filteredOrders.filter((o) => !['delivered', 'cancelled'].includes(o.status));
   const historyOrders = filteredOrders.filter((o) => ['delivered', 'cancelled'].includes(o.status)).slice(0, 10);
 
   return (
     <div className="page">
-      {newAlert && (
-        <div className="new-order-alert">Nuevo pedido recibido!</div>
-      )}
-
       <div className="page-header">
         <h2 className="page-title">Pedidos</h2>
         <button className="btn-refresh" onClick={() => fetchOrders(false)} title="Actualizar">
