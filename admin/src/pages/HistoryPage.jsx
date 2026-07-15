@@ -82,7 +82,7 @@ export default function HistoryPage() {
   return (
     <div className="page">
       <div className="page-header">
-        <h2 className="page-title">Historial de pedidos</h2>
+        <h2 className="page-title">Histórico de pedidos</h2>
       </div>
 
       <div className="history-filters">

@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { Pencil, X, Check, Trash2, ImagePlus, Upload, Download, Star } from 'lucide-react';
+import { Pencil, X, Check, Trash2, ImagePlus, Upload, Download, Star, Search } from 'lucide-react';
 import * as XLSX from 'xlsx';
 import api from '../api';
 import { today as todayStr } from '../utils/date';
@@ -22,6 +22,7 @@ export default function ProductsPage() {
   const [categories, setCategories] = useState([]);
   const [loading, setLoading]       = useState(true);
   const [showImport, setShowImport] = useState(false);
+  const [search, setSearch]         = useState('');
 
   const fetchData = async () => {
     setLoading(true);
@@ -38,25 +39,43 @@ export default function ProductsPage() {
 
   useEffect(() => { fetchData(); }, []);
 
+  const filteredProducts = search.trim()
+    ? products.filter(p => p.name.toLowerCase().includes(search.trim().toLowerCase()))
+    : products;
+
   return (
     <div className="page">
       <div className="page-header">
         <h2 className="page-title">Productos</h2>
       </div>
 
-      {!loading && (
-        <div style={{ display: 'flex', gap: 8, justifyContent: 'flex-end', marginBottom: 16 }}>
-          <button className="btn-secondary" onClick={() => newCategoryRef.current?.()}>+ Nueva categoría</button>
-          <button className="btn-primary"   onClick={() => newProductRef.current?.()}>+ Nuevo producto</button>
-          <button className="btn-secondary" style={{ display: 'flex', alignItems: 'center', gap: 6 }} onClick={() => setShowImport(true)}>
-            <Upload size={15} /> Importar Excel
-          </button>
+      <div className="orders-toolbar">
+        <div className="orders-search">
+          <Search size={15} className="orders-search-icon" />
+          <input
+            type="text"
+            className="orders-search-input"
+            placeholder="Buscar"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+          />
         </div>
-      )}
+
+        {!loading && (
+          <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+            <button className="btn-secondary" onClick={() => newCategoryRef.current?.()}>+ Nueva categoría</button>
+            <button className="btn-primary"   onClick={() => newProductRef.current?.()}>+ Nuevo producto</button>
+            <button className="btn-secondary" style={{ display: 'flex', alignItems: 'center', gap: 6 }} onClick={() => setShowImport(true)}>
+              <Upload size={15} /> Importar Excel
+            </button>
+          </div>
+        )}
+      </div>
 
       {loading ? <p className="loading-text">Cargando...</p> : (
         <ProductsTab
-          products={products}
+          products={filteredProducts}
+          allProducts={products}
           setProducts={setProducts}
           categories={categories}
           setCategories={setCategories}
@@ -72,7 +91,7 @@ export default function ProductsPage() {
 
 // ── ProductsTab ───────────────────────────────────────────────────────────────
 
-function ProductsTab({ products, setProducts, categories, setCategories, newProductRef, newCategoryRef, showImport, setShowImport }) {
+function ProductsTab({ products, allProducts, setProducts, categories, setCategories, newProductRef, newCategoryRef, showImport, setShowImport }) {
   const [showForm, setShowForm]     = useState(false);
   const [showCatForm, setShowCatForm] = useState(false);
   const [editingId, setEditingId]   = useState(null);
@@ -224,7 +243,7 @@ function ProductsTab({ products, setProducts, categories, setCategories, newProd
       {showCatForm && (
         <CategoryModal
           categories={categories}
-          products={products}
+          products={allProducts}
           setCategories={setCategories}
           onClose={() => setShowCatForm(false)}
         />
@@ -313,7 +332,7 @@ function ProductsTab({ products, setProducts, categories, setCategories, newProd
                       value=""
                       style={{ fontSize: 12, padding: '4px 8px', width: 'auto' }}
                       onChange={e => {
-                        const source = products.find(p => p._id === e.target.value);
+                        const source = allProducts.find(p => p._id === e.target.value);
                         if (!source) return;
                         const copiedGroups = (source.variants || []).map(g => ({
                           name: g.name,
@@ -326,7 +345,7 @@ function ProductsTab({ products, setProducts, categories, setCategories, newProd
                       }}
                     >
                       <option value="" disabled>Copiar de otro producto...</option>
-                      {products.filter(p => p._id !== editingId && p.variants?.length > 0).map(p => (
+                      {allProducts.filter(p => p._id !== editingId && p.variants?.length > 0).map(p => (
                         <option key={p._id} value={p._id}>{p.name}</option>
                       ))}
                     </select>
@@ -555,17 +574,33 @@ function ProductRow({ product, onToggle, onToggleDaily, onEdit, onDelete }) {
         <span className="product-price">${Number(product.price).toLocaleString('es-AR')}</span>
       </div>
       <div className="product-row-actions">
-        {product.isDaily && onToggleDaily && (
-          <button className={`btn-toggle ${product.dailyActive ? 'on' : 'off'}`} onClick={() => onToggleDaily(product)}>
-            {product.dailyActive ? 'Activo' : 'Inactivo'}
-          </button>
+        {product.isDaily && onToggleDaily ? (
+          <AvailabilitySwitch active={product.dailyActive} onClick={() => onToggleDaily(product)} />
+        ) : (
+          <AvailabilitySwitch active={product.available} onClick={() => onToggle(product)} />
         )}
-        <button className={`btn-toggle ${product.available ? 'on' : 'off'}`} onClick={() => onToggle(product)}>
-          {product.available ? 'Disponible' : 'Oculto'}
-        </button>
         <button className="btn-edit" onClick={() => onEdit(product)}>Editar</button>
         <button className="btn-delete" onClick={() => onDelete(product._id)} title="Eliminar"><Trash2 size={14} /></button>
       </div>
+    </div>
+  );
+}
+
+function AvailabilitySwitch({ active, onClick }) {
+  return (
+    <div className="availability-switch">
+      <button
+        type="button"
+        className={`switch ${active ? 'switch--on' : ''}`}
+        role="switch"
+        aria-checked={active}
+        onClick={onClick}
+      >
+        <span className="switch-thumb" />
+      </button>
+      <span className={`availability-switch-label ${active ? 'on' : 'off'}`}>
+        {active ? 'Disponible' : 'No disponible'}
+      </span>
     </div>
   );
 }
