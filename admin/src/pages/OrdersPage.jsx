@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
-import { FileText, MessageCircle, Landmark, X, Search } from 'lucide-react';
+import { FileText, MessageCircle, Landmark, X, Search, SlidersHorizontal, ChevronDown } from 'lucide-react';
 import api from '../api';
 import { playSuccessSound } from '../utils/sound';
 
@@ -38,6 +38,8 @@ function formatDate(dateStr) {
   return new Date(dateStr).toLocaleDateString('es-AR');
 }
 
+const FILTER_OPTIONS = ['all', 'pending', 'preparing', 'ready', 'delivered', 'cancelled'];
+
 export default function OrdersPage() {
   const [orders, setOrders] = useState([]);
   const [filter, setFilter] = useState('all');
@@ -47,6 +49,19 @@ export default function OrdersPage() {
   const [newAlert, setNewAlert] = useState(false);
   const [newOrderIds, setNewOrderIds] = useState(new Set());
   const [bankTransfer, setBankTransfer] = useState(null);
+  const [filterMenuOpen, setFilterMenuOpen] = useState(false);
+  const filterMenuRef = useRef(null);
+
+  useEffect(() => {
+    if (!filterMenuOpen) return;
+    const handleClickOutside = (e) => {
+      if (filterMenuRef.current && !filterMenuRef.current.contains(e.target)) {
+        setFilterMenuOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [filterMenuOpen]);
 
   useEffect(() => {
     api.get('/api/admin/restaurant')
@@ -89,6 +104,7 @@ export default function OrdersPage() {
   }, [filter]);
 
   useEffect(() => {
+    setKnownIds(null);
     fetchOrders(true);
     const interval = setInterval(() => fetchOrders(false), 15000);
     return () => clearInterval(interval);
@@ -126,7 +142,7 @@ export default function OrdersPage() {
 
   const filteredOrders = orders.filter(matchesSearch);
   const activeOrders = filteredOrders.filter((o) => !['delivered', 'cancelled'].includes(o.status));
-  const historyOrders = filteredOrders.filter((o) => ['delivered', 'cancelled'].includes(o.status));
+  const historyOrders = filteredOrders.filter((o) => ['delivered', 'cancelled'].includes(o.status)).slice(0, 10);
 
   return (
     <div className="page">
@@ -153,7 +169,7 @@ export default function OrdersPage() {
           />
         </div>
         <div className="filter-tabs">
-          {['all', 'pending', 'preparing', 'ready', 'delivered', 'cancelled'].map((s) => (
+          {FILTER_OPTIONS.map((s) => (
             <button
               key={s}
               className={`filter-tab ${filter === s ? 'active' : ''}`}
@@ -162,6 +178,33 @@ export default function OrdersPage() {
               {s === 'all' ? 'Todos' : STATUS_LABELS[s]}
             </button>
           ))}
+        </div>
+
+        <div className="filter-dropdown" ref={filterMenuRef}>
+          <button
+            className="filter-dropdown-toggle"
+            onClick={() => setFilterMenuOpen((o) => !o)}
+          >
+            <SlidersHorizontal size={15} />
+            {filter === 'all' ? 'Filtro' : STATUS_LABELS[filter]}
+            <ChevronDown size={14} />
+          </button>
+          {filterMenuOpen && (
+            <div className="filter-dropdown-menu">
+              {FILTER_OPTIONS.map((s) => (
+                <button
+                  key={s}
+                  className={`filter-dropdown-item ${filter === s ? 'active' : ''}`}
+                  onClick={() => {
+                    setFilter(s);
+                    setFilterMenuOpen(false);
+                  }}
+                >
+                  {s === 'all' ? 'Todos' : STATUS_LABELS[s]}
+                </button>
+              ))}
+            </div>
+          )}
         </div>
       </div>
 
@@ -186,7 +229,7 @@ export default function OrdersPage() {
           )}
           {historyOrders.length > 0 && (
             <section style={{ marginTop: '2rem' }}>
-              <h3 className="section-label">Historial ({historyOrders.length})</h3>
+              <h3 className="section-label">Anteriores ({historyOrders.length})</h3>
               <div className="orders-grid">
                 {historyOrders.map((order) => (
                   <OrderCard key={order._id} order={order} onStatusChange={updateStatus} onDelete={deleteOrder} bankTransfer={bankTransfer} />
