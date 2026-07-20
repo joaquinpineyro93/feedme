@@ -2,12 +2,13 @@ import { useState, useCallback } from 'react';
 import {
   ShoppingCart, MessageCircle, BarChart2,
   Pencil, Zap, Globe, Lock, RefreshCw,
-  Check, ArrowRight, Smartphone
+  Check, ArrowRight, Smartphone, FileText
 } from 'lucide-react';
 import { Analytics } from '@vercel/analytics/react';
 import SplashScreen from './components/SplashScreen';
 
 const DEMO_URL = 'https://tu-local.pedi.uy/';
+const BROCHURE_URL = '/pedi-brochure.pdf';
 const WA_LINK = "https://wa.me/59899566170?text=%C2%A1Hola%21%20Quiero%20probar%20Ped%C3%AD%20para%20mi%20negocio.";
 
 /* Brand ------------------------------------------------------------------ */
@@ -261,6 +262,9 @@ function Footer() {
         <Wordmark size="24px" color="#fff" />
       </div>
       <p className="footer-tagline">Pedidos online para tu negocio &mdash; &copy; {new Date().getFullYear()} Pedi</p>
+      <a href={BROCHURE_URL} target="_blank" rel="noreferrer" className="footer-link">
+        <FileText size={16} /> Descargar brochure
+      </a>
     </footer>
   );
 }
