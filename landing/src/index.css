@@ -414,6 +414,12 @@ a { color: var(--accent-dark); }
 .footer { background: var(--dark); padding: 2.75rem 1.5rem; text-align: center; }
 .footer-brand { display: flex; align-items: center; justify-content: center; margin-bottom: 0.75rem; }
 .footer-tagline { font-size: 0.82rem; color: #8a857a; }
+.footer-link {
+  display: inline-flex; align-items: center; gap: 0.4rem;
+  margin-top: 1rem; font-size: 0.82rem; color: #cfc9bc;
+  text-decoration: none; transition: color 0.2s;
+}
+.footer-link:hover { color: var(--accent); }
 
 /* Splash screen ---------------------------------------------------------- */
 .splash-screen {
